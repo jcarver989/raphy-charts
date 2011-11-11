@@ -47,24 +47,35 @@ LineChartOptions = (function() {
   return LineChartOptions;
 })();var Tooltip;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+Raphael.fn.triangle = function(cx, cy, r) {
+  r *= 1.75;
+  return this.path("M".concat(cx, ",", cy, "m0-", r * .58, "l", r * .5, ",", r * .87, "-", r, ",0z"));
+};
 Tooltip = (function() {
   function Tooltip(r, target, text) {
-    var height, offset, rounding, size, width, x, y, _ref;
+    var box, box_height, box_midpoint, box_width, height, offset, rounding, size, width, x, y;
     this.r = r;
     size = 30;
     width = 50;
     height = 25;
     offset = 10;
     rounding = 5;
-    _ref = target.getBBox(), x = _ref.x, y = _ref.y;
-    this.popup = this.r.rect(x - width / 2, y - (height + offset), width, height, rounding);
+    box = target.getBBox();
+    x = box.x;
+    y = box.y;
+    box_width = box.width;
+    box_height = box.height;
+    box_midpoint = x + box_width / 2;
+    this.popup = this.r.set();
+    this.popup.push(this.r.rect(box_midpoint - width / 2, y - (height + offset), width, height, rounding));
+    this.popup.push(this.r.triangle(box_midpoint, y - offset + 4, 4).rotate(180));
     this.popup.attr({
       "fill": "rgba(0,0,0,.4)",
       "fill-opacity": 0,
       "stroke": "transparent",
       "stroke-width": 0
     });
-    this.text = this.r.text(x, y - (height / 2 + offset), text);
+    this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
     this.text.attr({
       "fill": "#fff",
       "font-size": 14,

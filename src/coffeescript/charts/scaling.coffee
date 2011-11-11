@@ -10,8 +10,8 @@ class Scaling
     max_x = Math.max.apply(Math.max, xs)
     max_y = Math.max.apply(Math.max, ys)
     
-    min_x = Math.min.apply(Math.max, xs)
-    min_y = Math.min.apply(Math.max, ys)
+    min_x = Math.min.apply(Math.min, xs)
+    min_y = Math.min.apply(Math.min, ys)
 
     [max_x, min_x, max_y, min_y]
 

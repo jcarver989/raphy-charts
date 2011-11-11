@@ -123,8 +123,8 @@ Scaling = (function() {
     }
     max_x = Math.max.apply(Math.max, xs);
     max_y = Math.max.apply(Math.max, ys);
-    min_x = Math.min.apply(Math.max, xs);
-    min_y = Math.min.apply(Math.max, ys);
+    min_x = Math.min.apply(Math.min, xs);
+    min_y = Math.min.apply(Math.min, ys);
     return [max_x, min_x, max_y, min_y];
   };
   Scaling.scale_points = function(x_max, y_max, points, padding) {
@@ -247,16 +247,22 @@ Bezier = (function() {
 })();var LineChart;
 LineChart = (function() {
   function LineChart(dom_id, options) {
+    var container, _ref;
     if (options == null) {
       options = {};
     }
-    this.container = document.getElementById(dom_id);
-    this.width = parseInt(this.container.style.width);
-    this.height = parseInt(this.container.style.height);
+    container = document.getElementById(dom_id);
+    _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
     this.padding = 40;
     this.options = new LineChartOptions(options);
-    this.r = Raphael(this.container, this.width, this.height);
+    this.r = Raphael(container, this.width, this.height);
   }
+  LineChart.prototype.get_dimensions = function(container) {
+    var height, width;
+    width = parseInt(container.style.width);
+    height = parseInt(container.style.height);
+    return [width, height];
+  };
   LineChart.prototype.add_line = function(raw_points, options) {
     this.raw_points = raw_points;
     if (options == null) {

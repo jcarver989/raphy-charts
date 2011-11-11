@@ -7,13 +7,18 @@
 
 class LineChart
   constructor: (dom_id, options = {}) ->
-    @container = document.getElementById(dom_id)
-    @width   = parseInt(@container.style.width)
-    @height  = parseInt(@container.style.height)
+    container = document.getElementById(dom_id)
+    [@width,@height] = @get_dimensions(container)
     @padding = 40 
     @options = new LineChartOptions(options)
 
-    @r = Raphael(@container, @width, @height)
+    @r = Raphael(container, @width, @height)
+
+
+  get_dimensions: (container) ->
+    width  = parseInt(container.style.width)
+    height = parseInt(container.style.height)
+    [width, height]
 
   add_line: (@raw_points, options = {}) ->
     @points = Scaling.scale_points(@width, @height, @raw_points, @padding)

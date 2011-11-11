@@ -12,7 +12,40 @@ if (global.module == undefined) {
 
 
     module('Charts', function(exports) {
-      var Tooltip;
+      var LineChartOptions;
+LineChartOptions = (function() {
+  LineChartOptions.DEFAULTS = {
+    dot_size: 5,
+    dot_color: "#00aadd",
+    dot_stroke_color: "#fff",
+    dot_stroke_size: 2,
+    line_width: 3,
+    line_color: "#00aadd",
+    smoothing: 0.4,
+    fill_area: true,
+    area_color: "#00aadd",
+    area_opacity: 0.2,
+    label_max: true,
+    label_min: true
+  };
+  function LineChartOptions(options) {
+    var option, opts, value, _ref;
+    opts = {};
+    _ref = LineChartOptions.DEFAULTS;
+    for (option in _ref) {
+      value = _ref[option];
+      opts[option] = value;
+    }
+    for (option in options) {
+      value = options[option];
+      if (options.hasOwnProperty(option)) {
+        opts[option] = value;
+      }
+    }
+    return opts;
+  }
+  return LineChartOptions;
+})();var Tooltip;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Tooltip = (function() {
   function Tooltip(r, target, text) {
@@ -65,13 +98,6 @@ Tooltip = (function() {
     return this.animate_opacity(this.text, 1);
   };
   return Tooltip;
-})();var Point;
-Point = (function() {
-  function Point(x, y) {
-    this.x = x;
-    this.y = y;
-  }
-  return Point;
 })();var Scaling;
 Scaling = (function() {
   function Scaling() {}
@@ -109,39 +135,13 @@ Scaling = (function() {
     return scaled_points;
   };
   return Scaling;
-})();var LineChartOptions;
-LineChartOptions = (function() {
-  LineChartOptions.DEFAULTS = {
-    dot_size: 5,
-    dot_color: "#00aadd",
-    dot_stroke_color: "#fff",
-    dot_stroke_size: 2,
-    line_width: 3,
-    line_color: "#00aadd",
-    smoothing: 0.4,
-    fill_area: true,
-    area_color: "#00aadd",
-    area_opacity: 0.2,
-    label_max: true,
-    label_min: true
-  };
-  function LineChartOptions(options) {
-    var option, opts, value, _ref;
-    opts = {};
-    _ref = LineChartOptions.DEFAULTS;
-    for (option in _ref) {
-      value = _ref[option];
-      opts[option] = value;
-    }
-    for (option in options) {
-      value = options[option];
-      if (options.hasOwnProperty(option)) {
-        opts[option] = value;
-      }
-    }
-    return opts;
+})();var Point;
+Point = (function() {
+  function Point(x, y) {
+    this.x = x;
+    this.y = y;
   }
-  return LineChartOptions;
+  return Point;
 })();var Dot;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Dot = (function() {
@@ -191,10 +191,10 @@ Dot = (function() {
 })();var Bezier;
 Bezier = (function() {
   function Bezier() {}
-  Bezier.create_path = function(points, tension) {
+  Bezier.create_path = function(points, smoothing) {
     var b1, b2, i, path, point, _len, _ref;
-    if (tension == null) {
-      tension = 0.7;
+    if (smoothing == null) {
+      smoothing = 0.7;
     }
     path = "";
     for (i = 0, _len = points.length; i < _len; i++) {
@@ -202,36 +202,38 @@ Bezier = (function() {
       if (i === 0) {
         path += "M" + point.x + "," + point.y;
       } else {
-        _ref = Bezier.get_control_points(points, i - 1, tension), b1 = _ref[0], b2 = _ref[1];
+        _ref = Bezier.get_control_points(points, i - 1, smoothing), b1 = _ref[0], b2 = _ref[1];
         path += "M" + points[i - 1].x + "," + points[i - 1].y + " C" + b1.x + "," + b1.y + " " + b2.x + "," + b2.y + " " + points[i].x + "," + points[i].y;
       }
     }
     return path;
   };
-  Bezier.get_control_points = function(points, i, tension) {
+  Bezier.get_control_points = function(points, i, smoothing) {
     var b1, b2, d1, d2;
-    d1 = Bezier.get_control_point(points, i, tension);
-    d2 = Bezier.get_control_point(points, i + 1, tension);
+    d1 = Bezier.get_control_point(points, i, smoothing);
+    d2 = Bezier.get_control_point(points, i + 1, smoothing);
     b1 = new Point(points[i].x + d1.x / 3, points[i].y + d1.y / 3);
     b2 = new Point(points[i + 1].x - d2.x / 3, points[i + 1].y - d2.y / 3);
     return [b1, b2];
   };
-  Bezier.get_control_point = function(points, i, tension) {
-    var tension_factor;
+  Bezier.get_control_point = function(points, i, smoothing_factor) {
+    var i1, i2;
     if (points.length < 2) {
       throw "Error";
     }
-    tension_factor = 1 - tension;
+    i1 = i + 1;
+    i2 = i - 1;
     if (i === 0) {
-      return new Point((points[1].x - points[0].x) * tension_factor, (points[1].y - points[0].y) * tension_factor);
+      i1 = 1;
+      i2 = 0;
     } else if (i === (points.length - 1)) {
-      return new Point((points[i].x - points[i - 1].x) * tension_factor, (points[i].y - points[i - 1].y) * tension_factor);
-    } else {
-      return new Point((points[i + 1].x - points[i - 1].x) * tension_factor, (points[i + 1].y - points[i - 1].y) * tension_factor);
+      i1 = i;
+      i2 = i - 1;
     }
+    return new Point((points[i1].x - points[i2].x) * smoothing_factor, (points[i1].y - points[i2].y) * smoothing_factor);
   };
   return Bezier;
-})();var LineChart, create_random_points, create_random_points2, draw_bars;
+})();var LineChart;
 LineChart = (function() {
   function LineChart(dom_id, options) {
     if (options == null) {
@@ -253,7 +255,7 @@ LineChart = (function() {
   };
   LineChart.prototype.draw_curve = function() {
     var path;
-    path = this.r.path(Bezier.create_path(this.points, 1 - this.options.smoothing));
+    path = this.r.path(Bezier.create_path(this.points, this.options.smoothing));
     return path.attr({
       "stroke": this.options.line_color,
       "stroke-width": this.options.line_width
@@ -319,7 +321,7 @@ LineChart = (function() {
     }
   };
   return LineChart;
-})();
+})();var create_random_points, create_random_points2, draw_bars;
 create_random_points = function() {
   var i, points;
   points = (function() {
@@ -392,9 +394,22 @@ window.onload = function() {
     dot_color: "#118800",
     dot_stroke_color: "#aaa",
     dot_stroke_size: 3,
-    fill_area: false,
     label_min: false,
-    smoothing: 0.3
+    fill_area: false,
+    smoothing: 0.5
+  });
+  c.add_line(create_random_points2());
+  c.draw();
+  c = new LineChart('chart4', {
+    line_color: "#9900cc",
+    dot_color: "#000",
+    dot_size: 7,
+    dot_stroke_color: "#9900cc",
+    dot_stroke_size: 2,
+    label_min: false,
+    label_max: false,
+    fill_area: false,
+    smoothing: 0
   });
   c.add_line(create_random_points2());
   c.draw();

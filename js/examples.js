@@ -55,7 +55,7 @@
     return _results;
   };
   window.onload = function() {
-    var c, chart2, charts, height, i, padding, points, r2, width, _ref;
+    var c, charts, i;
     charts = Charts;
     c = new Charts.LineChart('chart1', {});
     c.add_line({
@@ -108,11 +108,6 @@
     c.add_line({
       data: create_random_points2()
     });
-    c.draw();
-    chart2 = document.getElementById('chart3');
-    _ref = [1000, 300, 25], width = _ref[0], height = _ref[1], padding = _ref[2];
-    r2 = Raphael(chart2, width, height);
-    points = Charts.Scaling.scale_points(width, height, create_exponential_points(), padding, padding);
-    return draw_bars(r2, points);
+    return c.draw();
   };
 }).call(this);

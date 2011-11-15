@@ -78,10 +78,3 @@ window.onload = () ->
     data: create_random_points2() 
   }
   c.draw()
-
-  # bars
-  chart2 = document.getElementById('chart3')
-  [width, height, padding] = [1000, 300, 25]
-  r2 = Raphael(chart2, width, height)
-  points = Charts.Scaling.scale_points(width, height, create_exponential_points(), padding, padding)
-  draw_bars(r2, points)

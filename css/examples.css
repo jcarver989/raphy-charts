@@ -1404,3 +1404,43 @@ button.button {
     background-image: -webkit-repeating-linear-gradient(-30deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0) 15px, rgba(255, 255, 255, 0) 30px), -webkit-gradient(linear, left bottom, left top, color-stop(0, #aa63db), color-stop(1, #933ad1));
     background-image: -moz-repeating-linear-gradient(left top -30deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0) 15px, rgba(255, 255, 255, 0) 30px), -moz-linear-gradient(#aa63db 0%, #933ad1 100%);
     background-image: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0.17) 30px); }
+
+body {
+  background: #eeeeee;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  font-weight: normal;
+  line-height: normal; }
+
+h1, h3 {
+  padding: 0;
+  margin: 0; }
+
+hr {
+  margin-bottom: 20px; }
+
+h1 {
+  font-size: 60px;
+  letter-spacing: -3px;
+  position: relative; }
+  h1 small {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    letter-spacing: 0; }
+
+pre {
+  background: #333333;
+  color: white;
+  padding: 20px;
+  -moz-border-radius: 4px 4px 4px 4px;
+  -webkit-border-radius: 4px 4px 4px 4px;
+  border-radius: 4px 4px 4px 4px;
+  -moz-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; }
+
+#container {
+  width: 1000px;
+  margin: 0 auto;
+  color: #333333; }

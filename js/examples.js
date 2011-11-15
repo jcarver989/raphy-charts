@@ -50,7 +50,7 @@
         "stroke-width": "0"
       });
       attach_handler(rect);
-      _results.push(new Tooltip(r, rect, Math.floor(points[i].y)));
+      _results.push(new Charts.Tooltip(r, rect, Math.floor(points[i].y)));
     }
     return _results;
   };

@@ -24,7 +24,7 @@ draw_bars = (r, points) ->
 
     attach_handler(rect)
 
-    new Tooltip(r, rect, Math.floor(points[i].y))
+    new Charts.Tooltip(r, rect, Math.floor(points[i].y))
 
 window.onload = () ->
   charts = Charts

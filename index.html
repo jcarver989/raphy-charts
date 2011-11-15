@@ -3,33 +3,126 @@
 <html>
   <head>
     <link rel="stylesheet" type="text/css" href="css/examples.css" />
+    <link rel="stylesheet" type="text/css" href="css/syntax.css" />
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script>
     <script type="text/javascript" src="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.js"></script>
     <script type="text/javascript" src="js/examples.js"></script>
-    <style type="text/css">
-      body { padding: 20px;  }
-      h1 {
-        font-family: Helvetica, Arial, sans-serif;
-      }
-    </style>
   </head>
   <body>
+    <div id="container">
+      <h1> 
+        Raphy Charts 
+
+        <small>
+          <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.js" class="large blue bordered pill striped button">Download Raphy Charts</a> 
+        </small>
+      </h1>
+    <h3>Easy, beautiful line charts with sane defaults</h3>
+    <hr />
+
+    <h2>Installation</h2>
+    <ol>
+      <li>Make sure you have Raphael.js loaded on your page</li>
+      <li>Download Raphy Charts and place it on your page</li>
+    </ol>
+
+
+    <h2>Basic Usage</h2>
+<pre>
+<code>
+// mydiv1 is the id of an existing dom element
+// with a defined width/height 
+var chart = new Charts.LineChart("mydiv1")
+
+chart.add_line({
+  data: [1,2,3,4,5],
+  labels: ["mon", "tues", "wed", "thurs", "fri"],
+  options: {
+    // Extra Options...see below
+  }
+})
+
+chart.draw()
+</code>
+</pre>
+
+
     <h2>Area Chart</h2>
     <div style="width:1000px; height: 300px;" id="chart1"></div>
+<pre>
+<code>
+c = new Charts.LineChart('chart1')
+
+c.add_line {
+  data: create_exponential_points() # array of numbers
+  labels: create_labels()           # array of date objects 
+  options: {
+    line_color : "#cc1100",
+    area_color : "#cc1100",
+    dot_color  :  "#cc1100"
+  }
+}
+c.add_line { data: create_squared_points() }
+c.draw()
+</code>
+</pre>
 
     <h2>Smoothed Line Chart</h2>
     <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart2"></div>
 
-    <h2>Normal Line Chart</h2>
+<pre>
+<code>
+c = new Charts.LineChart('chart2', {
+  line_color : "#118800",
+  dot_color  : "#118800",
+  area_color : "#118800",
+  dot_stroke_color: "#aaa",
+  dot_stroke_size: 3, 
+  label_min  : false,
+  smoothing  : 0.5,
+  show_grid  : true
+})
+
+c.add_line({
+  data: create_random_points2()
+})
+
+c.draw()
+</code>
+</pre>
+
+    <h2>Line Chart, No Smoothing</h2>
     <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart4"></div>
 
+<pre>
+<code>
+c = new Charts.LineChart('chart4', {
+  line_color : "#9900cc",
+  dot_color  : "#000",
+  dot_size: 7,
+  dot_stroke_color: "#9900cc",
+  dot_stroke_size: 2, 
+  label_min  : false,
+  label_max  : false,
+  fill_area  : false,
+  smoothing  : 0,
+  show_grid  : true,
+  grid_lines : 4
+})
+
+c.add_line { 
+  data: create_random_points2() 
+}
+c.draw()
+</code>
+</pre>
 
 
-    <h2>Line Bar Chart</h2>
-    <div style="width:1000px; height: 300px;" id="chart3">
-    </div>
+  </div>
+    <script type="text/javascript" src="js/highlight.pack.js"></script>
+    <script type="text/javascript">hljs.initHighlightingOnLoad();</script>
   </body>
-</head>
+</html>
 
 

@@ -97,7 +97,8 @@ Scaling = (function() {
     return scaled_points;
   };
   return Scaling;
-})();var Point;
+})();
+exports.Scaling = Scaling;var Point;
 Point = (function() {
   function Point(x, y) {
     this.x = x;
@@ -501,4 +502,5 @@ LineChart = (function() {
   };
   return LineChart;
 })();
+exports.LineChart = LineChart;
     })

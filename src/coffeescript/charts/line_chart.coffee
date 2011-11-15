@@ -74,3 +74,7 @@ class LineChart
 
     return
       
+
+
+
+exports.LineChart = LineChart

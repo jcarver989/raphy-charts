@@ -57,3 +57,6 @@ class Scaling
       scaled_points.push(new Point(sx, sy))
 
     scaled_points
+
+
+exports.Scaling = Scaling

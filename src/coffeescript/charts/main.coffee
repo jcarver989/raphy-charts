@@ -6,16 +6,11 @@
 # @import line_chart_options.coffee
 # @import line_chart.coffee
 
-create_random_points = -> 
-  points = (new Point(i, i*(i-1)) for i in [0..25])
-  points.push(new Point(26, 30))
-  points.push(new Point(27, 300))
-  points.push(new Point(28, 800))
-  points.push(new Point(29, 500))
-  points.push(new Point(30, 600))
-  points.push(new Point(31, 610))
-  points.push(new Point(32, 620))
-  points
+create_exponential_points = -> 
+  points = (new Point(i, i*(4)) for i in [0..25])
+
+create_squared_points = -> 
+  points = (new Point(i, i * i-1) for i in [0..25])
 
 create_random_points2 = -> 
   points = (new Point(i, Math.random() * i) for i in [0..25])
@@ -47,21 +42,28 @@ draw_bars = (r, points) ->
 
 window.onload = () ->
   # line 
-  raw_points = create_random_points()
   c = new LineChart('chart1')
-  c.add_line(raw_points)
+  c.add_line create_exponential_points(), {
+    line_color: "#cc1100"
+    area_color: "#cc1100"
+    dot_color:  "#cc1100"
+  }
+  c.add_line create_squared_points()
   c.draw()
 
 
   c = new LineChart('chart2', {
     line_color : "#118800"
     dot_color  : "#118800"
+    area_color : "#118800"
     dot_stroke_color: "#aaa"
     dot_stroke_size: 3 
     label_min  : false
-    fill_area  : false
     smoothing  : 0.5 
+    show_grid  : true
+    grid_lines : 5
   })
+
   c.add_line(create_random_points2())
   c.draw()
 
@@ -83,5 +85,5 @@ window.onload = () ->
   chart2 = document.getElementById('chart3')
   [width, height, padding] = [1000, 300, 25]
   r2 = Raphael(chart2, width, height)
-  points = Scaling.scale_points(width, height, raw_points, padding)
+  points = Scaling.scale_points(width, height, create_exponential_points(), padding)
   draw_bars(r2, points)

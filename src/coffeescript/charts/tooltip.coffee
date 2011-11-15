@@ -52,6 +52,9 @@ class Tooltip
       "font-weight" : "bold"
     })
 
+    @popup.toFront()
+    @text.toFront()
+
     target.mouseover () => @show()
     target.mouseout  () => @hide()
 

@@ -11,6 +11,8 @@ class Dot
       "stroke-width" : @opts.dot_stroke_size 
     })
 
+    @element.toBack()
+
   activate: () ->
     @element.attr({ "fill" : "#333"})
     @element.animate({ 

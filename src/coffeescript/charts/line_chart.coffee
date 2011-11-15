@@ -4,6 +4,8 @@
 # @import tooltip.coffee
 # @import dot.coffee
 # @import line_chart_options.coffee
+# @import line.coffee
+# @import grid.coffee
 
 class LineChart
   constructor: (dom_id, options = {}) ->
@@ -14,72 +16,44 @@ class LineChart
 
     @r = Raphael(container, @width, @height)
 
+    @all_points   = []
+    @line_indices = []
+    @line_options = []
 
   get_dimensions: (container) ->
     width  = parseInt(container.style.width)
     height = parseInt(container.style.height)
     [width, height]
 
-  add_line: (@raw_points, options = {}) ->
-    @points = Scaling.scale_points(@width, @height, @raw_points, @padding)
-
-  draw_curve: () ->
-    path = @r.path Bezier.create_path(@points, @options.smoothing)
-    path.attr({
-      "stroke"       : @options.line_color
-      "stroke-width" : @options.line_width
-    })
-
-  draw_area: () ->
-    padded_height = @height
-    padded_width = @width + @padding
-
-    final_point = @points[@points.length-1]
-    first_point = @points[0]
-
-    path = ""
-
-    for point, i in @points
-      if i == 0
-        path += "M #{first_point.x}, #{first_point.y}" 
-      else
-        path += "L #{point.x}, #{point.y}"
-
-    path += "M #{final_point.x}, #{final_point.y}"
-    path += "L #{final_point.x}, #{padded_height}"
-    path += "L #{first_point.x}, #{padded_height}"
-    path += "L #{first_point.x}, #{first_point.y}"
-    path += "Z"
-
-    @r.path(path).attr({
-      "fill" : @options.area_color 
-      "fill-opacity" : @options.area_opacity 
-      "stroke" : "none"
-    })
+  add_line: (points, options = @options) ->
+    points_count  = @all_points.length
+    @line_indices.push [points_count, points_count + points.length-1]
+    @all_points.push.apply(@all_points, points)
+    @line_options.push new LineChartOptions(options)
+    return
 
   draw: () ->
     @r.clear()
-    @draw_curve()
-    @draw_area() if @options.fill_area
+    @scaled_points = Scaling.scale_points(@width, @height, @all_points, @padding)
+    effective_width = @width + @padding
 
-    tooltips = []
-    dots = []
-    max_point = 0
-    min_point = 0
 
-    # draw individual points
-    for point, i in @points
-      dots.push new Dot(@r, point, @options)
-      tooltips.push new Tooltip(@r, dots[i].element, @raw_points[i].y) 
-      max_point = i if @raw_points[i].y >= @raw_points[max_point].y 
-      min_point = i if @raw_points[i] > @raw_points[min_point].y 
+    for line_indices, i in @line_indices
+      [begin, end] = line_indices
+      points = @scaled_points[begin..end]
+      raw_points = @all_points[begin..end]
+      new Line(
+        @r,
+        raw_points,
+        points,
+        @height,
+        effective_width,
+        @line_options[i]
+      ).draw()
 
-    if @options.label_max
-      tooltips[max_point].show()
-      dots[max_point].activate()
-
-    if @options.label_min
-      tooltips[min_point].show()
-      dots[min_point].activate()
+    if @options.show_grid == true || @options.show_grid == "true"
+      grid = new Grid(@r, @width, @height, @options)
+      grid.draw()
 
     return
+      

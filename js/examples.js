@@ -55,8 +55,9 @@
     return _results;
   };
   window.onload = function() {
-    var c, chart2, height, i, padding, points, r2, width, _ref;
-    c = new LineChart('chart1', {});
+    var c, chart2, charts, height, i, padding, points, r2, width, _ref;
+    charts = Charts;
+    c = new Charts.LineChart('chart1', {});
     c.add_line({
       data: create_exponential_points(),
       labels: (function() {
@@ -77,7 +78,7 @@
       data: create_squared_points()
     });
     c.draw();
-    c = new LineChart('chart2', {
+    c = new Charts.LineChart('chart2', {
       line_color: "#118800",
       dot_color: "#118800",
       area_color: "#118800",
@@ -91,7 +92,7 @@
       data: create_random_points2()
     });
     c.draw();
-    c = new LineChart('chart4', {
+    c = new Charts.LineChart('chart4', {
       line_color: "#9900cc",
       dot_color: "#000",
       dot_size: 7,
@@ -111,7 +112,7 @@
     chart2 = document.getElementById('chart3');
     _ref = [1000, 300, 25], width = _ref[0], height = _ref[1], padding = _ref[2];
     r2 = Raphael(chart2, width, height);
-    points = Scaling.scale_points(width, height, create_exponential_points(), padding, padding);
+    points = Charts.Scaling.scale_points(width, height, create_exponential_points(), padding, padding);
     return draw_bars(r2, points);
   };
 }).call(this);

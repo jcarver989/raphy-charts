@@ -1,0 +1,876 @@
+$blue: #0070c3
+$light-blue: #00a8de
+$green: #7c9f1f
+$red: #ae1919
+$orange: #B43428
+$smoky: rgba(0,0,0,.8)
+$dark_gray: #333
+$gray: #888
+$light-gray: #eee
+$purple: #933ad1
+$yellow: yellow 
+
+.row
+    :margin 20px 0 20px 0
+
+
+.centered
+    :margin-left auto
+    :margin-right auto
+    :margin-top 40px
+    :text-align center
+
+
+.mini-row
+    :margin 10px 0 0 0
+    :overflow hidden
+.first-mini-row
+    :margin 0
+    :overflow hidden
+
+.row:after, .mini-row:after
+    :display block
+    :clear both
+    :content "."
+    :visibility hidden
+    :height 0
+
+#firstRow
+    :margin 0
+
+
+.column, .columns
+    :margin 0 0 0 20px
+    :padding 0
+    :float left
+
+    &:first-child
+        :margin-left 0
+
+.first-column
+    :margin 0
+    :padding 0
+    :float left
+
+
+.mini-row .column
+    :margin-left 10px
+
+
+.quarter
+    :width 25px
+.half
+    :width 50px
+
+.three-quarters
+    :width 75px
+
+.one
+    :width 100px
+
+.two
+    :width 200px
+
+.three
+    :width 300px
+
+.four
+    :width 400px
+
+
+.five
+    :width 500px
+
+
+.six
+    :width 600px
+
+.seven
+    :width 700px
+
+.eight
+    :width 800px
+
+.nine
+    :width 900px
+
+.ten
+    :width 1000px
+
+.one-and-a-quarter
+    :width 125px
+
+.two-and-a-quarter
+    :width 225px
+
+.three-and-a-quarter
+    :width 325px
+
+.four-and-a-quarter
+    :width 425px
+
+.five-and-a-quarter
+    :width 525px
+
+.six-and-a-quarter
+    :width 625px
+
+.seven-and-a-quarter
+    :width 725px
+
+.eight-and-a-quarter
+    :width 825px
+
+.nine-and-a-quarter
+    :width 925px
+
+
+.one-and-a-half
+    :width 150px
+
+.two-and-a-half
+    :width 250px
+
+.three-and-a-half
+    :width 350px
+
+.four-and-a-half
+    :width 450px
+
+.five-and-a-half
+    :width 550px
+
+.six-and-a-half
+    :width 650px
+
+.seven-and-a-half
+    :width 750px
+
+.eight-and-a-half
+    :width 850px
+
+.nine-and-a-half
+    :width 950px
+
+.one-and-three-quarter
+    :width 175px
+
+.two-and-three-quarters
+    :width 275px
+
+.three-and-three-quarters
+    :width 375px
+
+.four-and-three-quarters
+    :width 475px
+
+.five-and-three-quarters
+    :width 575px
+
+.six-and-three-quarters
+    :width 675px
+
+.seven-and-three-quarters
+    :width 775px
+
+.eight-and-three-quarters
+    :width 875px
+
+.nine-and-three-quarters
+    :width 975px
+
+.one-half
+    :width 470px
+
+.one-third
+    :width 30%
+
+
+// -------------------------
+// CSS3 - ROUNDED CORNERS + SHADOWS
+// -------------------------
+= border-radius($top-left, $top-right: $top-left, $bottom-left: $top-left, $bottom-right: $top-left)
+    :-moz-border-radius      $top-left $top-right $bottom-left $bottom-right
+    :-webkit-border-radius   $top-left $top-right $bottom-left $bottom-right
+    :border-radius           $top-left $top-right $bottom-left $bottom-right
+
+= gradient($color1,$color2)
+    :background-image -webkit-gradient(linear, left top, left bottom, from($color1), to($color2))
+    :background-image -moz-linear-gradient(top,  $color1,  $color2)
+
+= striped-gradient($color1, $color2)
+    background-image: -webkit-repeating-linear-gradient(-30deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.17) 15px, rgba(255,255,255,0) 15px, rgba(255,255,255,0) 30px), -webkit-gradient(linear, left bottom, left top, color-stop(0, $color1), color-stop(1, $color2))
+
+    background-image: -moz-repeating-linear-gradient(left top -30deg, rgba(255, 255, 255, 0.17), rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0) 15px, rgba(255, 255, 255, 0) 30px),  -moz-linear-gradient($color1 0%, $color2 100%)
+
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255,255,255,0.17) 15px, rgba(255,255,255,0.17) 30px)
+
+= ie-gradient($color1, $color2)
+    :filter progid:DXImageTransform.Microsoft.Gradient(GradientType=0, startColorstr='#{$color1}', endColorstr='#{$color2}')
+    :-ms-filter "progid:DXImageTransform.Microsoft.gradient(startColorstr='#{$color1}', endColorstr='#{$color2}')"
+
+= box-shadow($first: 0 0 0 transparent, $second: 0 0 0 transparent, $third: 0 0 0 transparent, $fourth: 0 0 0 transparent, $fith: 0 0 0 transparent, $sixth: 0 0 0 transparent)
+    :-moz-box-shadow     $first, $second, $third, $fourth, $fith 
+    :-webkit-box-shadow  $first, $second, $third, $fourth, $fith 
+    :box-shadow          $first, $second, $third, $fourth, $fith  
+
+= stroke-with-shadow($shadow-opacity: 0.4, $highlight-opacity: 0.2)
+    +box-shadow(inset 0 1px 0 rgba(255,255,255,$highlight-opacity), inset 0 -1px 0 rgba(0,0,0,$shadow-opacity), inset 1px 0 0 rgba(255,255,255,0.1), inset -1px 0 0 rgba(255,255,255,0.1))
+
+= inset-box-shadow($y,$x,$blur,$color)
+    :-moz-box-shadow       inset $y $x $blur $color
+    :-webkit-box-shadow    inset $y $x $blur $color
+    :box-sahdow            inset $y $x $blur $color
+
+= clear-box-shadow
+    :-moz-box-shadow     none
+    :-webkit-box-shadow  none
+    :box-shadow          none
+
+= lighten-on-hover($color, $intensity: 10%)
+    :background-color  $color
+    &:hover
+        :background-color lighten($color, $intensity) 
+    &:active
+        :background-color  $color
+
+// -------------------------
+// POSITIONING
+// -------------------------
+= float-clear
+    &:after
+        :content "."
+        :visibility hidden
+        :display block
+        :clear both
+
+= inline-block
+    display: inline-block
+    zoom: 1
+    *display: inline
+
+
+
+= shorthand ($weight: normal, $size: 14px, $lineHeight: normal) 
+    font:
+        size: $size
+        weight: $weight
+    line-height: $lineHeight
+
+= sans-serif($weight: normal, $size: 14px, $lineHeight: normal) 
+    font:
+        family: "Helvetica Neue", Helvetica, Arial, sans-serif
+        size: $size
+        weight: $weight
+
+    line-height: $lineHeight
+
+= serif($weight: normal, $size: 14px, $lineHeight: normal) 
+    font:
+        family: "Georgia", Times New Roman, Times, sans-serif
+        size: $size
+        weight: $weight
+
+    line-height: $lineHeight
+
+= monospace($weight: normal, $size: 12px, $lineHeight: normal) 
+    font:
+        family: "Monaco", Courier New, monospace
+        size: $size
+        weight: $weight
+
+    line-height: $lineHeight
+
+// ---------------------------------------
+// OPTIONS 
+// ---------------------------------------
+$default-roundness: 12px
+$square-roundness: 3px
+$pill-roundness: 30px 
+
+$default-color: $green
+$default-font-size: 14px
+
+
+$border-thickness: 5px
+$border-transparency: 0.5
+
+// ---------------------------------------
+// BASE STYLES
+// ---------------------------------------
+= button($base-color: $default-color, $roundness: $default-roundness,  $font-size: $default-font-size)
+    +inline-block
+    +border-radius($roundness)
+    +stroke-with-shadow()
+    +gradient(rgba(255,255,255,.1), rgba(0,0,0,.20))
+    +ie-gradient($base-color, darken($base-color, 10%))
+    +lighten-on-hover($base-color)
+    :border 1px solid rgba(0,0,0,.4)
+    :border-bottom none
+    :color #fff
+    :color #fff
+    :text-decoration none
+    :font-weight bold
+    :text-shadow rgba(0,0,0,.6) 0px -1px 0px
+    :cursor pointer
+    :outline none
+    :font-family Arial, sans-serif
+    :overflow hidden
+    :padding 6px 15px 7px 15px
+
+    &.striped
+        +striped-gradient($base-color, darken($base-color, 10%))
+
+    &:active, &.active
+        +gradient(rgba(0,0,0,.3), rgba(0,0,0,.2))
+        +box-shadow(0px 1px 3px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,0.1),inset 0 3px 3px rgba(0,0,0,0.4), inset 0 -1px 0 rgba(0,0,0,.3), inset 1px 0 0 rgba(255,255,255,0.1), inset -1px 0 0 rgba(255,255,255,0.1))
+
+= inset-button-group($roundness: $default-roundness, $base-color: $default-color, $font-size: $default-font-size)
+    +float-clear()
+
+    a
+        :display block
+        :float left
+        :font-size $font-size 
+        :padding $font-size/3 $font-size
+        :color #fff
+        :text-decoration none
+        :border-right 1px solid rgba(255,255,255,0.2)
+        :border-left 1px solid rgba(0,0,0,.2)
+        :text-shadow 0 1px 0 rgba(0,0,0,.4)
+        :background-color $base-color 
+        +gradient(rgba(255,255,255,0.1), rgba(0,0,0,.3))
+        +box-shadow(inset 0 1px 0 rgba(255,255,255,0.12))
+
+        &:hover
+            :background-color lighten($base-color, 10%)
+
+        &:first-child
+            :border-left none
+            +border-radius($roundness, 0, 0, $roundness)
+        &:last-child
+            :border-right none
+            +border-radius(0, $roundness, $roundness, 0px)
+
+        &.active, &:active
+            :background-color $base-color
+            +box-shadow(inset 0 3px 4px rgba(0,0,0,.4), inset 0 -1px 0 rgba(255,255,255,0.3))
+            +gradient(rgba(0,0,0,.3), rgba(0,0,0,.2))
+            :border-right 1px solid rgba(255,255,255,0.05)
+
+.blue.button
+    +button($blue)
+
+.light-blue.button
+    +button($light-blue)
+
+.green.button
+    +button($green)
+
+.orange.button
+    +button($orange)
+
+.red.button
+    +button($red)
+
+.purple.button
+    +button($purple)
+
+.dark-gray.button
+    +button($dark-gray)
+
+.gray.button
+    +button($light-gray)
+    :color #555
+    :text-shadow none
+
+    &:hover
+        :color #888
+
+button.button
+    +gradient(rgba(255,255,255,.1), rgba(0,0,0,.20) )
+
+
+.button:hover
+    :color #fff
+
+.button.inactive
+    :cursor default
+
+// ---------------------------------------
+// Pill Buttons 
+// ---------------------------------------
+.button
+    &.pill
+        +border-radius($pill-roundness)
+    &.square
+        +border-radius($square-roundness)
+    &.bordered
+        :border $border-thickness solid fade-out(#000, $border-transparency)
+
+
+// ---------------------------------------
+// SIZES
+// ---------------------------------------
+
+.mega.button
+    :font-size    26px
+
+.large.button
+    :font-size 20px
+
+.medium.button
+    :font-size 16px
+
+.small.button
+    :font-size 14px
+
+.micro.button
+    :font-size 12px
+
+
+
+
+
+// ----------------------
+// Fading Labels on Forms
+// ----------------------
+
+.special-labels
+    span.wrap
+        :position relative
+        :display block
+        :margin 5px 0 10px 0
+        :width 100%
+        :overflow hidden
+        :border 1px solid rgba(0,0,0,.1)
+        :background #fff
+        +border-radius(8px)
+
+        label
+            :position absolute
+            :top 12px
+            :left 12px
+            :color #aaa
+            :font-size 18px
+            :font-weight bold
+
+        label.faded
+            :color #ccc
+
+        input
+            :padding 12px 0 12px 12px
+            :background transparent
+            :border none
+            :font-size 16px
+            :font-weight bold
+            :width 100%
+
+        .button
+            :display block
+            :width 150px
+            :position absolute
+            :right 0
+            :top 0
+            :margin 0
+            height: 100%
+            :padding 0
+            +border-radius(6px)
+            
+            span
+                +border-radius(6px)
+                :height 100%
+                :margin-top -5px
+                :padding-top 8px
+= modal-highlight($color: rgba(255,255,255,0.3))
+    border: 1px solid $color
+
+.modal
+    :position absolute 
+    :top 0px
+    :left 30%
+    :width 504px
+    :padding 10px
+    :border 1px solid rgba(0,0,0,.3)
+    :border-bottom 1px solid rgba(0,0,0,.5)
+    :text-shadow 0 -1px 0px rgba(0,0,0,.4)
+    :font-size 14px
+    :color #444
+    :z-index 900
+    :display none
+    +box-shadow(0 2px 3px rgba(0,0,0,.3))
+    +border-radius(3px)
+
+
+
+    &.transparent.black
+        :background rgba(0,0,0,.8)
+
+    &.transparent.green
+        :background fade-out($green, 0.2)
+        +modal-highlight()
+
+    &.transparent.blue
+        :background fade-out($blue, 0.2)
+        +modal-highlight()
+
+    &.transparent.gray
+        :background fade-out($gray, 0.2)
+        +modal-highlight()
+    
+    &.transparent.red
+        :background fade-out($red, 0.2)
+        +modal-highlight()
+
+    .modal-content
+        :text-shadow none
+
+    
+    &.show
+        :display block
+    
+    h2
+        :font-size 18px
+        :margin 0
+        :margin-bottom 5px
+        :position relative
+        :color #fff
+
+        small
+            :position absolute
+            :right 0
+            :top 0
+
+            .cancelModal
+                :color #fff
+                :font-size 12px
+                :text-decoration none
+                :display block
+                :float left
+                :font-weight bold
+
+                &:hover
+      
+    h3
+        :margin-top 10px
+        :font-size 16px
+    p
+        :margin 5px 0 10px
+        
+    img 
+        :display block 
+        :margin-top 10px
+        :border 1px solid rgba(0,0,0,.4)
+
+    textarea
+        :width 100%
+        :height 80px
+        :border 1px solid #ccc
+        :text-align left
+        +border-radius(2px)
+    
+    .controls    
+        :margin-top 15px
+        :position absolute
+        :right 10px
+        :bottom 10px
+
+    .modal-content
+        :background #fff
+        :padding 10px 10px 30px 10px
+        :position relative
+        :min-height 130px
+        +border-radius(2px)
+
+    &.solid
+        +border-radius(6px)
+        :border 1px solid rgba(0,0,0,.4)
+        :color #333
+        :text-shadow none
+
+        &.gray
+            :background $light-gray 
+
+        &.green
+            :background lighten($green, 50%)
+
+        &.blue
+            :background lighten($blue, 50%)
+
+        &.red
+            :background lighten($red, 50%)
+
+        .cancelModal
+            :color transparent 
+            :background url(../images/close.png) top left no-repeat
+            :width 36px
+            :height 36px
+
+        hr
+            :border none
+            :height 0px
+            :color transparent
+            :border-top 1px solid rgba(0,0,0,.2)
+            :border-bottom 1px solid rgba(255,255,255,.4)
+
+        h2
+            :color rgba(0,0,0,.8) 
+            :text-shadow none
+            :font-weight bold
+            :font-size 22px
+
+            small
+                :top -22px
+                :right -25px
+        
+
+        .modal-content
+            :background transparent
+            :padding 0 0 30px 0
+
+        .controls
+            :right 0
+            :bottom 0
+= notification($color, $icon, $roundness: 15px)
+    font-size: 20px
+    color: #fff
+    margin: 20px auto 0
+    width: 100%
+    padding: 3px 10px 4px 10px
+    height: 30px
+    position: relative
+    +border-radius($roundness)
+    +gradient(lighten($color, 10%), darken($color, 10%))
+    +float-clear()
+
+    h3
+        padding-left: 30px
+        color: #fff
+        margin: 0
+        text-shadow: 0px 1px 1px rgba(0,0,0,.3) 
+        float: left
+        background: url("../images/" + $icon) top left no-repeat
+        background-position: 0 2px 
+
+    p
+        margin: 8px 0 0 10px 
+        float: left
+        text-shadow: 0px 1px 1px rgba(0,0,0,.3) 
+        font-size: 14px
+
+
+    a.close-link
+        background: url(../images/close.png) top left no-repeat
+        height: 36px
+        width: 36px
+        position: absolute
+        top: -10px
+        right: -15px
+        text-indent: -9999em
+
+    &.small
+        width: auto
+        margin: 0
+
+        h3
+            font-size: 16px
+            height: 24px
+            padding-top: 6px
+            margin: 5px 0 0 0
+
+        p
+            margin: 0
+            padding: 0 0 0 30px
+
+    &.flat
+        background: $color
+        border: none
+        border-bottom: 4px solid darken($color, 20%)
+        +border-radius(0,0,0,0)
+        +clear-box-shadow
+
+    a.close-link
+        background: none
+        top: 7px
+        right: 10px
+        text-decoration: none
+        color: #222
+        text-indent: 0 
+        width: auto
+        height: auto
+
+        &:hover
+            color: #000
+
+    &.light
+        background: lighten($color, 40%)
+        color: #222
+        text-shadow: none
+
+        h3
+            color: #222
+            text-shadow: none
+
+.notification
+    &.success
+        +notification($green, "check.png")
+
+    &.error
+        +notification($red, "error.png")
+
+    &.warning
+        +notification($yellow, "warning.png")
+
+= gradient-box($base-color: $green)
+    :color #fff
+    :font-size 18px
+    :text-shadow 0 -1px 1px rgba(0,0,0,.4)
+    :padding 8px 8px
+    :display inline-block
+    :zoom 1
+    :*display inline
+    :border 1px solid rgba(0,0,0,.74)
+    :text-align center
+    :margin-right 10px
+    :min-width 120px
+    :background-color $base-color
+    +border-radius(4px)
+    +ie-gradient(#0092ae, #00728d)
+    +gradient($base-color, darken($base-color, 10%))
+    +box-shadow(inset 0 1px 0 rgba(255,255,255,0.4))
+
+    &.striped
+        +striped-gradient($base-color, darken($base-color, 10%))
+
+    h3
+        :color #fff
+        :font-size 52px
+        :margin 0
+        :text-shadow 0 -2px 1px rgba(0,0,0,.6)
+
+    small
+        :font-weight normal
+        :color #282828
+        :font-size 18px
+        :text-shadow 0 1px 0 rgba(255,255,255,0.3)
+
+.gradient-box.green
+    +gradient-box($green)
+
+.gradient-box.blue
+    +gradient-box($blue)
+
+.gradient-box.red
+    +gradient-box($red)
+
+.gradient-box.purple
+    +gradient-box($purple)
+
+.gradient-box.gray
+    +gradient-box($gray)
+
+.gradient-box.dark-gray
+    +gradient-box($dark-gray)
+
+$default-search-roundness: 2px
+$dark-icon: "search-dark.png"
+$light-icon: "search-light.png"
+
+= search-box($roundness: $default-search-roundness, $icon-color: transparent, $icon: $dark-icon, $text-color: #fff)
+    position: relative
+    width: 200px
+    min-height: 35px
+    margin: 5px 0 5px
+    background-color: $dark-gray
+    +box-shadow(inset 0 2px 2px rgba(0,0,0,.4), inset 0 -1px 0 rgba(255,255,255,0.1))
+    +border-radius($roundness)
+
+    .icon
+        +border-radius(0, $roundness, $roundness, 0)
+        position: absolute
+        right: 3px 
+        top: 3px 
+        width: 26px
+        height: 27px
+        padding: 5px
+        background: url("../images/" + $icon) no-repeat 5px 5px $icon-color
+        display: block
+        border: none
+        cursor: pointer
+
+    input
+        width: 100%
+        height: 35px 
+        background: transparent
+        padding-left: 10px
+        line-height: 40px
+        outline: none
+        border: none
+        color: $text-color
+
+
+.search
+    &.dark
+        +search-box($default-search-roundness, transparent, $dark-icon)
+
+    &.light
+        +search-box($default-search-roundness, transparent, $dark-icon, #333)
+        background-color: $light-gray
+
+    &.rounded
+        +border-radius($default-search-roundness + 20px)
+
+    &.left
+        .icon 
+            right: auto
+            left: 3px 
+            +border-radius($default-search-roundness, 0, 0, $default-search-roundness)
+
+            input
+                padding-left: 40px
+
+$progress-roundness: 20px
+
+= progress-bar($color)
+    height: 30px
+    margin: 5px 0
+    border: 1px solid rgba(0,0,0,.2)
+    border-bottom: 1px solid rgba(255,255,255,0.1)
+    +gradient(rgba(0,0,0,.4), rgba(0,0,0,.2))
+    +border-radius($progress-roundness)
+
+    .progress-value
+        :display block
+        :position relative
+        :height 100%
+        :border-top 1px solid rgba(255,255,255,0.4)
+        +border-radius($progress-roundness)
+        +box-shadow(inset 0 -3px 10px rgba(0,0,0,.4))
+        +gradient(lighten($color, 10%), $color)
+
+        .label
+            :display block
+            :position absolute
+            :right 10px 
+            :top 6px
+            :font-size 14px
+            :text-shadow 0 1px 0 rgba(0,0,0,.3)
+            :color #fff
+
+    &.striped
+        .progress-value
+            +striped-gradient(lighten($color, 10%), $color)
+
+.progress.green
+    +progress-bar($green)
+
+.progress.blue
+    +progress-bar($blue)
+
+.progress.red
+    +progress-bar($red)
+
+.progress.purple
+    +progress-bar($purple)
+
+

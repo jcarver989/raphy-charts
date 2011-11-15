@@ -256,11 +256,13 @@ Grid = (function() {
       if (i % this.options.step_size === 0) {
         x = this.points[i].x;
         paths.push(this.r.path("M " + x + ", " + this.options.y_padding + " L " + x + ", " + height + " Z"));
-        if (y <= height) {
-          paths.push(this.r.path("M " + this.options.x_padding + ", " + y + " L " + width + ", " + y + " Z"));
-        }
-        y += y_step_size;
       }
+    }
+    for (i = 0; 0 <= grid_lines ? i <= grid_lines : i >= grid_lines; 0 <= grid_lines ? i++ : i--) {
+      if (y <= height) {
+        paths.push(this.r.path("M " + this.options.x_padding + ", " + y + " L " + width + ", " + y + " Z"));
+      }
+      y += y_step_size;
     }
     return paths.attr({
       stroke: "#ccc",
@@ -507,7 +509,7 @@ create_exponential_points = function() {
     var _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(new Point("11/" + i, i * 4.));
+      _results.push(new Point("11/" + (i + 1), i * 4.));
     }
     return _results;
   })();
@@ -519,7 +521,7 @@ create_squared_points = function() {
     var _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(new Point("11/" + i, i * i - 1));
+      _results.push(new Point("11/" + (i + 1), i * i - 1));
     }
     return _results;
   })();

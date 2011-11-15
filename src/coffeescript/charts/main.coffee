@@ -7,11 +7,11 @@
 # @import line_chart.coffee
 
 create_exponential_points = -> 
-  points = (new Point("11/#{i}", i*(4)) for i in [0..25])
+  points = (new Point("11/#{i+1}", i*(4)) for i in [0..25])
   points
 
 create_squared_points = -> 
-  points = (new Point("11/#{i}", i * i-1) for i in [0..25])
+  points = (new Point("11/#{i+1}", i * i-1) for i in [0..25])
 
 create_random_points2 = -> 
   points = (new Point(i, Math.random() * i) for i in [0..25])

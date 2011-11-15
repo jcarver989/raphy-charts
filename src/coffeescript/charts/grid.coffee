@@ -13,6 +13,8 @@ class Grid
     for point, i in @points when i % @options.step_size == 0
       x = @points[i].x
       paths.push @r.path("M #{x}, #{@options.y_padding} L #{x}, #{height} Z")
+
+    for i in [0..grid_lines]
       paths.push @r.path("M #{@options.x_padding}, #{y} L #{width}, #{y} Z") if y <= height
       y += y_step_size
 

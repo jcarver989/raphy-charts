@@ -76,3 +76,7 @@ class Tooltip
     @text.toFront()
     @animate_opacity(@popup, 0.8)
     @animate_opacity(@text, 1)
+
+
+
+exports.Tooltip = Tooltip

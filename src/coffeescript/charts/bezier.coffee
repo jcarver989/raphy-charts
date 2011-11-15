@@ -48,3 +48,4 @@ class Bezier
 
 
 
+exports.Bezier = Bezier

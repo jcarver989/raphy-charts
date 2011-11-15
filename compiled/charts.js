@@ -105,7 +105,8 @@ Point = (function() {
     this.y = y;
   }
   return Point;
-})();var Tooltip;
+})();
+exports.Point = Point;var Tooltip;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Raphael.fn.triangle = function(cx, cy, r) {
   r *= 1.75;
@@ -178,7 +179,8 @@ Tooltip = (function() {
     return this.animate_opacity(this.text, 1);
   };
   return Tooltip;
-})();var Label;
+})();
+exports.Tooltip = Tooltip;var Label;
 Label = (function() {
   function Label(r, height, x, text) {
     this.r = r;
@@ -334,7 +336,8 @@ Bezier = (function() {
     return new Point((points[i1].x - points[i2].x) * smoothing_factor, (points[i1].y - points[i2].y) * smoothing_factor);
   };
   return Bezier;
-})();var Line;
+})();
+exports.Bezier = Bezier;var Line;
 Line = (function() {
   function Line(r, raw_points, scaled_points, height, width, options) {
     this.r = r;

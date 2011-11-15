@@ -61,12 +61,18 @@ class Tooltip
   animate_opacity: (element, value, time = 200) ->
     element.animate({
       "fill-opacity" : value
-    }, time)
+    }, time, () ->
+      if value == 0
+        @text.toBack()
+        @popup.toBack()
+    )
 
   hide: () ->
     @animate_opacity(@popup, 0)
     @animate_opacity(@text, 0)
-  
+
   show: () ->
+    @popup.toFront()
+    @text.toFront()
     @animate_opacity(@popup, 0.8)
     @animate_opacity(@text, 1)

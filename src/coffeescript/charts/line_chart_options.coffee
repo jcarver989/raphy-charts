@@ -16,6 +16,10 @@ class LineChartOptions
     label_max : true
     label_min : true
 
+    step_size : 3 
+
+    x_padding: 25
+    y_padding: 40
   }
 
   constructor: (options) ->

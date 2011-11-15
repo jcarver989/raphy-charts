@@ -7,9 +7,9 @@ class Line
   constructor: (@r, @raw_points, @scaled_points, @height, @width, @options = {}) ->
 
   draw: ->
-    @draw_dots_and_tooltips(@scaled_points, @raw_points)
-    @draw_curve()
     @draw_area() if @options.fill_area
+    @draw_curve()
+    @draw_dots_and_tooltips(@scaled_points, @raw_points)
     return
 
   draw_curve: ->
@@ -17,14 +17,11 @@ class Line
     curve.attr({
       "stroke"       : @options.line_color
       "stroke-width" : @options.line_width
-    })
-
-    curve.toBack()
+    }).toFront()
 
   draw_area: ->
     points = @scaled_points
-    padded_height = @height
-    padded_width = @width
+    padded_height = @height - @options.y_padding
 
     final_point = points[points.length-1]
     first_point = points[0]

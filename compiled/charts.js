@@ -26,7 +26,10 @@ LineChartOptions = (function() {
     area_color: "#00aadd",
     area_opacity: 0.2,
     label_max: true,
-    label_min: true
+    label_min: true,
+    step_size: 3,
+    x_padding: 25,
+    y_padding: 40
   };
   function LineChartOptions(options) {
     var option, opts, value, _ref;
@@ -63,20 +66,32 @@ Scaling = (function() {
     min_y = Math.min.apply(Math.min, ys);
     return [max_x, min_x, max_y, min_y];
   };
-  Scaling.scale_points = function(x_max, y_max, points, padding) {
-    var max_x, max_y, min_x, min_y, padded_x_max_range, padded_y_max_range, point, scaled_points, sx, sy, x_range, x_scaling_factor, y_range, y_scaling_factor, _i, _len, _ref;
+  /*
+    Helper for mapping numbers into a new range:
+    existing range: A to B
+    target range: C to D
+    R1 = B - A
+    R2 = D - C
+    new number = (B*C - A*D)/R1 + old_number *(R2/R1) 
+    returns [(B*C - A*D) / R1, R2/R1)]
+    */
+  Scaling.calc_scaling_factors = function(old_max, old_min, new_max, new_min) {
+    var new_range, old_range, scaling_factor;
+    old_range = old_max - old_min;
+    new_range = new_max - new_min;
+    scaling_factor = old_max * new_min - new_max * old_min;
+    return [scaling_factor / old_range, new_range / old_range];
+  };
+  Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
+    var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
     _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
-    padded_x_max_range = x_max - 2 * padding;
-    padded_y_max_range = y_max - 2 * padding;
-    x_range = max_x - min_x;
-    y_range = max_y - min_y;
-    x_scaling_factor = padded_x_max_range / x_range;
-    y_scaling_factor = padded_y_max_range / y_range;
+    _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
+    _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
     scaled_points = [];
     for (_i = 0, _len = points.length; _i < _len; _i++) {
       point = points[_i];
-      sx = x_scaling_factor * point.x + padding;
-      sy = y_max - (y_scaling_factor * point.y + padding);
+      sx = x_scaling + point.x * x_range_ratio;
+      sy = y_max - (y_scaling + point.y * y_range_ratio);
       scaled_points.push(new Point(sx, sy));
     }
     return scaled_points;
@@ -84,10 +99,47 @@ Scaling = (function() {
   return Scaling;
 })();var Point;
 Point = (function() {
+  Point.date_regex = /\/|,|\.|\-/;
   function Point(x, y) {
-    this.x = x;
     this.y = y;
+    this.x = typeof x === "string" ? this.parse_x(x) : x;
   }
+  Point.prototype.toString = function() {
+    var date;
+    if (this.type !== "date") {
+      return this.x;
+    }
+    date = new Date(this.x);
+    return [date.getMonth() + 1, date.getDate()].join("/");
+  };
+  Point.prototype.parse_x = function(x) {
+    var date, day, i, month, numbers, parts, year;
+    parts = x.split(Point.date_regex);
+    if (!(parts.length > 1)) {
+      return x;
+    }
+    if (parts.length <= 3) {
+      try {
+        numbers = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = parts.length; _i < _len; _i++) {
+            i = parts[_i];
+            _results.push(parseInt(i));
+          }
+          return _results;
+        })();
+        month = numbers[0] - 1;
+        day = numbers[1];
+        year = numbers.length === 3 ? numbers[2] : new Date().getFullYear();
+        this.type = "date";
+        date = new Date(year, month, day);
+        return date.getTime();
+      } catch (e) {
+        return x;
+      }
+    }
+  };
   return Point;
 })();var Tooltip;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -144,46 +196,76 @@ Tooltip = (function() {
     }
     return element.animate({
       "fill-opacity": value
-    }, time);
+    }, time, function() {
+      if (value === 0) {
+        this.text.toBack();
+        return this.popup.toBack();
+      }
+    });
   };
   Tooltip.prototype.hide = function() {
     this.animate_opacity(this.popup, 0);
     return this.animate_opacity(this.text, 0);
   };
   Tooltip.prototype.show = function() {
+    this.popup.toFront();
+    this.text.toFront();
     this.animate_opacity(this.popup, 0.8);
     return this.animate_opacity(this.text, 1);
   };
   return Tooltip;
+})();var Label;
+Label = (function() {
+  function Label(r, height, x, text) {
+    this.r = r;
+    this.height = height;
+    this.x = x;
+    this.text = text;
+    this.size = 14;
+  }
+  Label.prototype.draw = function() {
+    this.text = this.r.text(this.x, this.height - this.size, this.text);
+    return this.text.attr({
+      "fill": "#333",
+      "font-size": this.size,
+      "font-weight": "bold"
+    });
+  };
+  return Label;
 })();var Grid;
 Grid = (function() {
-  function Grid(r, width, height, options) {
+  function Grid(r, width, height, points, options) {
     this.r = r;
     this.width = width;
     this.height = height;
+    this.points = points;
     this.options = options;
   }
   Grid.prototype.draw = function() {
-    var grid_lines, height, i, paths, width, x, x_step_size, y, y_step_size;
-    grid_lines = this.options.grid_lines;
-    height = this.height;
-    width = this.width;
-    x_step_size = width / grid_lines;
-    y_step_size = height / grid_lines;
-    x = 0;
-    y = 0;
+    var grid_lines, height, i, paths, point, width, x, x_step_size, y, y_step_size, _len, _ref;
+    grid_lines = Math.round(this.points.length / this.options.step_size);
+    height = this.height - this.options.y_padding;
+    width = this.width - this.options.x_padding;
+    x_step_size = Math.round(width / grid_lines);
+    y_step_size = Math.round(height / grid_lines);
+    y = this.options.y_padding;
     paths = this.r.set();
-    for (i = 0; 0 <= grid_lines ? i <= grid_lines : i >= grid_lines; 0 <= grid_lines ? i++ : i--) {
-      paths.push(this.r.path("M " + x + ", " + 0 + " L " + x + ", " + height + " Z"));
-      paths.push(this.r.path("M " + 0 + ", " + y + " L " + width + ", " + y + " Z"));
-      x += x_step_size;
-      y += y_step_size;
+    _ref = this.points;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      point = _ref[i];
+      if (i % this.options.step_size === 0) {
+        x = this.points[i].x;
+        paths.push(this.r.path("M " + x + ", " + this.options.y_padding + " L " + x + ", " + height + " Z"));
+        if (y <= height) {
+          paths.push(this.r.path("M " + this.options.x_padding + ", " + y + " L " + width + ", " + y + " Z"));
+        }
+        y += y_step_size;
+      }
     }
-    paths.attr({
+    return paths.attr({
       stroke: "#ccc",
       "stroke-width": 1
-    });
-    return paths.toBack();
+    }).toBack();
   };
   return Grid;
 })();var Dot;
@@ -204,7 +286,7 @@ Dot = (function() {
       "stroke": this.opts.dot_stroke_color,
       "stroke-width": this.opts.dot_stroke_size
     });
-    return this.element.toBack();
+    return this.element.toFront();
   };
   Dot.prototype.activate = function() {
     this.element.attr({
@@ -289,26 +371,24 @@ Line = (function() {
     this.options = options != null ? options : {};
   }
   Line.prototype.draw = function() {
-    this.draw_dots_and_tooltips(this.scaled_points, this.raw_points);
-    this.draw_curve();
     if (this.options.fill_area) {
       this.draw_area();
     }
+    this.draw_curve();
+    this.draw_dots_and_tooltips(this.scaled_points, this.raw_points);
   };
   Line.prototype.draw_curve = function() {
     var curve;
     curve = this.r.path(Bezier.create_path(this.scaled_points, this.options.smoothing));
-    curve.attr({
+    return curve.attr({
       "stroke": this.options.line_color,
       "stroke-width": this.options.line_width
-    });
-    return curve.toBack();
+    }).toFront();
   };
   Line.prototype.draw_area = function() {
-    var area, final_point, first_point, i, padded_height, padded_width, path, point, points, _len;
+    var area, final_point, first_point, i, padded_height, path, point, points, _len;
     points = this.scaled_points;
-    padded_height = this.height;
-    padded_width = this.width;
+    padded_height = this.height - this.options.y_padding;
     final_point = points[points.length - 1];
     first_point = points[0];
     path = "";
@@ -371,7 +451,7 @@ LineChart = (function() {
     }
     container = document.getElementById(dom_id);
     _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
-    this.padding = 40;
+    this.padding = 26;
     this.options = new LineChartOptions(options);
     this.r = Raphael(container, this.width, this.height);
     this.all_points = [];
@@ -395,9 +475,9 @@ LineChart = (function() {
     this.line_options.push(new LineChartOptions(options));
   };
   LineChart.prototype.draw = function() {
-    var begin, effective_width, end, grid, i, line_indices, points, raw_points, _len, _ref;
+    var begin, effective_width, end, i, j, line_indices, point, points, raw_points, _len, _len2, _ref;
     this.r.clear();
-    this.scaled_points = Scaling.scale_points(this.width, this.height, this.all_points, this.padding);
+    this.scaled_points = Scaling.scale_points(this.width, this.height, this.all_points, this.options.x_padding, this.options.y_padding);
     effective_width = this.width + this.padding;
     _ref = this.line_indices;
     for (i = 0, _len = _ref.length; i < _len; i++) {
@@ -406,24 +486,32 @@ LineChart = (function() {
       points = this.scaled_points.slice(begin, (end + 1) || 9e9);
       raw_points = this.all_points.slice(begin, (end + 1) || 9e9);
       new Line(this.r, raw_points, points, this.height, effective_width, this.line_options[i]).draw();
-    }
-    if (this.options.show_grid === true || this.options.show_grid === "true") {
-      grid = new Grid(this.r, this.width, this.height, this.options);
-      grid.draw();
+      if (i === 0) {
+        if (this.options.show_grid === true) {
+          new Grid(this.r, this.width, this.height, points, this.options).draw();
+        }
+        for (j = 0, _len2 = points.length; j < _len2; j++) {
+          point = points[j];
+          if (j % this.options.step_size === 0) {
+            new Label(this.r, this.height, point.x, raw_points[j].toString()).draw();
+          }
+        }
+      }
     }
   };
   return LineChart;
 })();var create_exponential_points, create_random_points2, create_squared_points, draw_bars;
 create_exponential_points = function() {
   var i, points;
-  return points = (function() {
+  points = (function() {
     var _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(new Point(i, i * 4.));
+      _results.push(new Point("11/" + i, i * 4.));
     }
     return _results;
   })();
+  return points;
 };
 create_squared_points = function() {
   var i, points;
@@ -431,14 +519,14 @@ create_squared_points = function() {
     var _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(new Point(i, i * i - 1));
+      _results.push(new Point("11/" + i, i * i - 1));
     }
     return _results;
   })();
 };
 create_random_points2 = function() {
   var i, points;
-  points = (function() {
+  return points = (function() {
     var _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
@@ -446,7 +534,6 @@ create_random_points2 = function() {
     }
     return _results;
   })();
-  return points;
 };
 draw_bars = function(r, points) {
   var attach_handler, i, point, rect, x, _len, _results;
@@ -480,7 +567,7 @@ draw_bars = function(r, points) {
 };
 window.onload = function() {
   var c, chart2, height, padding, points, r2, width, _ref;
-  c = new LineChart('chart1');
+  c = new LineChart('chart1', {});
   c.add_line(create_exponential_points(), {
     line_color: "#cc1100",
     area_color: "#cc1100",
@@ -496,8 +583,7 @@ window.onload = function() {
     dot_stroke_size: 3,
     label_min: false,
     smoothing: 0.5,
-    show_grid: true,
-    grid_lines: 5
+    show_grid: true
   });
   c.add_line(create_random_points2());
   c.draw();
@@ -510,7 +596,9 @@ window.onload = function() {
     label_min: false,
     label_max: false,
     fill_area: false,
-    smoothing: 0
+    smoothing: 0,
+    show_grid: true,
+    grid_lines: 4
   });
   c.add_line(create_random_points2());
   c.draw();

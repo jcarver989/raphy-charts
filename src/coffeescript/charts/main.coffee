@@ -7,14 +7,14 @@
 # @import line_chart.coffee
 
 create_exponential_points = -> 
-  points = (new Point(i, i*(4)) for i in [0..25])
+  points = (new Point("11/#{i}", i*(4)) for i in [0..25])
+  points
 
 create_squared_points = -> 
-  points = (new Point(i, i * i-1) for i in [0..25])
+  points = (new Point("11/#{i}", i * i-1) for i in [0..25])
 
 create_random_points2 = -> 
   points = (new Point(i, Math.random() * i) for i in [0..25])
-  points
 
 
 draw_bars = (r, points) ->
@@ -42,15 +42,15 @@ draw_bars = (r, points) ->
 
 window.onload = () ->
   # line 
-  c = new LineChart('chart1')
+  c = new LineChart('chart1', {
+  })
   c.add_line create_exponential_points(), {
-    line_color: "#cc1100"
-    area_color: "#cc1100"
-    dot_color:  "#cc1100"
+    line_color : "#cc1100"
+    area_color : "#cc1100"
+    dot_color  :  "#cc1100"
   }
   c.add_line create_squared_points()
   c.draw()
-
 
   c = new LineChart('chart2', {
     line_color : "#118800"
@@ -61,7 +61,6 @@ window.onload = () ->
     label_min  : false
     smoothing  : 0.5 
     show_grid  : true
-    grid_lines : 5
   })
 
   c.add_line(create_random_points2())
@@ -77,6 +76,8 @@ window.onload = () ->
     label_max  : false
     fill_area  : false
     smoothing  : 0 
+    show_grid  : true
+    grid_lines : 4
   })
   c.add_line(create_random_points2())
   c.draw()

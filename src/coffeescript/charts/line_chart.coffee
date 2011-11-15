@@ -11,7 +11,7 @@ class LineChart
   constructor: (dom_id, options = {}) ->
     container = document.getElementById(dom_id)
     [@width,@height] = @get_dimensions(container)
-    @padding = 40 
+    @padding = 26
     @options = new LineChartOptions(options)
 
     @r = Raphael(container, @width, @height)
@@ -34,7 +34,7 @@ class LineChart
 
   draw: () ->
     @r.clear()
-    @scaled_points = Scaling.scale_points(@width, @height, @all_points, @padding)
+    @scaled_points = Scaling.scale_points(@width, @height, @all_points, @options.x_padding, @options.y_padding)
     effective_width = @width + @padding
 
 
@@ -51,9 +51,12 @@ class LineChart
         @line_options[i]
       ).draw()
 
-    if @options.show_grid == true || @options.show_grid == "true"
-      grid = new Grid(@r, @width, @height, @options)
-      grid.draw()
+      if i == 0
+        new Grid(@r, @width, @height, points, @options).draw() if @options.show_grid == true
+
+        for point, j in points
+          new Label(@r, @height, point.x, raw_points[j].toString()).draw() if j % @options.step_size == 0
+
 
     return
       

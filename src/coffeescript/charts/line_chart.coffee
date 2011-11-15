@@ -10,7 +10,7 @@
 class LineChart
   constructor: (dom_id, options = {}) ->
     container = document.getElementById(dom_id)
-    [@width,@height] = @get_dimensions(container)
+    [@width, @height] = @get_dimensions(container)
     @padding = 26
     @options = new LineChartOptions(options)
 
@@ -19,44 +19,54 @@ class LineChart
     @all_points   = []
     @line_indices = []
     @line_options = []
+    @labels       = []
 
   get_dimensions: (container) ->
     width  = parseInt(container.style.width)
     height = parseInt(container.style.height)
     [width, height]
 
-  add_line: (points, options = @options) ->
+  add_line: (args) ->
+    points = (new Point(x, y) for y, x in args.data)
     points_count  = @all_points.length
+    @labels = args.labels if args.labels?
     @line_indices.push [points_count, points_count + points.length-1]
     @all_points.push.apply(@all_points, points)
-    @line_options.push new LineChartOptions(options)
+    @line_options.push new LineChartOptions(args.options || @options)
     return
+
+  draw_grid: (points) ->
+    grid = new Grid(@r, @width, @height, points, @options)
+    grid.draw()
+
+  draw_labels: (points) ->
+    for point, i in points
+      new Label(@r, @height, point.x, @labels[i]).draw() if i % @options.step_size == 0
+
+  draw_line: (raw_points, points, options) ->
+    new Line(
+      @r,
+      raw_points,
+      points,
+      @height,
+      @width,
+      options
+    ).draw()
 
   draw: () ->
     @r.clear()
     @scaled_points = Scaling.scale_points(@width, @height, @all_points, @options.x_padding, @options.y_padding)
-    effective_width = @width + @padding
-
 
     for line_indices, i in @line_indices
       [begin, end] = line_indices
-      points = @scaled_points[begin..end]
+      points     = @scaled_points[begin..end]
       raw_points = @all_points[begin..end]
-      new Line(
-        @r,
-        raw_points,
-        points,
-        @height,
-        effective_width,
-        @line_options[i]
-      ).draw()
-
+      options    = @line_options[i]
+      @draw_line(raw_points, points, options)
+      
       if i == 0
-        new Grid(@r, @width, @height, points, @options).draw() if @options.show_grid == true
-
-        for point, j in points
-          new Label(@r, @height, point.x, raw_points[j].toString()).draw() if j % @options.step_size == 0
-
+        @draw_grid(points)   if @options.show_grid == true
+        @draw_labels(points) if @labels.length == points.length
 
     return
       

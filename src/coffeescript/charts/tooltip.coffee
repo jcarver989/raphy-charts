@@ -61,7 +61,7 @@ class Tooltip
   animate_opacity: (element, value, time = 200) ->
     element.animate({
       "fill-opacity" : value
-    }, time, () ->
+    }, time, () =>
       if value == 0
         @text.toBack()
         @popup.toBack()

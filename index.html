@@ -37,13 +37,16 @@
     <h2>Basic Usage</h2>
 <pre>
 <code>
-// 'chart1' is the id of an existing dom element
-// with a defined width/height. DOM is assumed to be ready 
+/* 
+ DOM is assumed to be ready 
+ 'chart1' is the id of an existing DOM element
+ with a defined width/height. Eg. div id="chart1" style="width:100px; height:100px;"
+*/
 c = new Charts.LineChart('chart1')
 
 c.add_line {
-  data: create_exponential_points() # array of numbers
-  labels: create_labels()           # array of strings or date objects 
+  data: create_exponential_points() // array of numbers ex. [1,2]
+  labels: create_labels()           // array of strings or date objects ex. ["mon", "tues"]
   options: {
     line_color : "#cc1100",
     area_color : "#cc1100",

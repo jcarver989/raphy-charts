@@ -22,7 +22,6 @@ h1
         top: 30px
         letter-spacing: 0
 
-
 pre
     background: #333
     color: #fff
@@ -34,4 +33,36 @@ pre
     width: 1000px
     margin: 0 auto
     color: #333
+
+
+dl
+    margin: 0
+    padding: 0
+
+
+    dt, dd, p
+        padding: 3px 5px
+        margin: 0 0 5px
+        height: 20px
+
+    dt
+        display: block
+
+    dd
+        display: block
+        width: 65px
+        text-align: center
+        font-weight: bold
+        +border-radius(4px)
+
+        &.number
+            background: #B1C9ED 
+            color: #001E4C
+
+        &.color
+            background: #E1EDB1 
+            color: #3D4C00
+        &.boolean
+            background: #EDB1B1
+            color: #4C0000
 

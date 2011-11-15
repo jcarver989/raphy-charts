@@ -1444,3 +1444,30 @@ pre {
   width: 1000px;
   margin: 0 auto;
   color: #333333; }
+
+dl {
+  margin: 0;
+  padding: 0; }
+  dl dt, dl dd, dl p {
+    padding: 3px 5px;
+    margin: 0 0 5px;
+    height: 20px; }
+  dl dt {
+    display: block; }
+  dl dd {
+    display: block;
+    width: 65px;
+    text-align: center;
+    font-weight: bold;
+    -moz-border-radius: 4px 4px 4px 4px;
+    -webkit-border-radius: 4px 4px 4px 4px;
+    border-radius: 4px 4px 4px 4px; }
+    dl dd.number {
+      background: #b1c9ed;
+      color: #001e4c; }
+    dl dd.color {
+      background: #e1edb1;
+      color: #3d4c00; }
+    dl dd.boolean {
+      background: #edb1b1;
+      color: #4c0000; }

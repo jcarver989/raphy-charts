@@ -7,7 +7,11 @@
 # @import line.coffee
 # @import grid.coffee
 
+###\
+\###
 class LineChart
+  
+  
   constructor: (dom_id, options = {}) ->
     container = document.getElementById(dom_id)
     [@width, @height] = @get_dimensions(container)

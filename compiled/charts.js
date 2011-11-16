@@ -497,7 +497,7 @@ LineChart = (function() {
     _results = [];
     for (i = 0, _len = points.length; i < _len; i++) {
       point = points[i];
-      _results.push(i % this.options.step_size === 0 ? (new Label(this.r, point.x, this.height, this.labels[i], this.options.label_format).draw(), new Label(this.r, this.options.x_padding, point.y, point.y, this.options.label_format).draw()) : void 0);
+      _results.push(i % this.options.step_size === 0 ? new Label(this.r, point.x, this.height, this.labels[i], this.options.label_format).draw() : void 0);
     }
     return _results;
   };

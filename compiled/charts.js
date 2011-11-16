@@ -182,18 +182,40 @@ Tooltip = (function() {
 })();
 exports.Tooltip = Tooltip;var Label;
 Label = (function() {
-  function Label(r, height, x, text) {
+  function Label(r, height, x, text, format) {
     this.r = r;
     this.height = height;
     this.x = x;
     this.text = text;
+    this.format = format != null ? format : "%m/%d";
     this.size = 14;
   }
   Label.prototype.is_date = function(potential_date) {
     return Object.prototype.toString.call(potential_date) === '[object Date]';
   };
   Label.prototype.parse_date = function(date) {
-    return "" + (date.getMonth() + 1) + "/" + (date.getDate());
+    var formatted, groups, item, _i, _len;
+    groups = this.format.match(/%([a-zA-Z])/g);
+    formatted = this.format;
+    for (_i = 0, _len = groups.length; _i < _len; _i++) {
+      item = groups[_i];
+      formatted = formatted.replace(item, this.parse_format(item));
+    }
+    return formatted;
+  };
+  Label.prototype.parse_format = function(format) {
+    switch (format) {
+      case "%m":
+        return this.text.getMonth() + 1;
+      case "%d":
+        return this.text.getDate();
+      case "%Y":
+        return this.text.getFullYear();
+      case "%H":
+        return this.text.getHours();
+      case "%M":
+        return this.text.getMinutes();
+    }
   };
   Label.prototype.draw = function() {
     var text;

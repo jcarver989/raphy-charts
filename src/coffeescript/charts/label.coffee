@@ -1,5 +1,5 @@
 class Label
-  constructor: (@r, @height, @x, @text, @format) ->
+  constructor: (@r, @x, @y, @text, @format) ->
     @size = 14
 
   is_date: (potential_date) -> 
@@ -24,7 +24,7 @@ class Label
 
   draw: () ->
     text = if @is_date(@text) then @parse_date(@text) else @text
-    @element = @r.text(@x, @height - @size, text)
+    @element = @r.text(@x, @y - @size, text)
     @element.attr({ 
       "fill"        : "#333"
       "font-size"   : @size 

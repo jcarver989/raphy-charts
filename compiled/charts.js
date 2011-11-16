@@ -183,10 +183,10 @@ Tooltip = (function() {
 })();
 exports.Tooltip = Tooltip;var Label;
 Label = (function() {
-  function Label(r, height, x, text, format) {
+  function Label(r, x, y, text, format) {
     this.r = r;
-    this.height = height;
     this.x = x;
+    this.y = y;
     this.text = text;
     this.format = format;
     this.size = 14;
@@ -221,7 +221,7 @@ Label = (function() {
   Label.prototype.draw = function() {
     var text;
     text = this.is_date(this.text) ? this.parse_date(this.text) : this.text;
-    this.element = this.r.text(this.x, this.height - this.size, text);
+    this.element = this.r.text(this.x, this.y - this.size, text);
     return this.element.attr({
       "fill": "#333",
       "font-size": this.size,
@@ -497,7 +497,7 @@ LineChart = (function() {
     _results = [];
     for (i = 0, _len = points.length; i < _len; i++) {
       point = points[i];
-      _results.push(i % this.options.step_size === 0 ? new Label(this.r, this.height, point.x, this.labels[i], this.options.label_format).draw() : void 0);
+      _results.push(i % this.options.step_size === 0 ? new Label(this.r, point.x, this.height, this.labels[i], this.options.label_format).draw() : void 0);
     }
     return _results;
   };

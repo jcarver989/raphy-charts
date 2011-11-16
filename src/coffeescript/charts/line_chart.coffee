@@ -45,7 +45,9 @@ class LineChart
 
   draw_labels: (points) ->
     for point, i in points
-      new Label(@r, point.x, @height, @labels[i], @options.label_format).draw() if i % @options.step_size == 0
+      if i % @options.step_size == 0
+        new Label(@r, point.x, @height, @labels[i], @options.label_format).draw()
+        new Label(@r, @options.x_padding, point.y, point.y, @options.label_format).draw()
 
   draw_line: (raw_points, points, options) ->
     new Line(

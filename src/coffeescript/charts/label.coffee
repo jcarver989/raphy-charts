@@ -1,5 +1,5 @@
 class Label
-  constructor: (@r, @height, @x, @text, @format = "%m/%d" ) ->
+  constructor: (@r, @height, @x, @text, @format) ->
     @size = 14
 
   is_date: (potential_date) -> 

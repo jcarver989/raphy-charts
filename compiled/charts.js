@@ -27,6 +27,7 @@ LineChartOptions = (function() {
     area_opacity: 0.2,
     label_max: true,
     label_min: true,
+    label_format: "%m/%d",
     step_size: 3,
     x_padding: 25,
     y_padding: 40
@@ -187,7 +188,7 @@ Label = (function() {
     this.height = height;
     this.x = x;
     this.text = text;
-    this.format = format != null ? format : "%m/%d";
+    this.format = format;
     this.size = 14;
   }
   Label.prototype.is_date = function(potential_date) {
@@ -496,7 +497,7 @@ LineChart = (function() {
     _results = [];
     for (i = 0, _len = points.length; i < _len; i++) {
       point = points[i];
-      _results.push(i % this.options.step_size === 0 ? new Label(this.r, this.height, point.x, this.labels[i]).draw() : void 0);
+      _results.push(i % this.options.step_size === 0 ? new Label(this.r, this.height, point.x, this.labels[i], this.options.label_format).draw() : void 0);
     }
     return _results;
   };

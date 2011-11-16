@@ -15,6 +15,7 @@ class LineChartOptions
 
     label_max : true
     label_min : true
+    label_format: "%m/%d"
 
     step_size : 3 
 

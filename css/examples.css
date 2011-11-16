@@ -1462,6 +1462,9 @@ dl {
     -moz-border-radius: 4px 4px 4px 4px;
     -webkit-border-radius: 4px 4px 4px 4px;
     border-radius: 4px 4px 4px 4px; }
+    dl dd.string {
+      color: #26004c;
+      background: #cfb1ed; }
     dl dd.number {
       background: #b1c9ed;
       color: #001e4c; }

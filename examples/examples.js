@@ -105,7 +105,8 @@
       fill_area: false,
       smoothing: 0,
       show_grid: true,
-      grid_lines: 4
+      grid_lines: 4,
+      label_format: "%I"
     });
     c.add_line({
       data: create_random_points2()

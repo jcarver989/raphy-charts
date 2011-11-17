@@ -16,11 +16,11 @@ class Label
   to_12_hour_clock: (date) ->
     hour = date.getHours()
     indicator = if hour >= 12 then "pm" else "am"
-    "#{hour % 12}#{indicator}"
+    fmt_hour = hour % 12
+    fmt_hour = 12 if fmt_hour == 0
+    "#{fmt_hour}#{indicator}"
 
   format_number: (number) ->
-    if number >= 1000000
-      number / 1000000}
     Math.round(number*10)/10
     
   parse_format: (format) ->

@@ -68,9 +68,9 @@
     c.add_line({
       data: create_exponential_points(),
       options: {
-        line_color: "#cc1100",
-        area_color: "#cc1100",
-        dot_color: "#cc1100"
+        line_color: "#55bb00",
+        area_color: "#55bb00",
+        dot_color: "#55bb00"
       }
     });
     c.add_line({

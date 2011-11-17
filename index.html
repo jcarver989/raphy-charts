@@ -34,13 +34,13 @@
     </ol>
 
 
-    <h2>Basic Usage</h2>
+    <h2>Usage</h2>
 <pre>
 <code>
 /* 
- DOM is assumed to be ready 
- 'chart1' is the id of an existing DOM element
- with a defined width/height. Eg. div id="chart1" style="width:100px; height:100px;"
+ * DOM is assumed to be ready 
+ * 'chart1' is the id of an existing DOM element
+ *  with a defined width/height. Eg. div id="chart1" style="width:100px; height:100px;"
 */
 c = new Charts.LineChart('chart1', {
   show_grid: true
@@ -61,6 +61,8 @@ c.draw()
 </pre>
 
     <h2>Options</h2>
+    <p>Options can be specified at the chart level or on a line-by-line basis</p>
+    <h3>Chart Level</h3>
 <div class="row">
     <dl>
       <div class="three-quarters columns">
@@ -115,17 +117,19 @@ c.draw()
       <div class="three-qaurters columns">
           <dd class="number">number</dd>
           <dd class="number">number</dd>
-          <dd class="number">number</dd>
-          <dd class="number">number</dd>
           <dd class="boolean">boolean</dd>
+          <dd class="number">number</dd>
+          <dd class="number">number</dd>
+          <dd class="number">number</dd>
       </div>
 
       <div class="three columns">
-          <dt>smoothing (0 to 1)</dt>
-          <dt>step_size (draw label every n labels)</dt>
+          <dt>max_x_labels</dt>
+          <dt>max_y_labels</dt>
+          <dt>show_grid</dt>
           <dt>y_padding (pads the y-axis)</dt>
           <dt>x_padding (pads the x-axis)</dt>
-          <dt>show_grid</dt>
+          <dt>smoothing (0 to 1)</dt>
       </div>
     </dl>
 </div>

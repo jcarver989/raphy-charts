@@ -12,6 +12,16 @@ class Label
     for item in groups
       formatted = formatted.replace(item, @parse_format(item)) 
     formatted
+
+  to_12_hour_clock: (date) ->
+    hour = date.getHours()
+    indicator = if hour >= 12 then "pm" else "am"
+    "#{hour % 12}#{indicator}"
+
+  format_number: (number) ->
+    if number >= 1000000
+      number / 1000000}
+    Math.round(number*10)/10
     
   parse_format: (format) ->
     switch format 
@@ -20,6 +30,7 @@ class Label
       when "%Y" then @text.getFullYear()
       when "%H" then @text.getHours()
       when "%M" then @text.getMinutes()
+      when "%I" then @to_12_hour_clock(@text) 
 
   draw: () ->
     text = "" 
@@ -27,7 +38,7 @@ class Label
     if @is_date(@text) 
       text = @parse_date(@text)
     else if typeof @text == "number" 
-      text = Math.round(@text*10)/10
+      text = @format_number(@text) 
     else
       text = @text
 

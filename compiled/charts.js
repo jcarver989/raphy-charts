@@ -30,9 +30,9 @@ LineChartOptions = (function() {
     step_size: 3,
     x_label_size: 14,
     y_label_size: 14,
-    label_format: "%m/%d",
     show_x_labels: true,
     show_y_labels: false,
+    label_format: "%m/%d",
     show_grid: false,
     x_padding: 25,
     y_padding: 40

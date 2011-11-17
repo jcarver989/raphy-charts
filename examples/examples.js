@@ -65,9 +65,6 @@
     var c, charts, i;
     charts = Charts;
     c = new Charts.LineChart('chart1', {
-        x_label_size: 14,
-        y_label_size: 10,
-        max_x_labels: 4,
         show_y_labels: true,
         show_grid: true
     });

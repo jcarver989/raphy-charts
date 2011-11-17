@@ -64,11 +64,9 @@ class LineChart
     sorted = (point for point in @all_points)
     sorted.sort (a,b) -> a.y - b.y
 
-
-    console.log(@all_points)
-
     fmt = @options.label_format
     size = @options.y_label_size
+    padding = size + 5 
     max_labels = @options.max_y_labels
     label_coordinates = []
     labels = []
@@ -81,8 +79,8 @@ class LineChart
     last_label  = sorted[sorted.length-1].y
     labels.push new Point(0, last_label)
 
-    label_y = first_label
     label_step_size  = Math.round(last_label / (max_labels-1))
+    label_y = first_label + label_step_size 
 
     while label_y < last_label
       labels.push new Point(0, Math.round(label_y/10) * 10)
@@ -91,10 +89,9 @@ class LineChart
     scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
 
     for label, i in scaled_labels
-      new Label(@r, size, label.y, labels[i].y, fmt, size).draw()
+      new Label(@r, padding, label.y, labels[i].y, fmt, size).draw()
       label_coordinates.push label.y
 
-    console.log("-----")
     label_coordinates
 
 

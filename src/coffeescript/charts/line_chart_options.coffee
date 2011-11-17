@@ -20,12 +20,12 @@ class LineChartOptions
     max_x_labels: 10
     max_y_labels: 3 
     x_label_size: 14
-    y_label_size: 10
+    y_label_size: 14
     label_format: "%m/%d"
 
     show_grid: false
 
-    x_padding: 25
+    x_padding: 45
     y_padding: 40
 
   }

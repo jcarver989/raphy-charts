@@ -32,10 +32,10 @@ LineChartOptions = (function() {
     max_x_labels: 10,
     max_y_labels: 3,
     x_label_size: 14,
-    y_label_size: 10,
+    y_label_size: 14,
     label_format: "%m/%d",
     show_grid: false,
-    x_padding: 25,
+    x_padding: 45,
     y_padding: 40
   };
   function LineChartOptions(options) {
@@ -239,11 +239,10 @@ Label = (function() {
   Label.prototype.draw = function() {
     var text;
     text = "";
-    console.log([this.text, typeof this.text]);
     if (this.is_date(this.text)) {
       text = this.parse_date(this.text);
     } else if (typeof this.text === "number") {
-      text = Math.round(this.text * 100) / 100;
+      text = Math.round(this.text * 10) / 10;
     } else {
       text = this.text;
     }
@@ -537,7 +536,7 @@ LineChart = (function() {
     }).toBack();
   };
   LineChart.prototype.draw_y_labels = function() {
-    var first_label, first_y, fmt, i, label, label_coordinates, label_step_size, label_y, labels, last_label, last_y, max_labels, point, scaled_labels, scaled_sorted, size, sorted, _len;
+    var first_label, first_y, fmt, i, label, label_coordinates, label_step_size, label_y, labels, last_label, last_y, max_labels, padding, point, scaled_labels, scaled_sorted, size, sorted, _len;
     scaled_sorted = (function() {
       var _i, _len, _ref, _results;
       _ref = this.scaled_points;
@@ -564,9 +563,9 @@ LineChart = (function() {
     sorted.sort(function(a, b) {
       return a.y - b.y;
     });
-    console.log(this.all_points);
     fmt = this.options.label_format;
     size = this.options.y_label_size;
+    padding = size + 5;
     max_labels = this.options.max_y_labels;
     label_coordinates = [];
     labels = [];
@@ -576,8 +575,8 @@ LineChart = (function() {
     last_y = this.height - scaled_sorted[scaled_sorted.length - 1].y;
     last_label = sorted[sorted.length - 1].y;
     labels.push(new Point(0, last_label));
-    label_y = first_label;
     label_step_size = Math.round(last_label / (max_labels - 1));
+    label_y = first_label + label_step_size;
     while (label_y < last_label) {
       labels.push(new Point(0, Math.round(label_y / 10) * 10));
       label_y += label_step_size;
@@ -585,10 +584,9 @@ LineChart = (function() {
     scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
     for (i = 0, _len = scaled_labels.length; i < _len; i++) {
       label = scaled_labels[i];
-      new Label(this.r, size, label.y, labels[i].y, fmt, size).draw();
+      new Label(this.r, padding, label.y, labels[i].y, fmt, size).draw();
       label_coordinates.push(label.y);
     }
-    console.log("-----");
     return label_coordinates;
   };
   LineChart.prototype.draw_x_label = function(raw_point, point) {

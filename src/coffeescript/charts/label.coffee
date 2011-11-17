@@ -23,12 +23,11 @@ class Label
 
   draw: () ->
     text = "" 
-    console.log([@text, typeof @text])
     
     if @is_date(@text) 
       text = @parse_date(@text)
     else if typeof @text == "number" 
-      text = Math.round(@text*100)/100
+      text = Math.round(@text*10)/10
     else
       text = @text
 

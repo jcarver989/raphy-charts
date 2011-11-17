@@ -64,14 +64,19 @@
   window.onload = function() {
     var c, charts, i;
     charts = Charts;
-    c = new Charts.LineChart('chart1', {});
+    c = new Charts.LineChart('chart1', {
+        x_label_size: 14,
+        y_label_size: 10,
+        max_x_labels: 4,
+        show_y_labels: true,
+        show_grid: true
+    });
     c.add_line({
       data: create_exponential_points(),
       options: {
         line_color: "#cc1100",
         area_color: "#cc1100",
         dot_color: "#cc1100",
-        show_grid: true
       }
     });
     c.add_line({

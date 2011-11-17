@@ -25,13 +25,14 @@ LineChartOptions = (function() {
     fill_area: true,
     area_color: "#00aadd",
     area_opacity: 0.2,
-    label_max: true,
-    label_min: true,
-    step_size: 3,
-    x_label_size: 14,
-    y_label_size: 14,
     show_x_labels: true,
     show_y_labels: false,
+    label_max: true,
+    label_min: true,
+    max_x_labels: 10,
+    max_y_labels: 8,
+    x_label_size: 14,
+    y_label_size: 14,
     label_format: "%m/%d",
     show_grid: false,
     x_padding: 25,
@@ -497,13 +498,32 @@ LineChart = (function() {
     this.all_points.push.apply(this.all_points, points);
     this.line_options.push(new LineChartOptions(args.options || this.options));
   };
-  LineChart.prototype.draw_grid = function(points) {
-    var grid;
-    grid = new Grid(this.r, this.width, this.height, points, this.options);
-    return grid.draw();
+  LineChart.prototype.draw_grid = function(x_coordinates, y_coordinates) {
+    var height, paths, val, width, _i, _j, _len, _len2;
+    if (x_coordinates == null) {
+      x_coordinates = [];
+    }
+    if (y_coordinates == null) {
+      y_coordinates = [];
+    }
+    height = this.height - this.options.y_padding;
+    width = this.width - this.options.x_padding;
+    paths = this.r.set();
+    for (_i = 0, _len = x_coordinates.length; _i < _len; _i++) {
+      val = x_coordinates[_i];
+      paths.push(this.r.path("M " + val + ", " + this.options.y_padding + " L " + val + ", " + height + " Z"));
+    }
+    for (_j = 0, _len2 = y_coordinates.length; _j < _len2; _j++) {
+      val = y_coordinates[_j];
+      paths.push(this.r.path("M " + this.options.x_padding + ", " + val + " L " + width + ", " + val + " Z"));
+    }
+    return paths.attr({
+      stroke: "#ccc",
+      "stroke-width": 1
+    }).toBack();
   };
   LineChart.prototype.draw_y_labels = function() {
-    var first_label, first_y, fmt, last_label, last_y, mid_label, mid_y, point, scaled_sorted, size, sorted;
+    var first_label, first_y, fmt, i, label, label_coordinates, label_step_size, label_y, labels, last_label, last_y, max_labels, point, scaled_labels, scaled_sorted, size, sorted, _len;
     scaled_sorted = (function() {
       var _i, _len, _ref, _results;
       _ref = this.scaled_points;
@@ -530,27 +550,68 @@ LineChart = (function() {
     sorted.sort(function(a, b) {
       return a.y - b.y;
     });
-    first_y = this.height - scaled_sorted[0].y;
-    last_y = this.height - scaled_sorted[scaled_sorted.length - 1].y;
-    mid_y = Math.round(this.height / 2);
-    first_label = sorted[0].y;
-    last_label = sorted[sorted.length - 1].y;
-    mid_label = Math.round(last_label / 2);
     fmt = this.options.label_format;
     size = this.options.y_label_size;
-    new Label(this.r, size, first_y, first_label, fmt, size).draw();
-    new Label(this.r, size, mid_y, mid_label, fmt, size).draw();
-    return new Label(this.r, size, last_y, last_label, fmt, size).draw();
+    max_labels = this.options.max_y_labels;
+    label_coordinates = [];
+    labels = [];
+    first_y = this.height - scaled_sorted[0].y;
+    first_label = sorted[0].y;
+    labels.push(new Point(0, first_label));
+    last_y = this.height - scaled_sorted[scaled_sorted.length - 1].y;
+    last_label = sorted[sorted.length - 1].y;
+    labels.push(new Point(0, last_label));
+    label_y = first_label;
+    label_step_size = Math.round(last_label / (max_labels - 1));
+    while (label_y < last_label) {
+      labels.push(new Point(0, Math.round(label_y / 10) * 10));
+      label_y += label_step_size;
+    }
+    scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
+    for (i = 0, _len = scaled_labels.length; i < _len; i++) {
+      label = scaled_labels[i];
+      new Label(this.r, size, label.y, labels[i].y, fmt, size).draw();
+      label_coordinates.push(label.y);
+    }
+    return label_coordinates;
+  };
+  LineChart.prototype.draw_x_label = function(raw_point, point) {
+    var fmt, label, size;
+    fmt = this.options.label_format;
+    size = this.options.x_label_size;
+    label = raw_point.is_date_type === true ? new Date(raw_point.x) : Math.round(raw_point.x);
+    return new Label(this.r, point.x, this.height - size, label, fmt, size).draw();
   };
   LineChart.prototype.draw_x_labels = function(raw_points, points) {
-    var fmt, i, label, point, raw_point, size, _len, _results;
-    _results = [];
-    for (i = 0, _len = points.length; i < _len; i++) {
-      point = points[i];
-      raw_point = raw_points[i];
-      _results.push(i % this.options.step_size === 0 ? (label = raw_point.is_date_type === true ? new Date(raw_point.x) : Math.round(raw_point.x), fmt = this.options.label_format, size = this.options.x_label_size, new Label(this.r, point.x, this.height - size, label, fmt).draw()) : void 0);
+    var i, label_coordinates, last, len, max_labels, point, raw_point, rounded_step_size, step_size;
+    label_coordinates = [];
+    max_labels = this.options.max_x_labels;
+    this.draw_x_label(raw_points[0], points[0]);
+    label_coordinates.push(points[0].x);
+    if (max_labels < 2) {
+      return;
     }
-    return _results;
+    last = points.length - 1;
+    this.draw_x_label(raw_points[last], points[last]);
+    label_coordinates.push(points[last].x);
+    if (max_labels < 3) {
+      return;
+    }
+    len = points.length - 2;
+    step_size = len / (max_labels - 1);
+    rounded_step_size = Math.round(step_size);
+    if (step_size !== rounded_step_size) {
+      step_size = rounded_step_size + 1;
+    }
+    i = step_size;
+    while (i < len) {
+      raw_point = raw_points[i];
+      point = points[i];
+      this.draw_x_label(raw_point, point);
+      label_coordinates.push(point.x);
+      i += step_size;
+    }
+    return label_coordinates;
   };
   LineChart.prototype.draw_line = function(raw_points, points, options) {
     return new Line(this.r, raw_points, points, this.height, this.width, options).draw();
@@ -568,14 +629,14 @@ LineChart = (function() {
       options = this.line_options[i];
       this.draw_line(raw_points, points, options);
       if (i === 0) {
-        if (this.options.show_grid === true) {
-          this.draw_grid(points);
+        if (this.options.show_x_labels === true) {
+          this.x_label_coordinates = this.draw_x_labels(raw_points, points);
         }
         if (this.options.show_y_labels === true) {
-          this.draw_y_labels();
+          this.y_label_coordinates = this.draw_y_labels();
         }
-        if (this.options.show_x_labels === true) {
-          this.draw_x_labels(raw_points, points);
+        if (this.options.show_grid === true) {
+          this.draw_grid(this.x_label_coordinates, this.y_label_coordinates);
         }
       }
     }

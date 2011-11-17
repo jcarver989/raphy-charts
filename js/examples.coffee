@@ -1,7 +1,10 @@
-create_exponential_points = -> (i*(4) for i in [0..25])
-create_squared_points = -> (i * (i-1) for i in [0..25])
-create_random_points2 = -> (Math.random() * i for i in [0..25])
+create_date = (day) ->
+  d = new Date()
+  new Date(d.getFullYear(), d.getMonth(), day+1)
 
+create_exponential_points = -> ([create_date(i), i*(4)] for i in [0..25])
+create_squared_points = -> ([create_date(i), i * (i-1)] for i in [0..25])
+create_random_points2 = -> ([create_date(i), Math.random() * i] for i in [0..25])
 
 draw_bars = (r, points) ->
   attach_handler = (element) ->
@@ -34,7 +37,6 @@ window.onload = () ->
 
   c.add_line {
     data: create_exponential_points()
-    labels: (new Date(2011, 10, i+1) for i in [0..25]) 
     options: {
       line_color : "#cc1100"
       area_color : "#cc1100"

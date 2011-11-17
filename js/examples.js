@@ -1,10 +1,15 @@
 (function() {
-  var create_exponential_points, create_random_points2, create_squared_points, draw_bars;
+  var create_date, create_exponential_points, create_random_points2, create_squared_points, draw_bars;
+  create_date = function(day) {
+    var d;
+    d = new Date();
+    return new Date(d.getFullYear(), d.getMonth(), day + 1);
+  };
   create_exponential_points = function() {
     var i, _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(i * 4.);
+      _results.push([create_date(i), i * 4.]);
     }
     return _results;
   };
@@ -12,7 +17,7 @@
     var i, _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(i * (i - 1));
+      _results.push([create_date(i), i * (i - 1)]);
     }
     return _results;
   };
@@ -20,7 +25,7 @@
     var i, _results;
     _results = [];
     for (i = 0; i <= 25; i++) {
-      _results.push(Math.random() * i);
+      _results.push([create_date(i), Math.random() * i]);
     }
     return _results;
   };
@@ -55,19 +60,11 @@
     return _results;
   };
   window.onload = function() {
-    var c, charts, i;
+    var c, charts;
     charts = Charts;
     c = new Charts.LineChart('chart1', {});
     c.add_line({
       data: create_exponential_points(),
-      labels: (function() {
-        var _results;
-        _results = [];
-        for (i = 0; i <= 25; i++) {
-          _results.push(new Date(2011, 10, i + 1));
-        }
-        return _results;
-      })(),
       options: {
         line_color: "#cc1100",
         area_color: "#cc1100",

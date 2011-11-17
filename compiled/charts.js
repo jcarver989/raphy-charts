@@ -484,6 +484,9 @@ LineChart = (function() {
   LineChart.prototype.add_line = function(args) {
     var pair, point_pairs, points, points_count;
     point_pairs = args.data;
+    if (point_pairs.length < 1) {
+      return;
+    }
     points = (function() {
       var _i, _len, _results;
       _results = [];
@@ -618,6 +621,9 @@ LineChart = (function() {
   };
   LineChart.prototype.draw = function() {
     var begin, end, i, line_indices, options, points, raw_points, _len, _ref;
+    if (this.all_points.length < 1) {
+      return;
+    }
     this.r.clear();
     this.scaled_points = Scaling.scale_points(this.width, this.height, this.all_points, this.options.x_padding, this.options.y_padding);
     _ref = this.line_indices;

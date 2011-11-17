@@ -31,6 +31,8 @@ class LineChart
 
   add_line: (args) ->
     point_pairs = args.data
+    return if point_pairs.length < 1
+
     points = (new Point(pair[0], pair[1]) for pair in point_pairs)
     points_count  = @all_points.length
     @line_indices.push [points_count, points_count + points.length-1]
@@ -149,6 +151,8 @@ class LineChart
     ).draw()
 
   draw: () ->
+    return if @all_points.length < 1
+
     @r.clear()
     @scaled_points = Scaling.scale_points(@width, @height, @all_points, @options.x_padding, @options.y_padding)
 

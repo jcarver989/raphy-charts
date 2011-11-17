@@ -1,6 +1,5 @@
 class Label
-  constructor: (@r, @x, @y, @text, @format) ->
-    @size = 14
+  constructor: (@r, @x, @y, @text, @format, @size = 14) ->
 
   is_date: (potential_date) -> 
     Object.prototype.toString.call(potential_date) == '[object Date]'
@@ -24,10 +23,10 @@ class Label
 
   draw: () ->
     text = if @is_date(@text) then @parse_date(@text) else @text
-    @element = @r.text(@x, @y - @size, text)
+    @element = @r.text(@x, @y, text)
     @element.attr({ 
       "fill"        : "#333"
-      "font-size"   : @size 
+      "font-size"   : @size
       "font-weight" : "bold"
     })
 

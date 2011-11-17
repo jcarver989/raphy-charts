@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="css/examples.css" />
+    <link rel="stylesheet" type="text/css" href="css/syntax.css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script>
+    <script type="text/javascript" src="../compiled/charts.js"></script>
+    <script type="text/javascript" src="examples.js"></script>
+  </head>
+  <body>
+
+    <a href="http://github.com/jcarver989/raphy-charts"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
+
+
+    <div id="container">
+      <h1> 
+        Raphy Charts 
+
+        <small>
+          <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="large blue bordered pill striped button">Download</a> 
+        </small>
+      </h1>
+    <h3>Easy, beautiful line charts with sane defaults</h3>
+    <hr />
+
+
+    <div style="width:1000px; height: 300px;" id="chart1"></div>
+    <h2>Installation</h2>
+    <ol>
+      <li>Make sure you have <a href="http://raphaeljs.com">Raphael.js</a> loaded on your page</li>
+      <li>Download Raphy Charts and place it on your page</li>
+    </ol>
+
+
+    <h2>Basic Usage</h2>
+<pre>
+<code>
+/* 
+ DOM is assumed to be ready 
+ 'chart1' is the id of an existing DOM element
+ with a defined width/height. Eg. div id="chart1" style="width:100px; height:100px;"
+*/
+c = new Charts.LineChart('chart1')
+
+c.add_line {
+  data: create_exponential_points() // array of numbers ex. [1,2]
+  labels: create_labels()           // array of strings or date objects ex. ["mon", "tues"]
+  options: {
+    line_color : "#cc1100",
+    area_color : "#cc1100",
+    dot_color  :  "#cc1100"
+  }
+}
+c.add_line { data: create_squared_points() }
+c.draw()
+</code>
+</pre>
+
+    <h2>Options</h2>
+<div class="row">
+    <dl>
+      <div class="three-quarters columns">
+            <dd class="number">number</dd>
+            <dd class="number">number</dd>
+            <dd class="color">css color</dd>
+            <dd class="color">css color</dd>
+            <dd class="number">number</dd>
+            <dd class="color">css color</dd>
+      </div>
+
+      <div class="one-and-a-quarter columns">
+            <dt>dot_size</dt>
+            <dt>dot_stroke_size</dt>
+            <dt>dot_color</dt>
+            <dt>dot_stroke_color</dt>
+            <dt>line_width</dt>
+            <dt>line_color</dt>
+      </div>
+
+    </dl>
+
+    <dl>
+      <div class="three-quarters columns">
+          <dd class="boolean">boolean</dd>
+          <dd class="color">css color</dd>
+          <dd class="number">number</dd>
+          <dd class="boolean">boolean</dd>
+          <dd class="boolean">boolean</dd>
+          <dd class="string">string</dd>
+      </div>
+
+      <div class="one-and-a-quarter columns">
+          <dt>fill_area</dt>
+          <dt>area_color</dt>
+          <dt>area_opacity</dt>
+          <dt>label_max</dt>
+          <dt>label_min</dt>
+          <dt>label_format</dt>
+      </div>
+    </dl>
+
+    <dl>
+      <div class="three-qaurters columns">
+          <dd class="number">number</dd>
+          <dd class="number">number</dd>
+          <dd class="number">number</dd>
+          <dd class="number">number</dd>
+          <dd class="boolean">boolean</dd>
+      </div>
+
+      <div class="three columns">
+          <dt>smoothing (0 to 1)</dt>
+          <dt>step_size (draw label every n labels)</dt>
+          <dt>y_padding (pads the y-axis)</dt>
+          <dt>x_padding (pads the x-axis)</dt>
+          <dt>show_grid</dt>
+      </div>
+    </dl>
+</div>
+
+<h3>Label Formatting</h3>
+</p>
+<ul>
+  <li>%m - month (1-12)</li>
+  <li>%d - date (1-31)</li>
+  <li>%Y - year (eg. 2011)</li>
+  <li>%H - hours (0-24)</li>
+  <li>%M - minutes (0-59)</li>
+</ul>
+<p>Example: label_format: "%m/%d/%Y" -> "11/05/2011"</p>
+</h3>
+    <h2>Smoothed Line Chart</h2>
+    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart2"></div>
+
+<pre>
+<code>
+c = new Charts.LineChart('chart2', {
+  line_color : "#118800",
+  dot_color  : "#118800",
+  area_color : "#118800",
+  dot_stroke_color: "#aaa",
+  dot_stroke_size: 3, 
+  label_min  : false,
+  smoothing  : 0.5,
+  show_grid  : true
+})
+
+c.add_line({
+  data: create_random_points2()
+})
+
+c.draw()
+</code>
+</pre>
+
+    <h2>Line Chart, No Smoothing</h2>
+    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart4"></div>
+
+<pre>
+<code>
+c = new Charts.LineChart('chart4', {
+  line_color : "#9900cc",
+  dot_color  : "#000",
+  dot_size: 7,
+  dot_stroke_color: "#9900cc",
+  dot_stroke_size: 2, 
+  label_min  : false,
+  label_max  : false,
+  fill_area  : false,
+  smoothing  : 0,
+  show_grid  : true,
+})
+
+c.add_line { 
+  data: create_random_points2() 
+}
+c.draw()
+</code>
+</pre>
+
+
+  </div>
+  </body>
+</html>
+
+

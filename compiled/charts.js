@@ -27,8 +27,13 @@ LineChartOptions = (function() {
     area_opacity: 0.2,
     label_max: true,
     label_min: true,
-    label_format: "%m/%d",
     step_size: 3,
+    x_label_size: 14,
+    y_label_size: 14,
+    label_format: "%m/%d",
+    show_x_labels: true,
+    show_y_labels: false,
+    show_grid: false,
     x_padding: 25,
     y_padding: 40
   };
@@ -102,9 +107,18 @@ Scaling = (function() {
 exports.Scaling = Scaling;var Point;
 Point = (function() {
   function Point(x, y) {
-    this.x = x;
     this.y = y;
+    if (this.is_date(x)) {
+      this.x = x.getTime();
+      this.is_date_type = true;
+    } else {
+      this.x = x;
+    }
+    return;
   }
+  Point.prototype.is_date = function(potential_date) {
+    return Object.prototype.toString.call(potential_date) === '[object Date]';
+  };
   return Point;
 })();
 exports.Point = Point;var Tooltip;
@@ -183,13 +197,13 @@ Tooltip = (function() {
 })();
 exports.Tooltip = Tooltip;var Label;
 Label = (function() {
-  function Label(r, x, y, text, format) {
+  function Label(r, x, y, text, format, size) {
     this.r = r;
     this.x = x;
     this.y = y;
     this.text = text;
     this.format = format;
-    this.size = 14;
+    this.size = size != null ? size : 14;
   }
   Label.prototype.is_date = function(potential_date) {
     return Object.prototype.toString.call(potential_date) === '[object Date]';
@@ -221,7 +235,7 @@ Label = (function() {
   Label.prototype.draw = function() {
     var text;
     text = this.is_date(this.text) ? this.parse_date(this.text) : this.text;
-    this.element = this.r.text(this.x, this.y - this.size, text);
+    this.element = this.r.text(this.x, this.y, text);
     return this.element.attr({
       "fill": "#333",
       "font-size": this.size,
@@ -459,7 +473,6 @@ LineChart = (function() {
     this.all_points = [];
     this.line_indices = [];
     this.line_options = [];
-    this.labels = [];
   }
   LineChart.prototype.get_dimensions = function(container) {
     var height, width;
@@ -468,21 +481,18 @@ LineChart = (function() {
     return [width, height];
   };
   LineChart.prototype.add_line = function(args) {
-    var points, points_count, x, y;
+    var pair, point_pairs, points, points_count;
+    point_pairs = args.data;
     points = (function() {
-      var _len, _ref, _results;
-      _ref = args.data;
+      var _i, _len, _results;
       _results = [];
-      for (x = 0, _len = _ref.length; x < _len; x++) {
-        y = _ref[x];
-        _results.push(new Point(x, y));
+      for (_i = 0, _len = point_pairs.length; _i < _len; _i++) {
+        pair = point_pairs[_i];
+        _results.push(new Point(pair[0], pair[1]));
       }
       return _results;
     })();
     points_count = this.all_points.length;
-    if (args.labels != null) {
-      this.labels = args.labels;
-    }
     this.line_indices.push([points_count, points_count + points.length - 1]);
     this.all_points.push.apply(this.all_points, points);
     this.line_options.push(new LineChartOptions(args.options || this.options));
@@ -492,12 +502,53 @@ LineChart = (function() {
     grid = new Grid(this.r, this.width, this.height, points, this.options);
     return grid.draw();
   };
-  LineChart.prototype.draw_labels = function(points) {
-    var i, point, _len, _results;
+  LineChart.prototype.draw_y_labels = function() {
+    var first_label, first_y, fmt, last_label, last_y, mid_label, mid_y, point, scaled_sorted, size, sorted;
+    scaled_sorted = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.scaled_points;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        point = _ref[_i];
+        _results.push(point);
+      }
+      return _results;
+    }).call(this);
+    scaled_sorted.sort(function(a, b) {
+      return a.y - b.y;
+    });
+    sorted = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.all_points;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        point = _ref[_i];
+        _results.push(point);
+      }
+      return _results;
+    }).call(this);
+    sorted.sort(function(a, b) {
+      return a.y - b.y;
+    });
+    first_y = this.height - scaled_sorted[0].y;
+    last_y = this.height - scaled_sorted[scaled_sorted.length - 1].y;
+    mid_y = Math.round(this.height / 2);
+    first_label = sorted[0].y;
+    last_label = sorted[sorted.length - 1].y;
+    mid_label = Math.round(last_label / 2);
+    fmt = this.options.label_format;
+    size = this.options.y_label_size;
+    new Label(this.r, size, first_y, first_label, fmt, size).draw();
+    new Label(this.r, size, mid_y, mid_label, fmt, size).draw();
+    return new Label(this.r, size, last_y, last_label, fmt, size).draw();
+  };
+  LineChart.prototype.draw_x_labels = function(raw_points, points) {
+    var fmt, i, label, point, raw_point, size, _len, _results;
     _results = [];
     for (i = 0, _len = points.length; i < _len; i++) {
       point = points[i];
-      _results.push(i % this.options.step_size === 0 ? new Label(this.r, point.x, this.height, this.labels[i], this.options.label_format).draw() : void 0);
+      raw_point = raw_points[i];
+      _results.push(i % this.options.step_size === 0 ? (label = raw_point.is_date_type === true ? new Date(raw_point.x) : Math.round(raw_point.x), fmt = this.options.label_format, size = this.options.x_label_size, new Label(this.r, point.x, this.height - size, label, fmt).draw()) : void 0);
     }
     return _results;
   };
@@ -520,8 +571,11 @@ LineChart = (function() {
         if (this.options.show_grid === true) {
           this.draw_grid(points);
         }
-        if (this.labels.length === points.length) {
-          this.draw_labels(points);
+        if (this.options.show_y_labels === true) {
+          this.draw_y_labels();
+        }
+        if (this.options.show_x_labels === true) {
+          this.draw_x_labels(raw_points, points);
         }
       }
     }

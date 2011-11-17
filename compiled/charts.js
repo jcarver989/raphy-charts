@@ -400,7 +400,9 @@ Line = (function() {
       this.draw_area();
     }
     this.draw_curve();
-    this.draw_dots_and_tooltips(this.scaled_points, this.raw_points);
+    if (this.options.dot_size > 0) {
+      this.draw_dots_and_tooltips(this.scaled_points, this.raw_points);
+    }
   };
   Line.prototype.draw_curve = function() {
     var curve;

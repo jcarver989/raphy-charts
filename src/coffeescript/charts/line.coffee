@@ -9,7 +9,7 @@ class Line
   draw: ->
     @draw_area() if @options.fill_area
     @draw_curve()
-    @draw_dots_and_tooltips(@scaled_points, @raw_points)
+    @draw_dots_and_tooltips(@scaled_points, @raw_points) if @options.dot_size > 0
     return
 
   draw_curve: ->

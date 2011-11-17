@@ -222,15 +222,24 @@ Label = (function() {
     }
     return formatted;
   };
-  Label.prototype.to_12_hour_clock = function(date) {
-    var fmt_hour, hour, indicator;
+  Label.prototype.meridian_indicator = function(date) {
+    var hour;
     hour = date.getHours();
-    indicator = hour >= 12 ? "pm" : "am";
+    if (hour >= 12) {
+      return "pm";
+    } else {
+      return "am";
+    }
+  };
+  Label.prototype.to_12_hour_clock = function(date) {
+    var fmt_hour, hour;
+    hour = date.getHours();
     fmt_hour = hour % 12;
     if (fmt_hour === 0) {
-      fmt_hour = 12;
+      return 12;
+    } else {
+      return fmt_hour;
     }
-    return "" + fmt_hour + indicator;
   };
   Label.prototype.format_number = function(number) {
     return Math.round(number * 10) / 10;
@@ -249,6 +258,8 @@ Label = (function() {
         return this.text.getMinutes();
       case "%I":
         return this.to_12_hour_clock(this.text);
+      case "%p":
+        return this.meridian_indicator(this.text);
     }
   };
   Label.prototype.draw = function() {

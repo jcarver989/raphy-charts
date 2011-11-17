@@ -13,15 +13,16 @@ class Label
       formatted = formatted.replace(item, @parse_format(item)) 
     formatted
 
+  meridian_indicator: (date) ->
+    hour = date.getHours()
+    if hour >= 12 then "pm" else "am"
+
   to_12_hour_clock: (date) ->
     hour = date.getHours()
-    indicator = if hour >= 12 then "pm" else "am"
     fmt_hour = hour % 12
-    fmt_hour = 12 if fmt_hour == 0
-    "#{fmt_hour}#{indicator}"
+    if fmt_hour == 0 then 12 else fmt_hour
 
-  format_number: (number) ->
-    Math.round(number*10)/10
+  format_number: (number) -> Math.round(number*10)/10
     
   parse_format: (format) ->
     switch format 
@@ -31,6 +32,7 @@ class Label
       when "%H" then @text.getHours()
       when "%M" then @text.getMinutes()
       when "%I" then @to_12_hour_clock(@text) 
+      when "%p" then @meridian_indicator(@text)
 
   draw: () ->
     text = "" 

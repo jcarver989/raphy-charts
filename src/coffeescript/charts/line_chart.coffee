@@ -64,6 +64,9 @@ class LineChart
     sorted = (point for point in @all_points)
     sorted.sort (a,b) -> a.y - b.y
 
+
+    console.log(@all_points)
+
     fmt = @options.label_format
     size = @options.y_label_size
     max_labels = @options.max_y_labels
@@ -91,6 +94,7 @@ class LineChart
       new Label(@r, size, label.y, labels[i].y, fmt, size).draw()
       label_coordinates.push label.y
 
+    console.log("-----")
     label_coordinates
 
 

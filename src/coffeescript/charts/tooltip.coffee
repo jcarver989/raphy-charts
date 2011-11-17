@@ -11,6 +11,9 @@ class Tooltip
     offset = 10
     rounding = 5
 
+    text = Math.round(text*100)/100 if typeof text == "number"
+      
+
     box = target.getBBox()
     x = box.x
     y = box.y

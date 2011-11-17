@@ -22,7 +22,16 @@ class Label
       when "%M" then @text.getMinutes()
 
   draw: () ->
-    text = if @is_date(@text) then @parse_date(@text) else @text
+    text = "" 
+    console.log([@text, typeof @text])
+    
+    if @is_date(@text) 
+      text = @parse_date(@text)
+    else if typeof @text == "number" 
+      text = Math.round(@text*100)/100
+    else
+      text = @text
+
     @element = @r.text(@x, @y, text)
     @element.attr({ 
       "fill"        : "#333"

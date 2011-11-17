@@ -26,13 +26,13 @@ LineChartOptions = (function() {
     area_color: "#00aadd",
     area_opacity: 0.2,
     show_x_labels: true,
-    show_y_labels: false,
+    show_y_labels: true,
     label_max: true,
     label_min: true,
     max_x_labels: 10,
-    max_y_labels: 8,
+    max_y_labels: 3,
     x_label_size: 14,
-    y_label_size: 14,
+    y_label_size: 10,
     label_format: "%m/%d",
     show_grid: false,
     x_padding: 25,
@@ -137,6 +137,9 @@ Tooltip = (function() {
     height = 25;
     offset = 10;
     rounding = 5;
+    if (typeof text === "number") {
+      text = Math.round(text * 100) / 100;
+    }
     box = target.getBBox();
     x = box.x;
     y = box.y;
@@ -235,7 +238,15 @@ Label = (function() {
   };
   Label.prototype.draw = function() {
     var text;
-    text = this.is_date(this.text) ? this.parse_date(this.text) : this.text;
+    text = "";
+    console.log([this.text, typeof this.text]);
+    if (this.is_date(this.text)) {
+      text = this.parse_date(this.text);
+    } else if (typeof this.text === "number") {
+      text = Math.round(this.text * 100) / 100;
+    } else {
+      text = this.text;
+    }
     this.element = this.r.text(this.x, this.y, text);
     return this.element.attr({
       "fill": "#333",
@@ -553,6 +564,7 @@ LineChart = (function() {
     sorted.sort(function(a, b) {
       return a.y - b.y;
     });
+    console.log(this.all_points);
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     max_labels = this.options.max_y_labels;
@@ -576,6 +588,7 @@ LineChart = (function() {
       new Label(this.r, size, label.y, labels[i].y, fmt, size).draw();
       label_coordinates.push(label.y);
     }
+    console.log("-----");
     return label_coordinates;
   };
   LineChart.prototype.draw_x_label = function(raw_point, point) {

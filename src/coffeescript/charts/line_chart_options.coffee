@@ -14,13 +14,13 @@ class LineChartOptions
     area_opacity: 0.2 
 
     show_x_labels: true
-    show_y_labels: false
+    show_y_labels: true
     label_max : true
     label_min : true
     max_x_labels: 10
-    max_y_labels: 8 
+    max_y_labels: 3 
     x_label_size: 14
-    y_label_size: 14
+    y_label_size: 10
     label_format: "%m/%d"
 
     show_grid: false

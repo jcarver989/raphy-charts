@@ -32,7 +32,8 @@ draw_bars = (r, points) ->
 window.onload = () ->
   charts = Charts
   # line 
-  c = new Charts.LineChart('chart1', {
+  c = new Charts.LineChart('chart1', { 
+    show_grid: true
   })
 
   c.add_line {

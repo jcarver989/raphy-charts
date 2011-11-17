@@ -62,7 +62,9 @@
   window.onload = function() {
     var c, charts;
     charts = Charts;
-    c = new Charts.LineChart('chart1', {});
+    c = new Charts.LineChart('chart1', {
+      show_grid: true
+    });
     c.add_line({
       data: create_exponential_points(),
       options: {

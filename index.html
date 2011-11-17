@@ -42,7 +42,9 @@
  'chart1' is the id of an existing DOM element
  with a defined width/height. Eg. div id="chart1" style="width:100px; height:100px;"
 */
-c = new Charts.LineChart('chart1')
+c = new Charts.LineChart('chart1', {
+  show_grid: true
+})
 
 c.add_line {
   data: create_exponential_points() // 2d array of x,y values ex:  [[1,1], [2,3], [3,20]]

@@ -242,7 +242,26 @@ Label = (function() {
     }
   };
   Label.prototype.format_number = function(number) {
-    return Math.round(number * 10) / 10;
+    var millions, thousands;
+    if (number > 1000000) {
+      millions = number / 1000000;
+      millions = Math.round(millions * 100) / 100;
+      return millions + "m";
+    } else if (number > 1000) {
+      thousands = number / 1000;
+      return Math.round(thousands * 10) / 10 + "k";
+    } else {
+      return Math.round(number * 10) / 10;
+    }
+  };
+  Label.prototype.fmt_minutes = function(date) {
+    var minutes;
+    minutes = date.getMinutes();
+    if (minutes < 10) {
+      return "0" + minutes;
+    } else {
+      return minutes;
+    }
   };
   Label.prototype.parse_format = function(format) {
     switch (format) {
@@ -255,7 +274,7 @@ Label = (function() {
       case "%H":
         return this.text.getHours();
       case "%M":
-        return this.text.getMinutes();
+        return this.fmt_minutes(this.text);
       case "%I":
         return this.to_12_hour_clock(this.text);
       case "%p":
@@ -263,7 +282,7 @@ Label = (function() {
     }
   };
   Label.prototype.draw = function() {
-    var text, width, x;
+    var margin, text, width, x;
     text = "";
     if (this.is_date(this.text)) {
       text = this.parse_date(this.text);
@@ -274,12 +293,14 @@ Label = (function() {
     }
     this.element = this.r.text(this.x, this.y, text);
     width = this.element.getBBox().width;
-    x = this.x < width ? width : this.x;
+    margin = 5;
+    x = this.x < width ? (width / 2) + margin : this.x;
     return this.element.attr({
       "fill": "#333",
       "font-size": this.size,
       "font-weight": "bold",
-      "x": x
+      "x": x,
+      "text-anchor": "middle"
     });
   };
   return Label;

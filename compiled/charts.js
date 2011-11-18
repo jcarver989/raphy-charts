@@ -92,6 +92,12 @@ Scaling = (function() {
   Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
     var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
     _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (min_y === max_y) {
+      max_y += 1;
+    }
+    if (min_x === max_x) {
+      max_x += 1;
+    }
     _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
     _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
     scaled_points = [];
@@ -590,6 +596,9 @@ LineChart = (function() {
   LineChart.prototype.draw_y_labels = function() {
     var fmt, i, label, label_coordinates, labels, max_labels, max_x, max_y, min_x, min_y, padding, scaled_labels, size, step_size, y, _len, _ref;
     _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (max_y === min_y) {
+      return [this.options.y_padding, this.height - this.options.y_padding];
+    }
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     padding = size + 5;
@@ -599,7 +608,7 @@ LineChart = (function() {
     step_size = Math.round((max_y - min_y) / (max_labels - 1));
     y = min_y;
     while (y <= max_y) {
-      labels.push(new Point(0, Math.round(y / 10) * 10));
+      labels.push(new Point(0, y));
       y += step_size;
     }
     if (max_y > 1) {

@@ -160,7 +160,7 @@ $(document).ready(function() {
         }
 
         c.add_line({
-          data: yvals,
+          data: [[1321571220000,1.00],[1321575420000,1.00],[1321576620000,1.0]],
           options: {
             line_color: colors[ i % colors.length],
             dot_color:  colors[ i % colors.length],

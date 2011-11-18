@@ -35,6 +35,10 @@ class Scaling
   @scale_points:  (x_max, y_max, points, x_padding, y_padding) ->
     [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(points)
 
+    # prevent NAN errors
+    max_y += 1 if min_y == max_y
+    max_x += 1 if min_x == max_x
+
     [x_scaling, x_range_ratio] = Scaling.calc_scaling_factors(
       max_x,
       min_x,

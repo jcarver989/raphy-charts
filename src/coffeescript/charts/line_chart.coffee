@@ -60,6 +60,10 @@ class LineChart
   draw_y_labels: ->
     [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(@all_points)
 
+    # prevent NAN errors
+    if max_y == min_y
+      return [@options.y_padding, @height-@options.y_padding]
+
     fmt = @options.label_format
     size = @options.y_label_size
     padding = size + 5 
@@ -71,7 +75,7 @@ class LineChart
     y = min_y
 
     while y <= max_y 
-      labels.push new Point(0, Math.round(y/10)*10)
+      labels.push new Point(0, y)
       y += step_size
 
     labels[labels.length-1].y = Math.round(max_y) if max_y > 1

@@ -7,8 +7,6 @@
 # @import line.coffee
 # @import grid.coffee
 
-###\
-\###
 class LineChart
   
   

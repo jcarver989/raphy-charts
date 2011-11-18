@@ -12,50 +12,7 @@ if (global.module == undefined) {
 
 
     module('Charts', function(exports) {
-      var LineChartOptions;
-LineChartOptions = (function() {
-  LineChartOptions.DEFAULTS = {
-    dot_size: 5,
-    dot_color: "#00aadd",
-    dot_stroke_color: "#fff",
-    dot_stroke_size: 2,
-    line_width: 3,
-    line_color: "#00aadd",
-    smoothing: 0.4,
-    fill_area: true,
-    area_color: "#00aadd",
-    area_opacity: 0.2,
-    show_x_labels: true,
-    show_y_labels: true,
-    label_max: true,
-    label_min: true,
-    max_x_labels: 10,
-    max_y_labels: 3,
-    x_label_size: 14,
-    y_label_size: 14,
-    label_format: "%m/%d",
-    show_grid: false,
-    x_padding: 45,
-    y_padding: 40
-  };
-  function LineChartOptions(options) {
-    var option, opts, value, _ref;
-    opts = {};
-    _ref = LineChartOptions.DEFAULTS;
-    for (option in _ref) {
-      value = _ref[option];
-      opts[option] = value;
-    }
-    for (option in options) {
-      value = options[option];
-      if (options.hasOwnProperty(option)) {
-        opts[option] = value;
-      }
-    }
-    return opts;
-  }
-  return LineChartOptions;
-})();var Scaling;
+      var Scaling;
 Scaling = (function() {
   function Scaling() {}
   Scaling.get_ranges_for_points = function(points) {
@@ -128,7 +85,50 @@ Point = (function() {
   };
   return Point;
 })();
-exports.Point = Point;var Tooltip;
+exports.Point = Point;var LineChartOptions;
+LineChartOptions = (function() {
+  LineChartOptions.DEFAULTS = {
+    dot_size: 5,
+    dot_color: "#00aadd",
+    dot_stroke_color: "#fff",
+    dot_stroke_size: 2,
+    line_width: 3,
+    line_color: "#00aadd",
+    smoothing: 0.4,
+    fill_area: true,
+    area_color: "#00aadd",
+    area_opacity: 0.2,
+    show_x_labels: true,
+    show_y_labels: true,
+    label_max: true,
+    label_min: true,
+    max_x_labels: 10,
+    max_y_labels: 3,
+    x_label_size: 14,
+    y_label_size: 14,
+    label_format: "%m/%d",
+    show_grid: false,
+    x_padding: 45,
+    y_padding: 40
+  };
+  function LineChartOptions(options) {
+    var option, opts, value, _ref;
+    opts = {};
+    _ref = LineChartOptions.DEFAULTS;
+    for (option in _ref) {
+      value = _ref[option];
+      opts[option] = value;
+    }
+    for (option in options) {
+      value = options[option];
+      if (options.hasOwnProperty(option)) {
+        opts[option] = value;
+      }
+    }
+    return opts;
+  }
+  return LineChartOptions;
+})();var Tooltip;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Raphael.fn.triangle = function(cx, cy, r) {
   r *= 1.75;
@@ -449,7 +449,10 @@ Line = (function() {
     this.scaled_points = scaled_points;
     this.height = height;
     this.width = width;
-    this.options = options != null ? options : {};
+    if (options == null) {
+      options = {};
+    }
+    this.options = new LineChartOptions(options);
   }
   Line.prototype.draw = function() {
     if (this.options.fill_area) {
@@ -525,9 +528,7 @@ Line = (function() {
     }
   };
   return Line;
-})();/*\
-\*/
-var LineChart;
+})();var LineChart;
 LineChart = (function() {
   function LineChart(dom_id, options) {
     var container, _ref;

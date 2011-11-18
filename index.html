@@ -115,226 +115,271 @@ c.draw()
         Options can be specified at the chart level or on a line-by-line basis. Chart options are the default for all lines unless otherwise specified. 
         </p>
         <div class="row">
-            <div class="two columns">
+            <div class="eight columns">
                 <h3>Dots</h3>
-            </div>
+                <table>
+                  <col class="three-quarters"></col> 
+                  <col class="one-and-a-quarter"></col> 
+                  <col class="four"></col> 
+                  <col class="one"></col> 
+                  <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                        <th>Chart/Line</th>
+                    </tr>
+                  </thead>
 
-            <div class="two columns">
+                  <tbody>
+                    <tr>
+                        <td class="number">number</td>
+                        <td>dot_size</td>
+                        <td>5</td>
+                        <td>size of dots</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="color">css-color</td>
+                        <td>dot_color</td>
+                        <td>color of dots</td>
+                        <td>"#00aadd"</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="color">css-color</td>
+                        <td>dot_stroke_color</td>
+                        <td>color of dot border</td>
+                        <td>"#fff"</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="number">number</td>
+                        <td>dot_stroke_size</td>
+                        <td>size of dot border</td>
+                        <td>2</td>
+                        <td>both</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+
                 <h3>Lines</h3>
-            </div>
+
+                <table>
+                  <col class="three-quarters"></col> 
+                  <col class="one-and-a-quarter"></col> 
+                  <col class="four"></col> 
+                  <col class="one"></col>
+                  <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                        <th>Chart/Line</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                        <td class="number">number</td>
+                        <td>line_width</td>
+                        <td>width of line</td>
+                        <td>3</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="color">css-color</td>
+                        <td>line_color</td>
+                        <td>color of line</td>
+                        <td>"#00aadd"</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="number">number</td>
+                        <td>smoothing</td>
+                        <td>0.0 to 1.0,  0 = no smoothing, 1.0= ultra smoothing</td>
+                        <td>0.4</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="boolean">boolean</td>
+                        <td>fill_area</td>
+                        <td>shade the area under a line</td>
+                        <td>true</td>
+                        <td>both</td>
+                    </tr>
+
+                    <tr>
+                        <td class="color">css-color</td>
+                        <td>area_color</td>
+                        <td>color of area under a line</td>
+                        <td>"#00aadd"</td>
+                        <td>both</td>
+                    </tr>
+
+                    <tr>
+                        <td class="number">number</td>
+                        <td>area_opacity</td>
+                        <td>0.0 to 1.0 opacity of shading under a line</td>
+                        <td>0.2</td>
+                        <td>both</td>
+                    </tr>
+
+                  </tbody>
+                </table>
 
 
-            <div class="two columns">
                 <h3>Labels</h3>
-            </div>
 
-            <div class="two columns">
+                <table>
+                  <col class="three-quarters"></col> 
+                  <col class="one-and-a-quarter"></col> 
+                  <col class="four"></col> 
+                  <col class="one"></col>
+                  <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                        <th>Chart/Line</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                        <td class="boolean">boolean</td>
+                        <td>show_x_labels</td>
+                        <td>display x axis labels</td>
+                        <td>true</td>
+                        <td>chart only</td>
+                    </tr>
+
+                     <tr>
+                        <td class="boolean">boolean</td>
+                        <td>show_y_labels</td>
+                        <td>show y axis labels</td>
+                        <td>true</td>
+                        <td>chart only</td>
+                    </tr>
+
+                     <tr>
+                        <td class="boolean">boolean</td>
+                        <td>label_max</td>
+                        <td>label max point of line with tooltip</td>
+                        <td>true</td>
+                        <td>both</td>
+                    </tr>
+
+                     <tr>
+                        <td class="boolean">boolean</td>
+                        <td>label_min</td>
+                        <td>label min point of line with tooltip</td>
+                        <td>true</td>
+                        <td>both</td>
+                    </tr>
+
+                    <tr>
+                        <td class="number">number</td>
+                        <td>max_x_labels</td>
+                        <td>max number of x axis labels to show</td>
+                        <td>10</td>
+                        <td>chart only</td>
+                    </tr>
+
+                    <tr>
+                        <td class="number">number</td>
+                        <td>max_y_labels</td>
+                        <td>max number of y axis labels to show</td>
+                        <td>3</td>
+                        <td>chart only</td>
+                    </tr>
+
+                    <tr>
+                        <td class="number">number</td>
+                        <td>x_label_size</td>
+                        <td>size of x labels (pixels)</td>
+                        <td>14</td>
+                        <td>chart only</td>
+                    </tr>
+
+                    <tr>
+                        <td class="number">number</td>
+                        <td>y_label_size</td>
+                        <td>size of y labels (pixels)</td>
+                        <td>14</td>
+                        <td>chart only</td>
+                    </tr>
+
+                    <tr>
+                        <td class="number">number</td>
+                        <td>label_format</td>
+                        <td>format string for date labels</td>
+                        <td>"%m%d"</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
                 <h3>Chart</h3>
+
+                <table>
+                  <col class="three-quarters"></col> 
+                  <col class="one-and-a-quarter"></col> 
+                  <col class="four"></col> 
+                  <col class="one"></col>
+                  <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Option</th>
+                        <th>Description</th>
+                        <th>Default</th>
+                        <th>Chart/Line</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <tr>
+                        <td class="boolean">boolean</td>
+                        <td>show_grid</td>
+                        <td>render a background grid</td>
+                        <td>true</td>
+                        <td>chart only</td>
+                    </tr>
+                  </tbody>
+
+                  <tbody>
+                    <tr>
+                        <td class="number">number</td>
+                        <td>x_padding</td>
+                        <td>how much to pad the x-axis (px)</td>
+                        <td>45</td>
+                        <td>chart only</td>
+                    </tr>
+                  </tbody>
+
+                  <tbody>
+                    <tr>
+                        <td class="boolean">boolean</td>
+                        <td>y_padding</td>
+                        <td>how much to pad the y-axis</td>
+                        <td>40</td>
+                        <td>chart only</td>
+                    </tr>
+                  </tbody>
+                </table>
             </div>
         </div>
-        <div class="row">
-            <dl>
-              <div class="three-quarters columns">
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                    <dd class="color">css color</dd>
-                    <dd class="color">css color</dd>
-              </div>
-
-              <div class="one-and-a-quarter columns">
-                    <dt>dot_size</dt>
-                    <dt>dot_stroke_size</dt>
-                    <dt>dot_color</dt>
-                    <dt>dot_stroke_color</dt>
-              </div>
-            </dl>
-
-
-            <dl>
-                <div class="three-quarters columns">
-                    <dd class="number">number</dd>
-                    <dd class="color">css color</dd>
-                    <dd class="boolean">boolean</dd>
-                    <dd class="color">css color</dd>
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                </div>
-
-
-                <div class="one-and-a-quarter columns">
-                   <dt>line_width</dt>
-                    <dt>line_color</dt>
-                    <dt>fill_area</dt>
-                    <dt>area_color</dt>
-                    <dt>area_opacity</dt>
-                    <dt>smoothing (0 to 1)</dt>
-                </div>
-
-            <dl>
-                <div class="three-quarters columns">
-                    <dd class="boolean">boolean</dd>
-                    <dd class="boolean">boolean</dd>
-                    <dd class="boolean">boolean</dd>
-                    <dd class="boolean">boolean</dd>
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                    <dd class="string">string</dd>
-                </div>
-
-                <div class="one-and-a-quarter columns">
-                    <dt>show_x_lables</dt>
-                    <dt>show_y_labels</dt>
-                    <dt>label_max</dt>
-                    <dt>label_min</dt>
-                    <dt>max_x_labels</dt>
-                    <dt>max_y_labels</dt>
-                    <dt>x_label_size</dt>
-                    <dt>y_label_size</dt>
-                    <dt>label_format</dt>
-                </div>
-            </dl>
-
-            <dl>
-                <div class="three-qaurters columns">
-                    <dd class="boolean">boolean</dd>
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                </div>
-
-                <div class="two columns">
-                    <dt>show_grid</dt>
-                    <dt>y_padding (pads the y-axis)</dt>
-                    <dt>x_padding (pads the x-axis)</dt>
-                </div>
-            </dl>
-        </div>
-
-
-
-        <h2>Line Options</h2>
-        <p>These may be passed to an individual line during the add_line() call</p>
-           <div class="row">
-            <div class="two columns">
-                <h3>Dots</h3>
-            </div>
-
-            <div class="two columns">
-                <h3>Lines</h3>
-            </div>
-
-
-            <div class="two columns">
-                <h3>Labels</h3>
-            </div>
-        </div>
-        <div class="row">
-            <dl>
-              <div class="three-quarters columns">
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                    <dd class="color">css color</dd>
-                    <dd class="color">css color</dd>
-              </div>
-
-              <div class="one-and-a-quarter columns">
-                    <dt>dot_size</dt>
-                    <dt>dot_stroke_size</dt>
-                    <dt>dot_color</dt>
-                    <dt>dot_stroke_color</dt>
-              </div>
-            </dl>
-
-
-            <dl>
-                <div class="three-quarters columns">
-                    <dd class="number">number</dd>
-                    <dd class="color">css color</dd>
-                    <dd class="boolean">boolean</dd>
-                    <dd class="color">css color</dd>
-                    <dd class="number">number</dd>
-                    <dd class="number">number</dd>
-                </div>
-
-
-                <div class="one-and-a-quarter columns">
-                   <dt>line_width</dt>
-                    <dt>line_color</dt>
-                    <dt>fill_area</dt>
-                    <dt>area_color</dt>
-                    <dt>area_opacity</dt>
-                    <dt>smoothing (0 to 1)</dt>
-                </div>
-
-            <dl>
-                <div class="three-quarters columns">
-                    <dd class="boolean">boolean</dd>
-                    <dd class="boolean">boolean</dd>
-                </div>
-
-                <div class="one-and-a-quarter columns">
-                    <dt>label_max</dt>
-                    <dt>label_min</dt>
-                </div>
-            </dl>
-        </div>    
-
-
-        
-
-        <h2>Default Options</h2>
-        <div class="row">
-          <div class="two columns">
-            <h3>Dots</h3>
-            <ul>
-              <li>dot_size: 5</li>
-              <li>dot_color: "#00aadd"</li>
-              <li>dot_stroke_color: "#00aadd"</li>
-              <li>dot_stroke_size: 2</li>
-            </ul>
-          </div>
-
-          <div class="two columns">
-            <h3>Lines</h3>
-            <ul>
-              <li>line_width: 3</li>
-              <li>line_color: "#00aadd"</li>
-              <li>smoothing: 0.4</li>
-              <li>fill_area: true</li>
-              <li>area_color: "#00aadd"</li>
-              <li>area_opacity: 0.2</li>
-            </ul>
-          </div>
-
-          <div class="two columns">
-            <h3>Labels</h3>
-            <ul>
-              <li>show_x_labels: true</li>
-              <li>show_y_labels: true</li>
-              <li>label_max : true</li>
-              <li>label_min : true</li>
-              <li>max_x_labels: 10</li>
-              <li>max_y_labels: 3 </li>
-              <li>x_label_size: 14</li>
-              <li>y_label_size: 14</li>
-              <li>label_format: "%m/%d"</li>
-            </ul>
-          </div>
-
-
-          <div class="two columns">
-            <h3>Chart</h3>
-            <ul>
-              <li>show_grid: false</li>
-              <li>x_padding: 45</li>
-              <li>y_padding: 40</li>
-            </ul>
-          </div>
-
-
-        </div>
-
+            
         <h3>Label Formatting</h3>
         </p>
         <ul>

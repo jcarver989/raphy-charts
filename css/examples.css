@@ -1445,35 +1445,37 @@ pre {
   margin: 0 auto;
   color: #333333; }
 
-dl {
-  margin: 0;
-  padding: 0; }
-  dl dt, dl dd, dl p {
-    padding: 3px 5px;
-    margin: 0 0 5px;
-    height: 20px; }
-  dl dt {
-    display: block; }
-  dl dd {
-    display: block;
-    width: 65px;
-    text-align: center;
-    font-weight: bold;
+table {
+  width: 100%;
+  margin: 10px 0 10px 0;
+  padding: 0;
+  text-align: left;
+  border-collapse: collapse; }
+  table thead {
+    background: #333333; }
+  table th {
+    text-align: left;
+    color: white;
+    padding: 5px; }
+  table td {
     -moz-border-radius: 4px 4px 4px 4px;
     -webkit-border-radius: 4px 4px 4px 4px;
-    border-radius: 4px 4px 4px 4px; }
-    dl dd.bordered {
-      background-color: #b43428; }
-    dl dd.string {
+    border-radius: 4px 4px 4px 4px;
+    padding: 5px; }
+    table td.string, table td.number, table td.color, table td.boolean {
+      font-weight: bold;
+      text-align: center;
+      width: 65px; }
+    table td.string {
       color: #26004c;
       background: #cfb1ed; }
-    dl dd.number {
+    table td.number {
       background: #b1c9ed;
       color: #001e4c; }
-    dl dd.color {
+    table td.color {
       background: #e1edb1;
       color: #3d4c00; }
-    dl dd.boolean {
+    table td.boolean {
       background-color: #edb1b1;
       color: #4c0000; }
 

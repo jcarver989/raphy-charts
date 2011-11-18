@@ -35,28 +35,30 @@ pre
     color: #333
 
 
-dl
-    margin: 0
+table
+    width: 100%
+    margin: 10px 0 10px 0 
     padding: 0
+    text-align: left
+    border-collapse: collapse 
 
+    thead
+        background: #333
 
-    dt, dd, p
-        padding: 3px 5px
-        margin: 0 0 5px
-        height: 20px
+    th
+        text-align: left
+        color: #fff
+        padding: 5px
 
-    dt
-        display: block
-
-    dd
-        display: block
-        width: 65px
-        text-align: center
-        font-weight: bold
+    td 
         +border-radius(4px)
+        padding: 5px
 
-        &.bordered
-            background-color: $orange
+        &.string, &.number, &.color, &.boolean
+            font-weight: bold
+            text-align: center
+            width: 65px
+
 
         &.string
             color: #26004C
@@ -69,6 +71,7 @@ dl
         &.color
             background: #E1EDB1 
             color: #3D4C00
+
         &.boolean
             background-color: #EDB1B1
             color: #4C0000

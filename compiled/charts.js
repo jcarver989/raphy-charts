@@ -47,7 +47,7 @@ LineChartOptions = (function() {
     }
     for (option in to) {
       value = to[option];
-      if (options.hasOwnProperty(option)) {
+      if (to.hasOwnProperty(option)) {
         opts[option] = value;
       }
     }

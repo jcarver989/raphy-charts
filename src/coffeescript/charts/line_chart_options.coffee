@@ -37,7 +37,7 @@ class LineChartOptions
     for option, value of from
       opts[option] = value
 
-    for option, value of to when options.hasOwnProperty(option)
+    for option, value of to when to.hasOwnProperty(option)
       opts[option] = value
 
     return opts

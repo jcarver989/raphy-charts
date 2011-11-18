@@ -45,9 +45,13 @@ class Label
       text = @text
 
     @element = @r.text(@x, @y, text)
+    width = @element.getBBox().width
+    x = if @x < width then width else @x 
+
     @element.attr({ 
       "fill"        : "#333"
       "font-size"   : @size
       "font-weight" : "bold"
+      "x"           : x
     })
 

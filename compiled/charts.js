@@ -263,7 +263,7 @@ Label = (function() {
     }
   };
   Label.prototype.draw = function() {
-    var text;
+    var text, width, x;
     text = "";
     if (this.is_date(this.text)) {
       text = this.parse_date(this.text);
@@ -273,10 +273,13 @@ Label = (function() {
       text = this.text;
     }
     this.element = this.r.text(this.x, this.y, text);
+    width = this.element.getBBox().width;
+    x = this.x < width ? width : this.x;
     return this.element.attr({
       "fill": "#333",
       "font-size": this.size,
-      "font-weight": "bold"
+      "font-weight": "bold",
+      "x": x
     });
   };
   return Label;
@@ -564,50 +567,19 @@ LineChart = (function() {
     }).toBack();
   };
   LineChart.prototype.draw_y_labels = function() {
-    var first_label, first_y, fmt, i, label, label_coordinates, label_step_size, label_y, labels, last_label, last_y, max_labels, padding, point, scaled_labels, scaled_sorted, size, sorted, _len;
-    scaled_sorted = (function() {
-      var _i, _len, _ref, _results;
-      _ref = this.scaled_points;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        point = _ref[_i];
-        _results.push(point);
-      }
-      return _results;
-    }).call(this);
-    scaled_sorted.sort(function(a, b) {
-      return a.y - b.y;
-    });
-    sorted = (function() {
-      var _i, _len, _ref, _results;
-      _ref = this.all_points;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        point = _ref[_i];
-        _results.push(point);
-      }
-      return _results;
-    }).call(this);
-    sorted.sort(function(a, b) {
-      return a.y - b.y;
-    });
+    var fmt, i, label, label_coordinates, labels, max_labels, max_x, max_y, min_x, min_y, padding, scaled_labels, size, step_size, y, _len, _ref;
+    _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     padding = size + 5;
     max_labels = this.options.max_y_labels;
     label_coordinates = [];
     labels = [];
-    first_y = this.height - scaled_sorted[0].y;
-    first_label = sorted[0].y;
-    labels.push(new Point(0, first_label));
-    last_y = this.height - scaled_sorted[scaled_sorted.length - 1].y;
-    last_label = sorted[sorted.length - 1].y;
-    labels.push(new Point(0, last_label));
-    label_step_size = Math.round(last_label / (max_labels - 1));
-    label_y = first_label + label_step_size;
-    while (label_y < last_label) {
-      labels.push(new Point(0, Math.round(label_y / 10) * 10));
-      label_y += label_step_size;
+    step_size = Math.round((max_y - min_y) / (max_labels - 1));
+    y = min_y;
+    while (y <= max_y) {
+      labels.push(new Point(0, Math.round(y / 10) * 10));
+      y += step_size;
     }
     scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
     for (i = 0, _len = scaled_labels.length; i < _len; i++) {

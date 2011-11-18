@@ -58,11 +58,7 @@ class LineChart
     }).toBack()
 
   draw_y_labels: ->
-    scaled_sorted = (point for point in @scaled_points)
-    scaled_sorted.sort (a,b) -> a.y - b.y
-
-    sorted = (point for point in @all_points)
-    sorted.sort (a,b) -> a.y - b.y
+    [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(@all_points)
 
     fmt = @options.label_format
     size = @options.y_label_size
@@ -71,20 +67,12 @@ class LineChart
     label_coordinates = []
     labels = []
 
-    first_y = @height - scaled_sorted[0].y
-    first_label = sorted[0].y
-    labels.push new Point(0, first_label)
+    step_size  = Math.round((max_y - min_y)/(max_labels-1))
+    y = min_y
 
-    last_y  = @height - scaled_sorted[scaled_sorted.length-1].y 
-    last_label  = sorted[sorted.length-1].y
-    labels.push new Point(0, last_label)
-
-    label_step_size  = Math.round(last_label / (max_labels-1))
-    label_y = first_label + label_step_size 
-
-    while label_y < last_label
-      labels.push new Point(0, Math.round(label_y/10) * 10)
-      label_y += label_step_size
+    while y <= max_y 
+      labels.push new Point(0, Math.round(y/10) * 10)
+      y += step_size
 
     scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
 

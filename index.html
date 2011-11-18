@@ -11,7 +11,8 @@
     <script type="text/javascript">
         function switch_divs(hide, show) {
           hide.slideUp(200)
-            show.show()
+          show.show()
+          show.css({ "opacity" : 1 })
         }
 
         $(document).ready(function() {
@@ -42,10 +43,6 @@
     <div id="container">
       <h1> 
         Raphy Charts 
-
-        <small>
-          <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="large blue bordered pill striped button">Download</a> 
-        </small>
       </h1>
     <h3>Easy, beautiful line charts with sane defaults. Works in all major browsers.</h3>
     <hr />
@@ -53,8 +50,8 @@
     <div id="menu" class='inset-button-group dark-gray'>
           <a href='#' data-item="overview" class='active'>Overview</a>
           <a href='#' data-item="examples" >Examples</a>
-          <a href='#' data-item="installation" >Installation</a>
           <a href='#' data-item="documentation" >Documenation</a>
+          <a href='#' data-item="installation" >Download</a>
     </div>
 
 
@@ -100,7 +97,7 @@ c.draw()
           </div>
 
           <div class="three columns">
-              <a href="http://raphaeljs.com" class="small green bordered pill button">Raphael.js</a>
+              <a href="http://raphaeljs.com" class="small green bordered pill button">Download Raphael.js</a>
               <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="small blue bordered pill button">Download Raphy Charts</a>
           </div>
         </div>
@@ -217,7 +214,7 @@ c.draw()
 
 
         <h2>Line Options</h2>
-        <p>The following may be passed to an individual line during the add_line() call</p>
+        <p>These may be passed to an individual line during the add_line() call</p>
            <div class="row">
             <div class="two columns">
                 <h3>Dots</h3>
@@ -283,6 +280,61 @@ c.draw()
             </dl>
         </div>    
 
+
+        
+
+        <h2>Default Options</h2>
+        <div class="row">
+          <div class="two columns">
+            <h3>Dots</h3>
+            <ul>
+              <li>dot_size: 5</li>
+              <li>dot_color: "#00aadd"</li>
+              <li>dot_stroke_color: "#00aadd"</li>
+              <li>dot_stroke_size: 2</li>
+            </ul>
+          </div>
+
+          <div class="two columns">
+            <h3>Lines</h3>
+            <ul>
+              <li>line_width: 3</li>
+              <li>line_color: "#00aadd"</li>
+              <li>smoothing: 0.4</li>
+              <li>fill_area: true</li>
+              <li>area_color: "#00aadd"</li>
+              <li>area_opacity: 0.2</li>
+            </ul>
+          </div>
+
+          <div class="two columns">
+            <h3>Labels</h3>
+            <ul>
+              <li>show_x_labels: true</li>
+              <li>show_y_labels: true</li>
+              <li>label_max : true</li>
+              <li>label_min : true</li>
+              <li>max_x_labels: 10</li>
+              <li>max_y_labels: 3 </li>
+              <li>x_label_size: 14</li>
+              <li>y_label_size: 14</li>
+              <li>label_format: "%m/%d"</li>
+            </ul>
+          </div>
+
+
+          <div class="two columns">
+            <h3>Chart</h3>
+            <ul>
+              <li>show_grid: false</li>
+              <li>x_padding: 45</li>
+              <li>y_padding: 40</li>
+            </ul>
+          </div>
+
+
+        </div>
+
         <h3>Label Formatting</h3>
         </p>
         <ul>
@@ -295,9 +347,10 @@ c.draw()
           <li>%M - minutes (0-59)</li>
         </ul>
         <p>Example: label_format: "%m/%d/%Y" -> "11/05/2011"</p>
+        
     </div>
 
-    <div id="examples" style="display:none;">
+    <div id="examples" style="opacity:0;">
 
     <h2>Smoothed Line Chart</h2>
     <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart2"></div>

@@ -1518,3 +1518,8 @@ dl {
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), to(rgba(0, 0, 0, 0.2)));
     background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
     border-right: 1px solid rgba(255, 255, 255, 0.05); }
+
+ul {
+  margin-left: 0;
+  padding: 0;
+  list-style: none; }

@@ -31,7 +31,7 @@ class LineChartOptions
   }
 
 
-  @merge: (from, to) ->
+  @merge: (from = {}, to = {}) ->
     opts = {}
 
     for option, value of from

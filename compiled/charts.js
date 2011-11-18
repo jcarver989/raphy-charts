@@ -40,6 +40,12 @@ LineChartOptions = (function() {
   };
   LineChartOptions.merge = function(from, to) {
     var option, opts, value;
+    if (from == null) {
+      from = {};
+    }
+    if (to == null) {
+      to = {};
+    }
     opts = {};
     for (option in from) {
       value = from[option];
@@ -580,7 +586,7 @@ LineChart = (function() {
     points_count = this.all_points.length;
     this.line_indices.push([points_count, points_count + points.length - 1]);
     this.all_points.push.apply(this.all_points, points);
-    this.line_options.push(new LineChartOptions(args.options || this.options));
+    this.line_options.push(LineChartOptions.merge(this.options, args.options));
   };
   LineChart.prototype.draw_grid = function(x_coordinates, y_coordinates) {
     var height, paths, val, width, _i, _j, _len, _len2;
@@ -692,7 +698,7 @@ LineChart = (function() {
       begin = line_indices[0], end = line_indices[1];
       points = this.scaled_points.slice(begin, (end + 1) || 9e9);
       raw_points = this.all_points.slice(begin, (end + 1) || 9e9);
-      options = LineChartOptions.merge(this.options, this.line_options[i]);
+      options = this.line_options[i];
       this.draw_line(raw_points, points, options);
       if (i === 0) {
         if (this.options.show_x_labels === true) {

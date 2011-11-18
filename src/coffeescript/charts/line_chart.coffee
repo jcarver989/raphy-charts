@@ -33,7 +33,7 @@ class LineChart
     points_count  = @all_points.length
     @line_indices.push [points_count, points_count + points.length-1]
     @all_points.push.apply(@all_points, points)
-    @line_options.push new LineChartOptions(args.options || @options)
+    @line_options.push LineChartOptions.merge(@options, args.options )
     return
 
   draw_grid: (x_coordinates = [], y_coordinates = []) ->
@@ -154,7 +154,7 @@ class LineChart
       [begin, end] = line_indices
       points     = @scaled_points[begin..end]
       raw_points = @all_points[begin..end]
-      options    = LineChartOptions.merge(@options, @line_options[i])
+      options    = @line_options[i]
       @draw_line(raw_points, points, options)
       
       if i == 0

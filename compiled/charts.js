@@ -289,9 +289,6 @@ Label = (function() {
   };
   Label.prototype.draw = function() {
     var margin, text, width, x;
-    if (isNaN(this.x) || isNaN(this.y)) {
-      return;
-    }
     text = "";
     if (this.is_date(this.text)) {
       text = this.parse_date(this.text);
@@ -609,6 +606,9 @@ LineChart = (function() {
     label_coordinates = [];
     labels = [];
     step_size = Math.round((max_y - min_y) / (max_labels - 1));
+    if (step_size <= 0) {
+      step_size = 1;
+    }
     y = min_y;
     while (y <= max_y) {
       labels.push(new Point(0, y));

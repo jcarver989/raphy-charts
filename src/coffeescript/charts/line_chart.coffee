@@ -72,6 +72,8 @@ class LineChart
     labels = []
 
     step_size  = Math.round((max_y - min_y)/(max_labels-1))
+    step_size  = 1 if step_size <= 0 
+
     y = min_y
 
     while y <= max_y 
@@ -79,6 +81,7 @@ class LineChart
       y += step_size
 
     labels[labels.length-1].y = Math.round(max_y) if max_y > 1
+
 
     scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
 

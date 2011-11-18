@@ -48,7 +48,6 @@ class Label
       when "%p" then @meridian_indicator(@text)
 
   draw: () ->
-    return if isNaN(@x) || isNaN(@y)
     text = "" 
     
     if @is_date(@text) 

@@ -168,4 +168,3 @@ class LineChart
 
 
 exports.LineChart = LineChart
-

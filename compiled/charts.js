@@ -581,6 +581,9 @@ LineChart = (function() {
       labels.push(new Point(0, Math.round(y / 10) * 10));
       y += step_size;
     }
+    if (max_y > 1) {
+      labels[labels.length - 1].y = Math.round(max_y);
+    }
     scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
     for (i = 0, _len = scaled_labels.length; i < _len; i++) {
       label = scaled_labels[i];

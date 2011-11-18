@@ -71,8 +71,10 @@ class LineChart
     y = min_y
 
     while y <= max_y 
-      labels.push new Point(0, Math.round(y/10) * 10)
+      labels.push new Point(0, Math.round(y/10)*10)
       y += step_size
+
+    labels[labels.length-1].y = Math.round(max_y) if max_y > 1
 
     scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
 

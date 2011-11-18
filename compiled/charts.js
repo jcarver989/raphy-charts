@@ -289,6 +289,9 @@ Label = (function() {
   };
   Label.prototype.draw = function() {
     var margin, text, width, x;
+    if (isNaN(this.x) || isNaN(this.y)) {
+      return;
+    }
     text = "";
     if (this.is_date(this.text)) {
       text = this.parse_date(this.text);

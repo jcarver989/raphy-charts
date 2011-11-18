@@ -60,7 +60,7 @@
     return _results;
   };
   window.onload = function() {
-    var c, charts, colors, data, data_pair, i, result, x, y, yvals, _i, _len, _len2, _ref, _ref2;
+    var c, charts, colors, conversions_chart, data, data_pair, i, result, signups_chart, sparkline_options, visitors_chart, x, y, yvals, _i, _len, _len2, _ref, _ref2;
     charts = Charts;
     c = new Charts.LineChart('chart1', {
       show_grid: true
@@ -107,6 +107,44 @@
       data: create_random_points2()
     });
     c.draw();
+    sparkline_options = {
+      show_x_labels: false,
+      show_y_labels: false,
+      show_grid: false,
+      smoothing: 0,
+      label_min: false,
+      label_max: false,
+      dot_size: 0,
+      x_padding: 10,
+      y_padding: 5,
+      line_color: "#00bbee",
+      area_color: "#00bbee"
+    };
+    visitors_chart = new Charts.LineChart('sparkline-visitors', sparkline_options);
+    visitors_chart.add_line({
+      data: create_random_points2()
+    });
+    visitors_chart.draw();
+    signups_chart = new Charts.LineChart('sparkline-signups', sparkline_options);
+    signups_chart.add_line({
+      data: create_random_points2(),
+      options: {
+        line_color: "#0066cc",
+        area_color: "#0066cc",
+        dot_color: "#0066cc"
+      }
+    });
+    signups_chart.draw();
+    conversions_chart = new Charts.LineChart('sparkline-conversions', sparkline_options);
+    conversions_chart.add_line({
+      data: create_random_points2(),
+      options: {
+        line_color: "#002299",
+        area_color: "#002299",
+        dot_color: "#002299"
+      }
+    });
+    conversions_chart.draw();
     data = {
       "result": [
         {

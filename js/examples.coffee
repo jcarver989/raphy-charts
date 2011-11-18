@@ -81,6 +81,52 @@ window.onload = () ->
   }
   c.draw()
 
+  sparkline_options  = {
+    show_x_labels: false
+    show_y_labels: false
+    show_grid: false
+    smoothing: 0
+    label_min: false
+    label_max: false
+    dot_size: 0 
+    x_padding: 10
+    y_padding: 5
+    line_color: "#00bbee"
+    area_color: "#00bbee"
+  }
+  
+  visitors_chart = new Charts.LineChart('sparkline-visitors', sparkline_options)
+  visitors_chart.add_line {
+    data: create_random_points2()
+  }
+  visitors_chart.draw()
+
+  signups_chart = new Charts.LineChart('sparkline-signups', sparkline_options)
+
+  signups_chart.add_line {
+    data: create_random_points2()
+    options: {
+      line_color: "#0066cc"
+      area_color: "#0066cc"
+      dot_color: "#0066cc"
+    }
+  }
+  signups_chart.draw()
+
+  conversions_chart = new Charts.LineChart('sparkline-conversions', sparkline_options)
+
+  conversions_chart.add_line {
+    data: create_random_points2()
+    options: {
+      line_color: "#002299"
+      area_color: "#002299"
+      dot_color: "#002299"
+    }
+  }
+
+  conversions_chart.draw()
+  
+
 
 
   data = {"result":[{

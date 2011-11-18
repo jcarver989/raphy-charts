@@ -1462,6 +1462,8 @@ dl {
     -moz-border-radius: 4px 4px 4px 4px;
     -webkit-border-radius: 4px 4px 4px 4px;
     border-radius: 4px 4px 4px 4px; }
+    dl dd.bordered {
+      background-color: #b43428; }
     dl dd.string {
       color: #26004c;
       background: #cfb1ed; }
@@ -1472,5 +1474,47 @@ dl {
       background: #e1edb1;
       color: #3d4c00; }
     dl dd.boolean {
-      background: #edb1b1;
+      background-color: #edb1b1;
       color: #4c0000; }
+
+.inset-button-group.dark-gray:after {
+  content: ".";
+  visibility: hidden;
+  display: block;
+  clear: both; }
+.inset-button-group.dark-gray a {
+  display: block;
+  float: left;
+  font-size: 20px;
+  padding: 6.667px 20px;
+  color: white;
+  text-decoration: none;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-left: 1px solid rgba(0, 0, 0, 0.2);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
+  background-color: #333333;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.1)), to(rgba(0, 0, 0, 0.3)));
+  background-image: -moz-linear-gradient(top, rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3));
+  -moz-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; }
+  .inset-button-group.dark-gray a:hover {
+    background-color: #4d4d4d; }
+  .inset-button-group.dark-gray a:first-child {
+    border-left: none;
+    -moz-border-radius: 6px 0 0 6px;
+    -webkit-border-radius: 6px 0 0 6px;
+    border-radius: 6px 0 0 6px; }
+  .inset-button-group.dark-gray a:last-child {
+    border-right: none;
+    -moz-border-radius: 0 6px 6px 0px;
+    -webkit-border-radius: 0 6px 6px 0px;
+    border-radius: 0 6px 6px 0px; }
+  .inset-button-group.dark-gray a.active, .inset-button-group.dark-gray a:active {
+    background-color: #333333;
+    -moz-box-shadow: inset 0 3px 4px rgba(0, 0, 0, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.3), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+    -webkit-box-shadow: inset 0 3px 4px rgba(0, 0, 0, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.3), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+    box-shadow: inset 0 3px 4px rgba(0, 0, 0, 0.4), inset 0 -1px 0 rgba(255, 255, 255, 0.3), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.3)), to(rgba(0, 0, 0, 0.2)));
+    background-image: -moz-linear-gradient(top, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.2));
+    border-right: 1px solid rgba(255, 255, 255, 0.05); }

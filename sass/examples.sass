@@ -55,6 +55,9 @@ dl
         font-weight: bold
         +border-radius(4px)
 
+        &.bordered
+            background-color: $orange
+
         &.string
             color: #26004C
             background: #CFB1ED
@@ -67,6 +70,8 @@ dl
             background: #E1EDB1 
             color: #3D4C00
         &.boolean
-            background: #EDB1B1
+            background-color: #EDB1B1
             color: #4C0000
 
+.inset-button-group.dark-gray
+    +inset-button-group(6px, $dark-gray, 20px)

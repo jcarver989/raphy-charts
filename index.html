@@ -47,7 +47,7 @@
           <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="large blue bordered pill striped button">Download</a> 
         </small>
       </h1>
-    <h3>Easy, beautiful line charts with sane defaults</h3>
+    <h3>Easy, beautiful line charts with sane defaults. Works in all major browsers.</h3>
     <hr />
 
     <div id="menu" class='inset-button-group dark-gray'>
@@ -59,29 +59,31 @@
 
 
     <div id="overview">
+        <h2>Example Chart</h2>
         <div style="width:1000px; height: 300px;" id="chart1"></div>
         <h2>Usage</h2>
         <pre>
         <code>
-/* 
- * DOM is assumed to be ready 
- * 'chart1' is the id of an existing DOM element
- *  with a defined width/height. Eg. div id="chart1" style="width:100px; height:100px;"
-*/
 c = new Charts.LineChart('chart1', {
-  show_grid: true
+  show_grid: true;
+});
+
+c.add_line ({ 
+  // 2d array of x,y values ex:  [[1,1], [2,3], [3,20]]
+  // OR x values may be dates: [[new Date(),100]...]
+  data: create_squared_points() 
 })
 
 c.add_line {
-  data: create_exponential_points() // 2d array of x,y values ex:  [[1,1], [2,3], [3,20]]
-                                   // OR x values may be dates: [[new Date(),100]...]
+  data: create_exponential_points() 
+                                   
   options: {
-    line_color : "#cc1100",
-    area_color : "#cc1100",
-    dot_color  :  "#cc1100"
+    line_color : "#55bb00"
+    area_color : "#55bb00"
+    dot_color  :  "#55bb00"
   }
 }
-c.add_line { data: create_squared_points() }
+
 c.draw()
         </code>
         </pre>
@@ -91,16 +93,26 @@ c.draw()
 
         <div id="installation" style="display:none;">
         <h2>Installation</h2>
-        <ol>
-          <li>Load <a href="http://raphaeljs.com">Raphael.js</a> on your page</li>
-          <li><a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js">Download Raphy Charts</a> and place it on your page</li>
-        </ol>
+        <div class="row">
+          <div class="three columns">
+            <p>1. Get Raphael.js</p>
+            <p>2. Put Raphy Charts on your page</p>
+          </div>
+
+          <div class="three columns">
+              <a href="http://raphaeljs.com" class="small green bordered pill button">Raphael.js</a>
+              <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="small blue bordered pill button">Download Raphy Charts</a>
+          </div>
+        </div>
     </div>
 
 
 
 
     <div id="documentation" style="display:none;">
+        <h2>Browser Support</h2>
+        <img src="images/browsers-64.png" />
+
         <h2>Chart Options</h2>
         <p class="five">
         Options can be specified at the chart level or on a line-by-line basis. Chart options are the default for all lines unless otherwise specified. 
@@ -325,7 +337,6 @@ c = new Charts.LineChart('chart4', {
   label_max  : false,
   fill_area  : false,
   smoothing  : 0,
-  show_grid  : true,
 })
 
 c.add_line { 
@@ -334,6 +345,58 @@ c.add_line {
 c.draw()
     </code>
     </pre>
+
+    <h2>Lots of Data</h2>
+    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="lotsofdata"></div>
+
+    <pre>
+    <code>
+var colors = [
+  "#00aadd",
+  "#ffee33",
+  "#ff3366",
+  "#00cc33"
+]
+
+c = new Charts.LineChart('lotsofdata', {
+  show_grid: true,
+  label_format: "%I:%M %p",
+  x_label_size: 11,
+  show_y_labels: true,
+  y_label_size: 11,
+  smoothing: 1,
+  max_x_labels: 5,
+  max_y_labels: 10,
+  x_padding: 50,
+})
+
+
+for (var i = 0, len = data.length; i < len; i++) {
+  var yvals = [];
+  for (var j = 0, len2 = data[i].length; j++) {
+    var datapair = data[i][j];
+    yvals.push([new Date(datapair[0]), datapair[1]);
+  }
+
+  c.add_line({
+    data: yvals,
+    options: {
+      line_color: colors[ i % colors.length],
+      dot_color:  colors[ i % colors.length],
+      area_color:  colors[ i % colors.length],
+      area_opacity: 0.3,
+      dot_size: 0,
+      label_min: false,
+      label_max: false
+    }
+  })
+}
+
+
+c.draw()
+    </code>
+    </pre>
+
 
   </div>
 

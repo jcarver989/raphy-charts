@@ -8,8 +8,6 @@
 # @import grid.coffee
 
 class LineChart
-  
-  
   constructor: (dom_id, options = {}) ->
     container = document.getElementById(dom_id)
     [@width, @height] = @get_dimensions(container)
@@ -156,7 +154,7 @@ class LineChart
       [begin, end] = line_indices
       points     = @scaled_points[begin..end]
       raw_points = @all_points[begin..end]
-      options    = @line_options[i]
+      options    = LineChartOptions.merge(@options, @line_options[i])
       @draw_line(raw_points, points, options)
       
       if i == 0
@@ -170,3 +168,4 @@ class LineChart
 
 
 exports.LineChart = LineChart
+

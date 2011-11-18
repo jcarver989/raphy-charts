@@ -2,11 +2,9 @@
 # @import tooltip.coffee
 # @import dot.coffee
 # @import bezier.coffee
-# @import line_chart_options.coffee
 
 class Line
-  constructor: (@r, @raw_points, @scaled_points, @height, @width, options = {}) ->
-    @options = new LineChartOptions(options)
+  constructor: (@r, @raw_points, @scaled_points, @height, @width, @options = {}) ->
 
   draw: ->
     @draw_area() if @options.fill_area

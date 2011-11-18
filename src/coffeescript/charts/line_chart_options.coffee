@@ -30,6 +30,19 @@ class LineChartOptions
 
   }
 
+
+  @merge: (from, to) ->
+    opts = {}
+
+    for option, value of from
+      opts[option] = value
+
+    for option, value of to when options.hasOwnProperty(option)
+      opts[option] = value
+
+    return opts
+
+
   constructor: (options) ->
     opts = {}
 

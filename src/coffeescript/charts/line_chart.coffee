@@ -67,8 +67,12 @@ class LineChart
     label_coordinates = []
     labels = []
 
-    step_size  = Math.round((max_y - min_y)/(max_labels-1))
-    step_size  = 1 if step_size <= 0 
+    step_size  = (max_y - min_y)/(max_labels-1)
+
+    # round to nearest int
+    if max_y > 1
+      step_size  = Math.round(step_size)
+      step_size = 1 if step_size == 0
 
     y = min_y
 

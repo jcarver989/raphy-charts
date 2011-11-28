@@ -397,14 +397,17 @@ c.draw()
 
     <div id="examples" style="opacity:0;">
 
-    <h2>Smoothed Line Chart</h2>
+    <h2>Smoothed Line Chart with Gradient</h2>
     <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart2"></div>
     <pre>
     <code>
 c = new Charts.LineChart('chart2', {
   line_color : "#118800",
   dot_color  : "#118800",
-  area_color : "#118800",
+  // gradients: angle-color[-color[:offset]]*-color
+  // eg: 90-#fff-#118800
+  // 0-#fff-#118800:20-rgb(255,180, 180)
+  area_color : "90-#fff-#118800",
   dot_stroke_color: "#aaa",
   dot_stroke_size: 3, 
   label_min  : false,

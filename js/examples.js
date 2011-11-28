@@ -80,7 +80,7 @@
     c = new Charts.LineChart('chart2', {
       line_color: "#118800",
       dot_color: "#118800",
-      area_color: "#118800",
+      area_color: "90-#fff-#118800",
       dot_stroke_color: "#aaa",
       dot_stroke_size: 3,
       label_min: false,
@@ -115,6 +115,7 @@
       label_min: false,
       label_max: false,
       dot_size: 0,
+      dot_stroke_size: 0,
       x_padding: 10,
       y_padding: 5,
       line_color: "#00bbee",

@@ -612,18 +612,25 @@ LineChart = (function() {
       "stroke-width": 1
     }).toBack();
   };
-  LineChart.prototype.draw_y_labels = function() {
-    var fmt, i, label, label_coordinates, labels, max_labels, max_x, max_y, min_x, min_y, padding, scaled_labels, size, step_size, y, _len, _ref;
-    _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
-    if (max_y === min_y) {
-      return [this.options.y_padding, this.height - this.options.y_padding];
-    }
+  LineChart.prototype._draw_y_labels = function(labels) {
+    var fmt, i, label, label_coordinates, padding, scaled_labels, size, _len;
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     padding = size + 5;
-    max_labels = this.options.max_y_labels;
+    scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
     label_coordinates = [];
-    labels = [];
+    for (i = 0, _len = scaled_labels.length; i < _len; i++) {
+      label = scaled_labels[i];
+      new Label(this.r, padding, label.y, labels[i].y, fmt, size).draw();
+      label_coordinates.push(label.y);
+    }
+    return label_coordinates;
+  };
+  LineChart.prototype.calc_y_label_step_size = function(min_y, max_y, max_labels) {
+    var step_size;
+    if (max_labels == null) {
+      max_labels = this.options.max_y_labels;
+    }
     step_size = (max_y - min_y) / (max_labels - 1);
     if (max_y > 1) {
       step_size = Math.round(step_size);
@@ -631,7 +638,17 @@ LineChart = (function() {
         step_size = 1;
       }
     }
+    return step_size;
+  };
+  LineChart.prototype.draw_y_labels = function() {
+    var labels, max_x, max_y, min_x, min_y, step_size, y, _ref;
+    _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (max_y === min_y) {
+      return this._draw_y_labels([new Point(0, max_y)]);
+    }
     y = min_y;
+    labels = [];
+    step_size = this.calc_y_label_step_size(min_y, max_y);
     while (y <= max_y) {
       labels.push(new Point(0, y));
       y += step_size;
@@ -639,13 +656,7 @@ LineChart = (function() {
     if (max_y > 1) {
       labels[labels.length - 1].y = Math.round(max_y);
     }
-    scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
-    for (i = 0, _len = scaled_labels.length; i < _len; i++) {
-      label = scaled_labels[i];
-      new Label(this.r, padding, label.y, labels[i].y, fmt, size).draw();
-      label_coordinates.push(label.y);
-    }
-    return label_coordinates;
+    return this._draw_y_labels(labels);
   };
   LineChart.prototype.draw_x_label = function(raw_point, point) {
     var fmt, label, size;

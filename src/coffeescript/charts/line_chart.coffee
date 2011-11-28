@@ -53,20 +53,20 @@ class LineChart
       "stroke-width": 1
     }).toBack()
 
-  draw_y_labels: ->
-    [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(@all_points)
-
-    # prevent NAN errors
-    if max_y == min_y
-      return [@options.y_padding, @height-@options.y_padding]
-
+  _draw_y_labels: (labels) ->
     fmt = @options.label_format
     size = @options.y_label_size
     padding = size + 5 
-    max_labels = @options.max_y_labels
-    label_coordinates = []
-    labels = []
+    scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
 
+    label_coordinates = []
+    for label, i in scaled_labels
+      new Label(@r, padding, label.y, labels[i].y, fmt, size).draw()
+      label_coordinates.push label.y
+
+    label_coordinates
+
+  calc_y_label_step_size: (min_y, max_y, max_labels = @options.max_y_labels) ->
     step_size  = (max_y - min_y)/(max_labels-1)
 
     # round to nearest int
@@ -74,7 +74,18 @@ class LineChart
       step_size  = Math.round(step_size)
       step_size = 1 if step_size == 0
 
+    step_size
+    
+
+  draw_y_labels: ->
+    [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(@all_points)
+
+    # draw 1 label if all values are the same
+    return @_draw_y_labels([new Point(0, max_y)]) if max_y == min_y
+       
     y = min_y
+    step_size = @calc_y_label_step_size(min_y, max_y)
+    labels = []
 
     while y <= max_y 
       labels.push new Point(0, y)
@@ -82,14 +93,9 @@ class LineChart
 
     labels[labels.length-1].y = Math.round(max_y) if max_y > 1
 
+    return @_draw_y_labels(labels)
 
-    scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
-
-    for label, i in scaled_labels
-      new Label(@r, padding, label.y, labels[i].y, fmt, size).draw()
-      label_coordinates.push label.y
-
-    label_coordinates
+    
 
 
   draw_x_label: (raw_point, point) ->

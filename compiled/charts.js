@@ -624,10 +624,7 @@ LineChart = (function() {
     max_labels = this.options.max_y_labels;
     label_coordinates = [];
     labels = [];
-    step_size = (max_y - min_y) / (max_labels - 1);
-    if (step_size >= 1) {
-      step_size = Math.round(step_size);
-    }
+    step_size = Math.round((max_y - min_y) / (max_labels - 1));
     if (step_size <= 0) {
       step_size = 1;
     }

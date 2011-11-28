@@ -34,7 +34,7 @@
     var d = new Date()
     for (i = 0; i <= 25; i++) {
       var date = new Date(d.getFullYear(), d.getMonth(), i+1)
-      _results.push([date, Math.random() * i]);
+      _results.push([date, Math.random()]);
     }
     return _results;
   };

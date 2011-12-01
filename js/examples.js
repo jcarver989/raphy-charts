@@ -91,6 +91,26 @@
       data: create_random_points2()
     });
     c.draw();
+    c = new Charts.LineChart('areanoline', {
+      line_width: 0,
+      label_min: true,
+      label_max: true,
+      show_grid: true
+    });
+    c.add_line({
+      data: create_random_points2()
+    });
+    c.draw();
+    c = new Charts.LineChart('barchart', {
+      line_color: "90-#0a5200-#118800",
+      label_min: false,
+      show_grid: true,
+      render: "bar"
+    });
+    c.add_line({
+      data: create_random_points2()
+    });
+    c.draw();
     c = new Charts.LineChart('chart4', {
       line_color: "#9900cc",
       dot_color: "#000",

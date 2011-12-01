@@ -429,6 +429,48 @@ c.draw()
     </code>
     </pre>
 
+
+    <h2>Area Chart Without Line  </h2>
+    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="areanoline"></div>
+    <pre>
+    <code>
+c = new Charts.LineChart('chart2', {
+  line_width : 0
+  label_min  : true,
+  label_max  : true,
+  show_grid  : true
+})
+
+c.add_line({
+  data: create_random_points2()
+})
+
+c.draw()
+    </code>
+    </pre>
+
+    <h2>Bar Chart with Gradient</h2>
+    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="barchart"></div>
+    <pre>
+    <code>
+c = new Charts.LineChart('chart2', {
+  // gradients: angle-color[-color[:offset]]*-color
+  // eg: 90-#fff-#118800
+  // 0-#fff-#118800:20-rgb(255,180, 180)
+  line_color : "90-#0a5200-#118800",
+  label_min  : false,
+  show_grid  : true,
+  render: "bar"
+})
+
+c.add_line({
+  data: create_random_points2()
+})
+
+c.draw()
+    </code>
+    </pre>
+
     <h2>Line Chart, No Smoothing</h2>
     <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart4"></div>
 

@@ -28,6 +28,9 @@ class LineChartOptions
     x_padding: 45
     y_padding: 40
 
+    render: "line" # or "bar"
+    bar_width: 20
+
   }
 
 

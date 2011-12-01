@@ -73,7 +73,8 @@
     charts = Charts;
     c = new Charts.LineChart('chart1', {
         show_y_labels: true,
-        show_grid: true
+        show_grid: true,
+        render: "bar"
     });
     c.add_line({
       data: create_exponential_points(),
@@ -84,13 +85,18 @@
       }
     });
     c.add_line({
-      data: create_squared_points()
+      data: create_squared_points(),
+      options: {
+        area_color: "90-#00aadd-#fff"
+      }
     });
     c.draw();
     c = new Charts.LineChart('chart2', {
       line_color: "#118800",
       dot_color: "#118800",
-      area_color: "#118800",
+      // gradients <angle>-<color1>-<color2>
+      // ‹angle›-‹colour›[-‹colour›[:‹offset›]]*-‹colour›
+      area_color: "90-#fff-#118800",
       dot_stroke_color: "#aaa",
       dot_stroke_size: 3,
       label_min: false,

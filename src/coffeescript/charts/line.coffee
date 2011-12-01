@@ -1,4 +1,4 @@
-# scaling.coffee
+# @import scaling.coffee
 # @import tooltip.coffee
 # @import dot.coffee
 # @import bezier.coffee

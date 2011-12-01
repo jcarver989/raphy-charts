@@ -5,7 +5,9 @@
 # @import dot.coffee
 # @import line_chart_options.coffee
 # @import line.coffee
+# @import line_bar.coffee
 # @import grid.coffee
+
 
 class LineChart
   constructor: (dom_id, options = {}) ->
@@ -145,14 +147,24 @@ class LineChart
     label_coordinates
 
   draw_line: (raw_points, points, options) ->
-    new Line(
-      @r,
-      raw_points,
-      points,
-      @height,
-      @width,
-      options
-    ).draw()
+    if @options.render == "bar"
+      new LineBar(
+        @r,
+        raw_points,
+        points,
+        @height,
+        @width,
+        options
+      ).draw()
+    else
+      new Line(
+        @r,
+        raw_points,
+        points,
+        @height,
+        @width,
+        options
+      ).draw()
 
   draw: () ->
     return if @all_points.length < 1

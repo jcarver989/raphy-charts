@@ -36,7 +36,9 @@ LineChartOptions = (function() {
     label_format: "%m/%d",
     show_grid: false,
     x_padding: 45,
-    y_padding: 40
+    y_padding: 40,
+    render: "line",
+    bar_width: 20
   };
   LineChartOptions.merge = function(from, to) {
     var option, opts, value;
@@ -76,63 +78,7 @@ LineChartOptions = (function() {
     return opts;
   }
   return LineChartOptions;
-})();var Scaling;
-Scaling = (function() {
-  function Scaling() {}
-  Scaling.get_ranges_for_points = function(points) {
-    var max_x, max_y, min_x, min_y, point, xs, ys, _i, _len;
-    xs = [];
-    ys = [];
-    for (_i = 0, _len = points.length; _i < _len; _i++) {
-      point = points[_i];
-      xs.push(point.x);
-      ys.push(point.y);
-    }
-    max_x = Math.max.apply(Math.max, xs);
-    max_y = Math.max.apply(Math.max, ys);
-    min_x = Math.min.apply(Math.min, xs);
-    min_y = Math.min.apply(Math.min, ys);
-    return [max_x, min_x, max_y, min_y];
-  };
-  /*
-    Helper for mapping numbers into a new range:
-    existing range: A to B
-    target range: C to D
-    R1 = B - A
-    R2 = D - C
-    new number = (B*C - A*D)/R1 + old_number *(R2/R1) 
-    returns [(B*C - A*D) / R1, R2/R1)]
-    */
-  Scaling.calc_scaling_factors = function(old_max, old_min, new_max, new_min) {
-    var new_range, old_range, scaling_factor;
-    old_range = old_max - old_min;
-    new_range = new_max - new_min;
-    scaling_factor = old_max * new_min - new_max * old_min;
-    return [scaling_factor / old_range, new_range / old_range];
-  };
-  Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
-    var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
-    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
-    if (min_y === max_y) {
-      max_y += 1;
-    }
-    if (min_x === max_x) {
-      max_x += 1;
-    }
-    _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
-    _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
-    scaled_points = [];
-    for (_i = 0, _len = points.length; _i < _len; _i++) {
-      point = points[_i];
-      sx = x_scaling + point.x * x_range_ratio;
-      sy = y_max - (y_scaling + point.y * y_range_ratio);
-      scaled_points.push(new Point(sx, sy));
-    }
-    return scaled_points;
-  };
-  return Scaling;
-})();
-exports.Scaling = Scaling;var Point;
+})();var Point;
 Point = (function() {
   function Point(x, y) {
     this.y = y;
@@ -226,7 +172,110 @@ Tooltip = (function() {
   };
   return Tooltip;
 })();
-exports.Tooltip = Tooltip;var Label;
+exports.Tooltip = Tooltip;var Scaling;
+Scaling = (function() {
+  function Scaling() {}
+  Scaling.get_ranges_for_points = function(points) {
+    var max_x, max_y, min_x, min_y, point, xs, ys, _i, _len;
+    xs = [];
+    ys = [];
+    for (_i = 0, _len = points.length; _i < _len; _i++) {
+      point = points[_i];
+      xs.push(point.x);
+      ys.push(point.y);
+    }
+    max_x = Math.max.apply(Math.max, xs);
+    max_y = Math.max.apply(Math.max, ys);
+    min_x = Math.min.apply(Math.min, xs);
+    min_y = Math.min.apply(Math.min, ys);
+    return [max_x, min_x, max_y, min_y];
+  };
+  /*
+    Helper for mapping numbers into a new range:
+    existing range: A to B
+    target range: C to D
+    R1 = B - A
+    R2 = D - C
+    new number = (B*C - A*D)/R1 + old_number *(R2/R1) 
+    returns [(B*C - A*D) / R1, R2/R1)]
+    */
+  Scaling.calc_scaling_factors = function(old_max, old_min, new_max, new_min) {
+    var new_range, old_range, scaling_factor;
+    old_range = old_max - old_min;
+    new_range = new_max - new_min;
+    scaling_factor = old_max * new_min - new_max * old_min;
+    return [scaling_factor / old_range, new_range / old_range];
+  };
+  Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
+    var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
+    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (min_y === max_y) {
+      max_y += 1;
+    }
+    if (min_x === max_x) {
+      max_x += 1;
+    }
+    _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
+    _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
+    scaled_points = [];
+    for (_i = 0, _len = points.length; _i < _len; _i++) {
+      point = points[_i];
+      sx = x_scaling + point.x * x_range_ratio;
+      sy = y_max - (y_scaling + point.y * y_range_ratio);
+      scaled_points.push(new Point(sx, sy));
+    }
+    return scaled_points;
+  };
+  return Scaling;
+})();
+exports.Scaling = Scaling;var LineBar;
+LineBar = (function() {
+  function LineBar(r, raw_points, scaled_points, height, width, options) {
+    this.r = r;
+    this.raw_points = raw_points;
+    this.scaled_points = scaled_points;
+    this.height = height;
+    this.width = width;
+    this.options = options != null ? options : {};
+    this.effective_height = this.height - this.options.y_padding;
+    this.x_offset = this.options.bar_width / 2;
+  }
+  LineBar.prototype.draw = function() {
+    return this.draw_bars();
+  };
+  LineBar.prototype.draw_bars = function() {
+    var i, max_point, min_point, point, rect, set, tooltips, x, _len, _ref;
+    set = this.r.set();
+    tooltips = [];
+    max_point = 0;
+    min_point = 0;
+    _ref = this.scaled_points;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      point = _ref[i];
+      x = point.x - this.x_offset;
+      rect = this.r.rect(x, point.y, this.options.bar_width, this.effective_height - point.y);
+      set.push(rect);
+      tooltips.push(new Tooltip(this.r, rect, this.raw_points[i].y));
+      if (this.raw_points[i].y >= this.raw_points[max_point].y) {
+        max_point = i;
+      }
+      if (this.raw_points[i].y < this.raw_points[min_point].y) {
+        min_point = i;
+      }
+    }
+    set.attr({
+      "fill": this.options.line_color,
+      "stroke": "none"
+    });
+    if (this.options.label_max) {
+      tooltips[max_point].show();
+    }
+    if (this.options.label_min) {
+      return tooltips[min_point].show();
+    }
+  };
+  return LineBar;
+})();var Label;
 Label = (function() {
   function Label(r, x, y, text, format, size) {
     this.r = r;
@@ -647,8 +696,8 @@ LineChart = (function() {
       return this._draw_y_labels([new Point(0, max_y)]);
     }
     y = min_y;
-    labels = [];
     step_size = this.calc_y_label_step_size(min_y, max_y);
+    labels = [];
     while (y <= max_y) {
       labels.push(new Point(0, y));
       y += step_size;
@@ -697,7 +746,11 @@ LineChart = (function() {
     return label_coordinates;
   };
   LineChart.prototype.draw_line = function(raw_points, points, options) {
-    return new Line(this.r, raw_points, points, this.height, this.width, options).draw();
+    if (this.options.render === "bar") {
+      return new LineBar(this.r, raw_points, points, this.height, this.width, options).draw();
+    } else {
+      return new Line(this.r, raw_points, points, this.height, this.width, options).draw();
+    }
   };
   LineChart.prototype.draw = function() {
     var begin, end, i, line_indices, options, points, raw_points, _len, _ref;

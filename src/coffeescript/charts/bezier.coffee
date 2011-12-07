@@ -1,51 +1,60 @@
+# @import point.coffee
+
 class Bezier
-  @create_path: (points, smoothing = 0.7) -> 
-    path = ""
+  @create_path: (points, smoothing = 0.5) -> 
+    path = "M#{points[0].x}, #{points[0].y}"
 
     for point, i in points
-      if i == 0
-        path += "M#{point.x},#{point.y}"
-      else
-        [b1, b2] = Bezier.get_control_points(points, i-1, smoothing)
-        path += "M#{points[i-1].x},#{points[i-1].y} C#{b1.x},#{b1.y} #{b2.x},#{b2.y} #{points[i].x},#{points[i].y}"
+      continue if i == 0
+      [b1, b2] = Bezier.get_control_points(points, i-1, smoothing)
+      path += "C#{b1.x},#{b1.y} #{b2.x},#{b2.y} #{points[i].x},#{points[i].y}"
 
     path
 
-  @get_control_points: (points, i, smoothing) ->
-    d1 = Bezier.get_control_point(points, i, smoothing)
-    d2 = Bezier.get_control_point(points, i+1, smoothing)
+  # hermite interpolation with bezier curve
+  # smoothing: 0 to 1 (0 not smooth, 1 ultra smooth)
+  # t (0 to 1) controls where point is interpolated  
+  @get_control_points: (points, i, smoothing, t = 1/3) ->
+    [p0, p2] =  @get_prev_and_next_points(points, i)   # i-1 & i+1
+    [p1, p3] =  @get_prev_and_next_points(points, i+1) # i & i+2
 
-    b1 = new Point(
-      points[i].x + d1.x / 3,
-      points[i].y + d1.y / 3
-    )
+    tan_p0_p2 = @get_tangent(p0, p2)
+    tan_p1_p3 = @get_tangent(p1, p3)
 
-    b2 = new Point(
-      points[i+1].x - d2.x / 3,
-      points[i+1].y - d2.y / 3
-    )
+    b1_x = p1.x + (tan_p0_p2.x * smoothing * t)
+    b1_y = p1.y + (tan_p0_p2.y * smoothing * t)
 
-    [b1, b2]
+    b2_x = p2.x - (tan_p1_p3.x * smoothing * t)
+    b2_y = p2.y - (tan_p1_p3.y * smoothing * t)
 
-  @get_control_point: (points, i, smoothing_factor) ->
-    throw "Error" if points.length < 2
+    b1 = new Point(b1_x, b1_y)
+    b2 = new Point(b2_x, b2_y)
 
-    i1 = i + 1
-    i2 = i - 1
+    return [b1, b2] 
+ 
+  @get_prev_and_next_points = (points, i) ->
+    prev = undefined
+    next = undefined
 
+    # first point
     if i == 0
-      i1 = 1
-      i2 = 0
-
+      prev = points[0]
+      next = points[1]
+    # last point
     else if i == (points.length-1)
-      i1 = i
-      i2 = i-1
+      prev = points[i-1]
+      next = points[i]
+    else
+      prev = points[i-1]
+      next = points[i+1]
 
-    new Point(
-      (points[i1].x - points[i2].x) * smoothing_factor,
-      (points[i1].y - points[i2].y) * smoothing_factor 
-    )
+    return [prev, next]
 
+  @get_tangent = (p0, p1) ->
+    tan_x = p1.x - p0.x
+    tan_y = p1.y - p0.y
+    new Point(tan_x, tan_y)
 
 
 exports.Bezier = Bezier
+

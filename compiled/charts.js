@@ -78,24 +78,7 @@ LineChartOptions = (function() {
     return opts;
   }
   return LineChartOptions;
-})();var Point;
-Point = (function() {
-  function Point(x, y) {
-    this.y = y;
-    if (this.is_date(x)) {
-      this.x = x.getTime();
-      this.is_date_type = true;
-    } else {
-      this.x = x;
-    }
-    return;
-  }
-  Point.prototype.is_date = function(potential_date) {
-    return Object.prototype.toString.call(potential_date) === '[object Date]';
-  };
-  return Point;
-})();
-exports.Point = Point;var Tooltip;
+})();var Tooltip;
 var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 Raphael.fn.triangle = function(cx, cy, r) {
   r *= 1.75;
@@ -465,49 +448,80 @@ Dot = (function() {
     }, this));
   };
   return Dot;
-})();var Bezier;
+})();var Point;
+Point = (function() {
+  function Point(x, y) {
+    this.y = y;
+    if (this.is_date(x)) {
+      this.x = x.getTime();
+      this.is_date_type = true;
+    } else {
+      this.x = x;
+    }
+    return;
+  }
+  Point.prototype.is_date = function(potential_date) {
+    return Object.prototype.toString.call(potential_date) === '[object Date]';
+  };
+  return Point;
+})();
+exports.Point = Point;var Bezier;
 Bezier = (function() {
   function Bezier() {}
   Bezier.create_path = function(points, smoothing) {
     var b1, b2, i, path, point, _len, _ref;
     if (smoothing == null) {
-      smoothing = 0.7;
+      smoothing = 0.5;
     }
-    path = "";
+    path = "M" + points[0].x + ", " + points[0].y;
     for (i = 0, _len = points.length; i < _len; i++) {
       point = points[i];
       if (i === 0) {
-        path += "M" + point.x + "," + point.y;
-      } else {
-        _ref = Bezier.get_control_points(points, i - 1, smoothing), b1 = _ref[0], b2 = _ref[1];
-        path += "M" + points[i - 1].x + "," + points[i - 1].y + " C" + b1.x + "," + b1.y + " " + b2.x + "," + b2.y + " " + points[i].x + "," + points[i].y;
+        continue;
       }
+      _ref = Bezier.get_control_points(points, i - 1, smoothing), b1 = _ref[0], b2 = _ref[1];
+      path += "C" + b1.x + "," + b1.y + " " + b2.x + "," + b2.y + " " + points[i].x + "," + points[i].y;
     }
     return path;
   };
-  Bezier.get_control_points = function(points, i, smoothing) {
-    var b1, b2, d1, d2;
-    d1 = Bezier.get_control_point(points, i, smoothing);
-    d2 = Bezier.get_control_point(points, i + 1, smoothing);
-    b1 = new Point(points[i].x + d1.x / 3, points[i].y + d1.y / 3);
-    b2 = new Point(points[i + 1].x - d2.x / 3, points[i + 1].y - d2.y / 3);
+  Bezier.get_control_points = function(points, i, smoothing, t) {
+    var b1, b1_x, b1_y, b2, b2_x, b2_y, p0, p1, p2, p3, tan_p0_p2, tan_p1_p3, _ref, _ref2;
+    if (t == null) {
+      t = 1 / 3;
+    }
+    _ref = this.get_prev_and_next_points(points, i), p0 = _ref[0], p2 = _ref[1];
+    _ref2 = this.get_prev_and_next_points(points, i + 1), p1 = _ref2[0], p3 = _ref2[1];
+    tan_p0_p2 = this.get_tangent(p0, p2);
+    tan_p1_p3 = this.get_tangent(p1, p3);
+    b1_x = p1.x + (tan_p0_p2.x * smoothing * t);
+    b1_y = p1.y + (tan_p0_p2.y * smoothing * t);
+    b2_x = p2.x - (tan_p1_p3.x * smoothing * t);
+    b2_y = p2.y - (tan_p1_p3.y * smoothing * t);
+    b1 = new Point(b1_x, b1_y);
+    b2 = new Point(b2_x, b2_y);
     return [b1, b2];
   };
-  Bezier.get_control_point = function(points, i, smoothing_factor) {
-    var i1, i2;
-    if (points.length < 2) {
-      throw "Error";
-    }
-    i1 = i + 1;
-    i2 = i - 1;
+  Bezier.get_prev_and_next_points = function(points, i) {
+    var next, prev;
+    prev = void 0;
+    next = void 0;
     if (i === 0) {
-      i1 = 1;
-      i2 = 0;
+      prev = points[0];
+      next = points[1];
     } else if (i === (points.length - 1)) {
-      i1 = i;
-      i2 = i - 1;
+      prev = points[i - 1];
+      next = points[i];
+    } else {
+      prev = points[i - 1];
+      next = points[i + 1];
     }
-    return new Point((points[i1].x - points[i2].x) * smoothing_factor, (points[i1].y - points[i2].y) * smoothing_factor);
+    return [prev, next];
+  };
+  Bezier.get_tangent = function(p0, p1) {
+    var tan_x, tan_y;
+    tan_x = p1.x - p0.x;
+    tan_y = p1.y - p0.y;
+    return new Point(tan_x, tan_y);
   };
   return Bezier;
 })();
@@ -522,47 +536,38 @@ Line = (function() {
     this.options = options != null ? options : {};
   }
   Line.prototype.draw = function() {
+    var path;
+    path = Bezier.create_path(this.scaled_points, this.options.smoothing);
     if (this.options.fill_area) {
-      this.draw_area();
+      this.draw_area(path);
     }
-    this.draw_curve();
+    this.draw_curve(path);
     if (this.options.dot_size > 0) {
       this.draw_dots_and_tooltips(this.scaled_points, this.raw_points);
     }
   };
-  Line.prototype.draw_curve = function() {
+  Line.prototype.draw_curve = function(path) {
     var curve;
-    curve = this.r.path(Bezier.create_path(this.scaled_points, this.options.smoothing));
+    curve = this.r.path(path);
     return curve.attr({
       "stroke": this.options.line_color,
       "stroke-width": this.options.line_width
     }).toFront();
   };
-  Line.prototype.draw_area = function() {
-    var area, final_point, first_point, i, padded_height, path, point, points, _len;
+  Line.prototype.draw_area = function(path) {
+    var area, final_point, first_point, padded_height, points;
     points = this.scaled_points;
     padded_height = this.height - this.options.y_padding;
     final_point = points[points.length - 1];
     first_point = points[0];
-    path = "";
-    for (i = 0, _len = points.length; i < _len; i++) {
-      point = points[i];
-      if (i === 0) {
-        path += "M " + first_point.x + ", " + first_point.y;
-      } else {
-        path += "L " + point.x + ", " + point.y;
-      }
-    }
-    path += "M " + final_point.x + ", " + final_point.y;
-    path += "L " + final_point.x + ", " + padded_height;
-    path += "L " + first_point.x + ", " + padded_height;
-    path += "L " + first_point.x + ", " + first_point.y;
+    path += "L " + final_point.x + ", " + padded_height + " ";
+    path += "L " + first_point.x + ", " + padded_height + " ";
     path += "Z";
     area = this.r.path(path);
     area.attr({
       "fill": this.options.area_color,
       "fill-opacity": this.options.area_opacity,
-      "stroke": "none"
+      "stroke-width": 0
     });
     return area.toBack();
   };

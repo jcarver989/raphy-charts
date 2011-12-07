@@ -7,43 +7,35 @@ class Line
   constructor: (@r, @raw_points, @scaled_points, @height, @width, @options = {}) ->
 
   draw: ->
-    @draw_area() if @options.fill_area
-    @draw_curve()
+    path = Bezier.create_path(@scaled_points, @options.smoothing)
+    @draw_area(path) if @options.fill_area
+    @draw_curve(path)
     @draw_dots_and_tooltips(@scaled_points, @raw_points) if @options.dot_size > 0
     return
 
-  draw_curve: ->
-    curve = @r.path Bezier.create_path(@scaled_points, @options.smoothing)
+  draw_curve: (path) ->
+    curve = @r.path path
     curve.attr({
       "stroke"       : @options.line_color
       "stroke-width" : @options.line_width
     }).toFront()
 
-  draw_area: ->
+  draw_area: (path) ->
     points = @scaled_points
     padded_height = @height - @options.y_padding
 
     final_point = points[points.length-1]
     first_point = points[0]
 
-    path = ""
-    for point, i in points
-      if i == 0
-        path += "M #{first_point.x}, #{first_point.y}" 
-      else
-        path += "L #{point.x}, #{point.y}"
-
-    path += "M #{final_point.x}, #{final_point.y}"
-    path += "L #{final_point.x}, #{padded_height}"
-    path += "L #{first_point.x}, #{padded_height}"
-    path += "L #{first_point.x}, #{first_point.y}"
+    path += "L #{final_point.x}, #{padded_height} "
+    path += "L #{first_point.x}, #{padded_height} "
     path += "Z"
 
     area = @r.path(path)
     area.attr({
       "fill" : @options.area_color 
       "fill-opacity" : @options.area_opacity 
-      "stroke" : "none"
+      "stroke-width" : 0
     })
     area.toBack()
 

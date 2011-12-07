@@ -484,19 +484,19 @@ Bezier = (function() {
     }
     return path;
   };
-  Bezier.get_control_points = function(points, i, smoothing, t) {
-    var b1, b1_x, b1_y, b2, b2_x, b2_y, p0, p1, p2, p3, tan_p0_p2, tan_p1_p3, _ref, _ref2;
-    if (t == null) {
-      t = 1 / 3;
+  Bezier.get_control_points = function(points, i, smoothing, divisor) {
+    var b1, b1_x, b1_y, b2, b2_x, b2_y, p0, p1, p2, p3, tan1_x, tan1_y, tan2_x, tan2_y, _ref, _ref2, _ref3, _ref4;
+    if (divisor == null) {
+      divisor = 3;
     }
     _ref = this.get_prev_and_next_points(points, i), p0 = _ref[0], p2 = _ref[1];
     _ref2 = this.get_prev_and_next_points(points, i + 1), p1 = _ref2[0], p3 = _ref2[1];
-    tan_p0_p2 = this.get_tangent(p0, p2);
-    tan_p1_p3 = this.get_tangent(p1, p3);
-    b1_x = p1.x + (tan_p0_p2.x * smoothing * t);
-    b1_y = p1.y + (tan_p0_p2.y * smoothing * t);
-    b2_x = p2.x - (tan_p1_p3.x * smoothing * t);
-    b2_y = p2.y - (tan_p1_p3.y * smoothing * t);
+    _ref3 = this.get_tangent(p0, p2), tan1_x = _ref3[0], tan1_y = _ref3[1];
+    _ref4 = this.get_tangent(p1, p3), tan2_x = _ref4[0], tan2_y = _ref4[1];
+    b1_x = p1.x + (tan1_x * smoothing) / divisor;
+    b1_y = p1.y + (tan1_y * smoothing) / divisor;
+    b2_x = p2.x - (tan2_x * smoothing) / divisor;
+    b2_y = p2.y - (tan2_y * smoothing) / divisor;
     b1 = new Point(b1_x, b1_y);
     b2 = new Point(b2_x, b2_y);
     return [b1, b2];
@@ -517,6 +517,7 @@ Bezier = (function() {
     var tan_x, tan_y;
     tan_x = p1.x - p0.x;
     tan_y = p1.y - p0.y;
+    return [tan_x, tan_y];
     return new Point(tan_x, tan_y);
   };
   return Bezier;

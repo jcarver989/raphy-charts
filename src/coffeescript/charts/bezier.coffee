@@ -13,19 +13,19 @@ class Bezier
 
   # hermite interpolation with bezier curve
   # smoothing: 0 to 1 (0 not smooth, 1 ultra smooth)
-  # t (0 to 1) controls where point is interpolated  
-  @get_control_points: (points, i, smoothing, t = 1/3) ->
+  @get_control_points: (points, i, smoothing, divisor = 3) ->
     [p0, p2] =  @get_prev_and_next_points(points, i)   # i-1 & i+1
     [p1, p3] =  @get_prev_and_next_points(points, i+1) # i & i+2
 
-    tan_p0_p2 = @get_tangent(p0, p2)
-    tan_p1_p3 = @get_tangent(p1, p3)
+    # tan1 entering the point, tan2 leaving the point
+    [tan1_x, tan1_y] = @get_tangent(p0, p2)
+    [tan2_x, tan2_y] = @get_tangent(p1, p3)
 
-    b1_x = p1.x + (tan_p0_p2.x * smoothing * t)
-    b1_y = p1.y + (tan_p0_p2.y * smoothing * t)
+    b1_x = p1.x + (tan1_x * smoothing)/divisor
+    b1_y = p1.y + (tan1_y * smoothing)/divisor
 
-    b2_x = p2.x - (tan_p1_p3.x * smoothing * t)
-    b2_y = p2.y - (tan_p1_p3.y * smoothing * t)
+    b2_x = p2.x - (tan2_x * smoothing)/divisor
+    b2_y = p2.y - (tan2_y * smoothing)/divisor
 
     b1 = new Point(b1_x, b1_y)
     b2 = new Point(b2_x, b2_y)
@@ -44,6 +44,7 @@ class Bezier
   @get_tangent = (p0, p1) ->
     tan_x = p1.x - p0.x
     tan_y = p1.y - p0.y
+    return [tan_x, tan_y]
     new Point(tan_x, tan_y)
 
 

@@ -45,7 +45,6 @@ class Bezier
     tan_x = p1.x - p0.x
     tan_y = p1.y - p0.y
     return [tan_x, tan_y]
-    new Point(tan_x, tan_y)
 
 
 exports.Bezier = Bezier

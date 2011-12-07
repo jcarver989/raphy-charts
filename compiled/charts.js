@@ -503,19 +503,15 @@ Bezier = (function() {
   };
   Bezier.get_prev_and_next_points = function(points, i) {
     var next, prev;
-    prev = void 0;
-    next = void 0;
-    if (i === 0) {
-      prev = points[0];
-      next = points[1];
-    } else if (i === (points.length - 1)) {
-      prev = points[i - 1];
-      next = points[i];
-    } else {
-      prev = points[i - 1];
-      next = points[i + 1];
+    prev = i - 1;
+    next = i + 1;
+    if (prev < 0) {
+      prev = 0;
     }
-    return [prev, next];
+    if (next >= points.length) {
+      next = points.length - 1;
+    }
+    return [points[prev], points[next]];
   };
   Bezier.get_tangent = function(p0, p1) {
     var tan_x, tan_y;

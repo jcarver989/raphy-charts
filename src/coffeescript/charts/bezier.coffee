@@ -33,22 +33,13 @@ class Bezier
     return [b1, b2] 
  
   @get_prev_and_next_points = (points, i) ->
-    prev = undefined
-    next = undefined
+    prev = i-1 
+    next = i+1 
 
-    # first point
-    if i == 0
-      prev = points[0]
-      next = points[1]
-    # last point
-    else if i == (points.length-1)
-      prev = points[i-1]
-      next = points[i]
-    else
-      prev = points[i-1]
-      next = points[i+1]
+    prev = 0 if prev < 0
+    next = points.length-1 if next >= points.length
 
-    return [prev, next]
+    return [points[prev], points[next]]
 
   @get_tangent = (p0, p1) ->
     tan_x = p1.x - p0.x

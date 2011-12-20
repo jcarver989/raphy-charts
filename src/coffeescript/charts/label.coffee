@@ -1,5 +1,5 @@
 class Label
-  constructor: (@r, @x, @y, @text, @format, @size = 14) ->
+  constructor: (@r, @x, @y, @text, @format, @size = 14, @font_family) ->
 
   is_date: (potential_date) -> 
     Object.prototype.toString.call(potential_date) == '[object Date]'
@@ -68,5 +68,6 @@ class Label
       "font-weight" : "bold"
       "x"           : x
       "text-anchor" : "middle"
+      "font-family" : @font_family
     })
 

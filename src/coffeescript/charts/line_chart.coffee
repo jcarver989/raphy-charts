@@ -58,12 +58,21 @@ class LineChart
   _draw_y_labels: (labels) ->
     fmt = @options.label_format
     size = @options.y_label_size
+    font_family = @options.font_family
     padding = size + 5 
     scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
 
     label_coordinates = []
     for label, i in scaled_labels
-      new Label(@r, padding, label.y, labels[i].y, fmt, size).draw()
+      new Label(
+        @r, 
+        padding, 
+        label.y, 
+        labels[i].y, 
+        fmt, 
+        size,
+        font_family
+      ).draw()
       label_coordinates.push label.y
 
     label_coordinates
@@ -103,6 +112,7 @@ class LineChart
   draw_x_label: (raw_point, point) ->
     fmt = @options.label_format
     size = @options.x_label_size
+    font_family = @options.font_family
 
     label = if raw_point.is_date_type == true then new Date(raw_point.x) else Math.round(raw_point.x)
     new Label(
@@ -111,7 +121,8 @@ class LineChart
       @height - size, 
       label, 
       fmt,
-      size
+      size,
+      font_family
     ).draw()
 
   draw_x_labels: (raw_points, points) ->

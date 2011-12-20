@@ -32,12 +32,20 @@
     var i, _results;
     _results = [];
     var d = new Date()
-    for (i = 0; i <= 25; i++) {
+    for (i = 0; i <= 70; i++) {
       var date = new Date(d.getFullYear(), d.getMonth(), i+1)
       _results.push([date, Math.random()]);
     }
     return _results;
   };
+
+  var create_random_points3 = function() {
+    var points = create_random_points2();
+    for (var i = 0; i < points.length; i++) {
+      points[i][1] = points[i][1] * 1.4;
+    }
+    return points;
+  }
   draw_bars = function(r, points) {
     var attach_handler, i, point, rect, x, _len, _results;
     attach_handler = function(element) {
@@ -93,19 +101,28 @@
     c.draw();
     c = new Charts.LineChart('chart2', {
       line_color: "#118800",
-      dot_color: "#118800",
+      dot_color: "rgba(0,0,0,0)",
       // gradients <angle>-<color1>-<color2>
       // ‹angle›-‹colour›[-‹colour›[:‹offset›]]*-‹colour›
-      area_color: "90-#fff-#118800",
+      area_color: "#118800",
       dot_stroke_color: "#aaa",
-      dot_stroke_size: 3,
-      label_min: false,
-      smoothing: 0.5,
-      show_grid: true
+      dot_stroke_size: 0,
+      dot_size: 3,
+      label_min: true,
+      show_y_labels: false,
+      show_grid: false,
+      smoothing: 0.3
     });
     c.add_line({
       data: create_random_points2()
     });
+    c.add_line({
+      data: create_random_points3(),
+      options: {
+        line_color: "#2691b1",
+        area_color: "#2691b1"
+      }
+    })
     c.draw();
     c = new Charts.LineChart('chart4', {
       line_color: "#9900cc",

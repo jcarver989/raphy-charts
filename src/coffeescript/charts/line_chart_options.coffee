@@ -19,7 +19,7 @@ class LineChartOptions
     label_min : true
     max_x_labels: 10
     max_y_labels: 3 
-    label_font: "Helvetica, Arial, sans-serif"
+    font_family: "Helvetica, Arial, sans-serif"
     x_label_size: 14
     y_label_size: 14
     label_format: "%m/%d"

@@ -274,13 +274,14 @@ var Label;
 
 Label = (function() {
 
-  function Label(r, x, y, text, format, size) {
+  function Label(r, x, y, text, format, size, font_family) {
     this.r = r;
     this.x = x;
     this.y = y;
     this.text = text;
     this.format = format;
     this.size = size != null ? size : 14;
+    this.font_family = font_family;
   }
 
   Label.prototype.is_date = function(potential_date) {
@@ -381,7 +382,8 @@ Label = (function() {
       "font-size": this.size,
       "font-weight": "bold",
       "x": x,
-      "text-anchor": "middle"
+      "text-anchor": "middle",
+      "font-family": this.font_family
     });
   };
 

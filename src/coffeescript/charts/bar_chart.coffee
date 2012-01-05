@@ -50,7 +50,7 @@ class BarChart extends BaseChart
     new Label(
       @r,
       topleft_corner.x + @options.bar_width/2,
-      topleft_corner.y + @options.y_label_size + 5
+      topleft_corner.y + @options.y_label_size + 5,
       y_label,
       "",
       @options.y_label_size,

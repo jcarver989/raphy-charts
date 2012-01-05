@@ -5,6 +5,9 @@
 
 
 
+
+
+
 (function() {
   var create_exponential_points, create_random_points2, create_squared_points, draw_bars;
   create_exponential_points = function() {
@@ -196,5 +199,32 @@ $(document).ready(function() {
 
 
     c.draw()
+
+
+
+   var bullet = new Charts.BulletChart('bulletchart');
+   bullet.add("foo", 50, 30, 100);
+   bullet.add("doo", 70, 30, 100);
+   bullet.add("moo", 20, 30, 100);
+   bullet.draw();
+
+
+   var bars = new Charts.BarChart('normalbarchart');
+   bars.add({
+     label: "foo",
+     value: 600
+   });
+
+   bars.add({
+     label: "moo",
+     value: 800
+   });
+
+   bars.add({
+     label: "doo",
+     value: 300
+   });
+
+   bars.draw();
 
 })

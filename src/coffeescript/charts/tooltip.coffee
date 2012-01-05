@@ -4,7 +4,7 @@ Raphael.fn.triangle = (cx, cy, r) ->
 
 
 class Tooltip
-  constructor: (@r, target, text) ->
+  constructor: (@r, target, text, hover_enabled = true) ->
     size = 30
     width = 50
     height = 25 
@@ -58,8 +58,9 @@ class Tooltip
     @popup.toFront()
     @text.toFront()
 
-    target.mouseover () => @show()
-    target.mouseout  () => @hide()
+    if hover_enabled == true
+      target.mouseover () => @show()
+      target.mouseout  () => @hide()
 
   animate_opacity: (element, value, time = 200) ->
     element.animate({

@@ -87,10 +87,11 @@ Raphael.fn.triangle = function(cx, cy, r) {
 
 Tooltip = (function() {
 
-  function Tooltip(r, target, text) {
+  function Tooltip(r, target, text, hover_enabled) {
     var box, box_height, box_midpoint, box_width, height, offset, rounding, size, width, x, y,
       _this = this;
     this.r = r;
+    if (hover_enabled == null) hover_enabled = true;
     size = 30;
     width = 50;
     height = 25;
@@ -124,12 +125,14 @@ Tooltip = (function() {
     });
     this.popup.toFront();
     this.text.toFront();
-    target.mouseover(function() {
-      return _this.show();
-    });
-    target.mouseout(function() {
-      return _this.hide();
-    });
+    if (hover_enabled === true) {
+      target.mouseover(function() {
+        return _this.show();
+      });
+      target.mouseout(function() {
+        return _this.hide();
+      });
+    }
   }
 
   Tooltip.prototype.animate_opacity = function(element, value, time) {
@@ -162,112 +165,159 @@ Tooltip = (function() {
 })();
 
 exports.Tooltip = Tooltip;
-var Scaling;
+var Grid;
 
-Scaling = (function() {
+Grid = (function() {
 
-  function Scaling() {}
-
-  Scaling.get_ranges_for_points = function(points) {
-    var max_x, max_y, min_x, min_y, point, xs, ys, _i, _len;
-    xs = [];
-    ys = [];
-    for (_i = 0, _len = points.length; _i < _len; _i++) {
-      point = points[_i];
-      xs.push(point.x);
-      ys.push(point.y);
-    }
-    max_x = Math.max.apply(Math.max, xs);
-    max_y = Math.max.apply(Math.max, ys);
-    min_x = Math.min.apply(Math.min, xs);
-    min_y = Math.min.apply(Math.min, ys);
-    return [max_x, min_x, max_y, min_y];
-  };
-
-  /*
-    Helper for mapping numbers into a new range:
-    existing range: A to B
-    target range: C to D
-    R1 = B - A
-    R2 = D - C
-    new number = (B*C - A*D)/R1 + old_number *(R2/R1) 
-    returns [(B*C - A*D) / R1, R2/R1)]
-  */
-
-  Scaling.calc_scaling_factors = function(old_max, old_min, new_max, new_min) {
-    var new_range, old_range, scaling_factor;
-    old_range = old_max - old_min;
-    new_range = new_max - new_min;
-    scaling_factor = old_max * new_min - new_max * old_min;
-    return [scaling_factor / old_range, new_range / old_range];
-  };
-
-  Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
-    var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
-    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
-    if (min_y === max_y) max_y += 1;
-    if (min_x === max_x) max_x += 1;
-    _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
-    _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
-    scaled_points = [];
-    for (_i = 0, _len = points.length; _i < _len; _i++) {
-      point = points[_i];
-      sx = x_scaling + point.x * x_range_ratio;
-      sy = y_max - (y_scaling + point.y * y_range_ratio);
-      scaled_points.push(new Point(sx, sy));
-    }
-    return scaled_points;
-  };
-
-  return Scaling;
-
-})();
-
-exports.Scaling = Scaling;
-var LineBar;
-
-LineBar = (function() {
-
-  function LineBar(r, raw_points, scaled_points, height, width, options) {
+  function Grid(r, width, height, points, options) {
     this.r = r;
-    this.raw_points = raw_points;
-    this.scaled_points = scaled_points;
-    this.height = height;
     this.width = width;
-    this.options = options != null ? options : {};
-    this.effective_height = this.height - this.options.y_padding;
-    this.x_offset = this.options.bar_width / 2;
+    this.height = height;
+    this.points = points;
+    this.options = options;
   }
 
-  LineBar.prototype.draw = function() {
-    return this.draw_bars();
-  };
-
-  LineBar.prototype.draw_bars = function() {
-    var i, max_point, min_point, point, rect, set, tooltips, x, _len, _ref;
-    set = this.r.set();
-    tooltips = [];
-    max_point = 0;
-    min_point = 0;
-    _ref = this.scaled_points;
+  Grid.prototype.draw = function() {
+    var grid_lines, height, i, paths, point, width, x, x_step_size, y, y_step_size, _len, _ref;
+    grid_lines = Math.round(this.points.length / this.options.step_size);
+    height = this.height - this.options.y_padding;
+    width = this.width - this.options.x_padding;
+    x_step_size = Math.round(width / grid_lines);
+    y_step_size = Math.round(height / grid_lines);
+    y = this.options.y_padding;
+    paths = this.r.set();
+    _ref = this.points;
     for (i = 0, _len = _ref.length; i < _len; i++) {
       point = _ref[i];
-      x = point.x - this.x_offset;
-      rect = this.r.rect(x, point.y, this.options.bar_width, this.effective_height - point.y);
-      set.push(rect);
-      tooltips.push(new Tooltip(this.r, rect, this.raw_points[i].y));
-      if (this.raw_points[i].y >= this.raw_points[max_point].y) max_point = i;
-      if (this.raw_points[i].y < this.raw_points[min_point].y) min_point = i;
+      if (!(i % this.options.step_size === 0)) continue;
+      x = this.points[i].x;
+      paths.push(this.r.path("M " + x + ", " + this.options.y_padding + " L " + x + ", " + height + " Z"));
     }
-    set.attr({
-      "fill": this.options.line_color,
-      "stroke": "none"
-    });
-    if (this.options.label_max) tooltips[max_point].show();
-    if (this.options.label_min) return tooltips[min_point].show();
+    for (i = 0; 0 <= grid_lines ? i <= grid_lines : i >= grid_lines; 0 <= grid_lines ? i++ : i--) {
+      if (y <= height) {
+        paths.push(this.r.path("M " + this.options.x_padding + ", " + y + " L " + width + ", " + y + " Z"));
+      }
+      y += y_step_size;
+    }
+    return paths.attr({
+      stroke: "#ccc",
+      "stroke-width": 1
+    }).toBack();
   };
 
-  return LineBar;
+  return Grid;
+
+})();
+var Dot;
+
+Dot = (function() {
+
+  function Dot(r, point, opts, scale_factor) {
+    this.r = r;
+    this.point = point;
+    this.opts = opts;
+    this.scale_factor = scale_factor != null ? scale_factor : 1.5;
+    this.element = this.r.circle(point.x, point.y, this.opts.dot_size);
+    this.style_dot();
+    this.attach_handlers();
+  }
+
+  Dot.prototype.style_dot = function() {
+    this.element.attr({
+      "fill": this.opts.dot_color,
+      "stroke": this.opts.dot_stroke_color,
+      "stroke-width": this.opts.dot_stroke_size
+    });
+    return this.element.toFront();
+  };
+
+  Dot.prototype.activate = function() {
+    this.element.attr({
+      "fill": "#333"
+    });
+    return this.element.animate({
+      "r": this.opts.dot_size * this.scale_factor
+    }, 200);
+  };
+
+  Dot.prototype.deactivate = function() {
+    var shrink_factor;
+    shrink_factor = 1 / this.scale_factor;
+    this.element.attr({
+      "fill": this.opts.dot_color
+    });
+    return this.element.animate({
+      "r": this.opts.dot_size
+    }, 200);
+  };
+
+  Dot.prototype.attach_handlers = function() {
+    var _this = this;
+    this.element.mouseover(function() {
+      return _this.activate();
+    });
+    return this.element.mouseout(function() {
+      return _this.deactivate();
+    });
+  };
+
+  return Dot;
+
+})();
+var BulletChartOptions;
+
+BulletChartOptions = (function() {
+
+  BulletChartOptions.DEFAULTS = {
+    line_width: 4,
+    line_color: "#000",
+    area_color: "#00aadd",
+    area_width: 20,
+    area_opacity: 0.2,
+    bar_margin: 8,
+    show_average: true,
+    average_width: 4,
+    average_height: 8,
+    average_color: "#000",
+    font_family: "Helvetica, Arial, sans-serif",
+    x_label_size: 14,
+    y_label_size: 14,
+    x_padding: 45,
+    y_padding: 40
+  };
+
+  BulletChartOptions.merge = function(from, to) {
+    var option, opts, value;
+    if (from == null) from = {};
+    if (to == null) to = {};
+    opts = {};
+    for (option in from) {
+      value = from[option];
+      opts[option] = value;
+    }
+    for (option in to) {
+      value = to[option];
+      if (to.hasOwnProperty(option)) opts[option] = value;
+    }
+    return opts;
+  };
+
+  function BulletChartOptions(options) {
+    var option, opts, value, _ref;
+    opts = {};
+    _ref = BulletChartOptions.DEFAULTS;
+    for (option in _ref) {
+      value = _ref[option];
+      opts[option] = value;
+    }
+    for (option in options) {
+      value = options[option];
+      if (options.hasOwnProperty(option)) opts[option] = value;
+    }
+    return opts;
+  }
+
+  return BulletChartOptions;
 
 })();
 var Label;
@@ -390,103 +440,165 @@ Label = (function() {
   return Label;
 
 })();
-var Grid;
+var BarChartOptions;
 
-Grid = (function() {
+BarChartOptions = (function() {
 
-  function Grid(r, width, height, points, options) {
-    this.r = r;
-    this.width = width;
-    this.height = height;
-    this.points = points;
-    this.options = options;
-  }
-
-  Grid.prototype.draw = function() {
-    var grid_lines, height, i, paths, point, width, x, x_step_size, y, y_step_size, _len, _ref;
-    grid_lines = Math.round(this.points.length / this.options.step_size);
-    height = this.height - this.options.y_padding;
-    width = this.width - this.options.x_padding;
-    x_step_size = Math.round(width / grid_lines);
-    y_step_size = Math.round(height / grid_lines);
-    y = this.options.y_padding;
-    paths = this.r.set();
-    _ref = this.points;
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      point = _ref[i];
-      if (!(i % this.options.step_size === 0)) continue;
-      x = this.points[i].x;
-      paths.push(this.r.path("M " + x + ", " + this.options.y_padding + " L " + x + ", " + height + " Z"));
-    }
-    for (i = 0; 0 <= grid_lines ? i <= grid_lines : i >= grid_lines; 0 <= grid_lines ? i++ : i--) {
-      if (y <= height) {
-        paths.push(this.r.path("M " + this.options.x_padding + ", " + y + " L " + width + ", " + y + " Z"));
-      }
-      y += y_step_size;
-    }
-    return paths.attr({
-      stroke: "#ccc",
-      "stroke-width": 1
-    }).toBack();
+  BarChartOptions.DEFAULTS = {
+    bar_width: 20,
+    bar_spacing: 20,
+    bar_color: "#00aadd",
+    rounding: 0,
+    show_x_labels: true,
+    show_y_labels: true,
+    font_family: "Helvetica, Arial, sans-serif",
+    x_label_size: 14,
+    y_label_size: 14,
+    show_grid: false,
+    x_padding: 25,
+    y_padding: 40
   };
 
-  return Grid;
+  BarChartOptions.merge = function(from, to) {
+    var option, opts, value;
+    if (from == null) from = {};
+    if (to == null) to = {};
+    opts = {};
+    for (option in from) {
+      value = from[option];
+      opts[option] = value;
+    }
+    for (option in to) {
+      value = to[option];
+      if (to.hasOwnProperty(option)) opts[option] = value;
+    }
+    return opts;
+  };
+
+  function BarChartOptions(options) {
+    var option, opts, value, _ref;
+    opts = {};
+    _ref = BarChartOptions.DEFAULTS;
+    for (option in _ref) {
+      value = _ref[option];
+      opts[option] = value;
+    }
+    for (option in options) {
+      value = options[option];
+      if (options.hasOwnProperty(option)) opts[option] = value;
+    }
+    return opts;
+  }
+
+  return BarChartOptions;
 
 })();
-var Dot;
+var Scaling;
 
-Dot = (function() {
+Scaling = (function() {
 
-  function Dot(r, point, opts, scale_factor) {
+  function Scaling() {}
+
+  Scaling.get_ranges_for_points = function(points) {
+    var max_x, max_y, min_x, min_y, point, xs, ys, _i, _len;
+    xs = [];
+    ys = [];
+    for (_i = 0, _len = points.length; _i < _len; _i++) {
+      point = points[_i];
+      xs.push(point.x);
+      ys.push(point.y);
+    }
+    max_x = Math.max.apply(Math.max, xs);
+    max_y = Math.max.apply(Math.max, ys);
+    min_x = Math.min.apply(Math.min, xs);
+    min_y = Math.min.apply(Math.min, ys);
+    return [max_x, min_x, max_y, min_y];
+  };
+
+  /*
+    Helper for mapping numbers into a new range:
+    existing range: A to B
+    target range: C to D
+    R1 = B - A
+    R2 = D - C
+    new number = (B*C - A*D)/R1 + old_number *(R2/R1) 
+    returns [(B*C - A*D) / R1, R2/R1)]
+  */
+
+  Scaling.calc_scaling_factors = function(old_max, old_min, new_max, new_min) {
+    var new_range, old_range, scaling_factor;
+    old_range = old_max - old_min;
+    new_range = new_max - new_min;
+    scaling_factor = old_max * new_min - new_max * old_min;
+    return [scaling_factor / old_range, new_range / old_range];
+  };
+
+  Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
+    var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
+    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (min_y === max_y) max_y += 1;
+    if (min_x === max_x) max_x += 1;
+    _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
+    _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
+    scaled_points = [];
+    for (_i = 0, _len = points.length; _i < _len; _i++) {
+      point = points[_i];
+      sx = x_scaling + point.x * x_range_ratio;
+      sy = y_max - (y_scaling + point.y * y_range_ratio);
+      scaled_points.push(new Point(sx, sy));
+    }
+    return scaled_points;
+  };
+
+  return Scaling;
+
+})();
+
+exports.Scaling = Scaling;
+var LineBar;
+
+LineBar = (function() {
+
+  function LineBar(r, raw_points, scaled_points, height, width, options) {
     this.r = r;
-    this.point = point;
-    this.opts = opts;
-    this.scale_factor = scale_factor != null ? scale_factor : 1.5;
-    this.element = this.r.circle(point.x, point.y, this.opts.dot_size);
-    this.style_dot();
-    this.attach_handlers();
+    this.raw_points = raw_points;
+    this.scaled_points = scaled_points;
+    this.height = height;
+    this.width = width;
+    this.options = options != null ? options : {};
+    this.effective_height = this.height - this.options.y_padding;
+    this.x_offset = this.options.bar_width / 2;
   }
 
-  Dot.prototype.style_dot = function() {
-    this.element.attr({
-      "fill": this.opts.dot_color,
-      "stroke": this.opts.dot_stroke_color,
-      "stroke-width": this.opts.dot_stroke_size
-    });
-    return this.element.toFront();
+  LineBar.prototype.draw = function() {
+    return this.draw_bars();
   };
 
-  Dot.prototype.activate = function() {
-    this.element.attr({
-      "fill": "#333"
+  LineBar.prototype.draw_bars = function() {
+    var i, max_point, min_point, point, rect, set, tooltips, x, _len, _ref;
+    set = this.r.set();
+    tooltips = [];
+    max_point = 0;
+    min_point = 0;
+    _ref = this.scaled_points;
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      point = _ref[i];
+      x = point.x - this.x_offset;
+      rect = this.r.rect(x, point.y, this.options.bar_width, this.effective_height - point.y);
+      set.push(rect);
+      tooltips.push(new Tooltip(this.r, rect, this.raw_points[i].y));
+      if (this.raw_points[i].y >= this.raw_points[max_point].y) max_point = i;
+      if (this.raw_points[i].y < this.raw_points[min_point].y) min_point = i;
+    }
+    set.attr({
+      "fill": this.options.line_color,
+      "stroke": "none"
     });
-    return this.element.animate({
-      "r": this.opts.dot_size * this.scale_factor
-    }, 200);
+    if (this.options.label_max) tooltips[max_point].show();
+    if (this.options.label_min) return tooltips[min_point].show();
   };
 
-  Dot.prototype.deactivate = function() {
-    var shrink_factor;
-    shrink_factor = 1 / this.scale_factor;
-    this.element.attr({
-      "fill": this.opts.dot_color
-    });
-    return this.element.animate({
-      "r": this.opts.dot_size
-    }, 200);
-  };
-
-  Dot.prototype.attach_handlers = function() {
-    var _this = this;
-    this.element.mouseover(function() {
-      return _this.activate();
-    });
-    return this.element.mouseout(function() {
-      return _this.deactivate();
-    });
-  };
-
-  return Dot;
+  return LineBar;
 
 })();
 var Point;
@@ -513,6 +625,92 @@ Point = (function() {
 })();
 
 exports.Point = Point;
+var BulletChart, bar;
+
+bar = function(label, value, average, comparison) {
+  return {
+    label: label,
+    value: value,
+    average: average,
+    comparison: comparison
+  };
+};
+
+BulletChart = (function() {
+
+  function BulletChart(dom_id, options) {
+    var container, _ref;
+    if (options == null) options = {};
+    container = document.getElementById(dom_id);
+    _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
+    this.options = new BulletChartOptions(options);
+    this.r = Raphael(container, this.width, this.height);
+    this.bars = [];
+  }
+
+  BulletChart.prototype.get_dimensions = function(container) {
+    var height, width;
+    width = parseInt(container.style.width);
+    height = parseInt(container.style.height);
+    return [width, height];
+  };
+
+  BulletChart.prototype.add = function(label, value, average, comparison) {
+    return this.bars.push(bar.apply(bar, arguments));
+  };
+
+  BulletChart.prototype.draw_background = function(point, y_offset) {
+    var rect;
+    rect = this.r.rect(this.options.x_padding, y_offset, point.x, this.options.area_width);
+    return rect.attr({
+      fill: this.options.area_color,
+      "stroke-width": 0
+    });
+  };
+
+  BulletChart.prototype.draw_line = function(point, background_midpoint) {
+    var rect, y;
+    y = background_midpoint.y - this.options.line_width / 2;
+    rect = this.r.rect(this.options.x_padding, y, point.x, this.options.line_width);
+    return rect.attr({
+      fill: this.options.line_color,
+      "stroke-width": 0
+    });
+  };
+
+  BulletChart.prototype.draw_average = function(point, midpoint_y) {
+    var rect;
+    rect = this.r.rect(point.x - (this.options.average_width / 2), midpoint_y - this.options.average_height / 2, this.options.average_width, this.options.average_height);
+    return rect.attr({
+      fill: this.options.average_color,
+      "stroke-width": 0
+    });
+  };
+
+  BulletChart.prototype.draw_label = function(text, offset) {};
+
+  BulletChart.prototype.draw = function() {
+    var bar, i, midpoint_y, points, y_offset, _len, _ref, _results;
+    _ref = this.bars;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      bar = _ref[i];
+      points = Scaling.scale_points(this.width, this.height, [new Point(bar.comparison, 0), new Point(bar.value, 0), new Point(bar.average, 0), new Point(0, 0)], this.options.x_padding, this.options.y_padding);
+      y_offset = i * (this.options.area_width + this.options.bar_margin);
+      this.draw_background(points[0], y_offset);
+      midpoint_y = y_offset + this.options.area_width / 2;
+      this.draw_line(points[1], new Point(points[0].x, midpoint_y));
+      this.draw_average(points[2], midpoint_y);
+      _results.push(new Label(this.r, 0, y_offset + this.options.area_width / 2, bar.label, "", this.size = 14, this.options.font_family).draw());
+    }
+    return _results;
+  };
+
+  return BulletChart;
+
+})();
+
+exports.BulletChart = BulletChart;
 var Bezier;
 
 Bezier = (function() {
@@ -828,5 +1026,98 @@ LineChart = (function() {
 })();
 
 exports.LineChart = LineChart;
+var BaseChart;
+
+BaseChart = (function() {
+
+  function BaseChart(dom_id, options) {
+    var container, _ref;
+    container = document.getElementById(dom_id);
+    _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
+    this.r = Raphael(container, this.width, this.height);
+  }
+
+  BaseChart.prototype.get_dimensions = function(container) {
+    var height, width;
+    width = parseInt(container.style.width);
+    height = parseInt(container.style.height);
+    return [width, height];
+  };
+
+  return BaseChart;
+
+})();
+var BarChart,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+BarChart = (function(_super) {
+
+  __extends(BarChart, _super);
+
+  function BarChart(dom_id, options) {
+    if (options == null) options = {};
+    BarChart.__super__.constructor.apply(this, arguments);
+    this.options = new BarChartOptions(options);
+    this.effective_height = this.height - this.options.y_padding;
+    this.bar_options = [];
+    this.bars = [];
+    this.values = [];
+  }
+
+  BarChart.prototype.add = function(args) {
+    var label, value;
+    label = args.label, value = args.value;
+    this.bar_options.push(BarChartOptions.merge(this.options, args.options));
+    this.values.push(value);
+    return this.bars.push({
+      label: label,
+      value: value
+    });
+  };
+
+  BarChart.prototype.render_bar = function(x_label, y_label, topleft_corner, options) {
+    var rect;
+    console.log(x_label, topleft_corner.x, topleft_corner.y);
+    rect = this.r.rect(topleft_corner.x, topleft_corner.y, this.options.bar_width, this.effective_height - topleft_corner.y);
+    rect.attr({
+      "fill": options.bar_color,
+      "stroke-width": 0
+    });
+    new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size).draw();
+    return new Tooltip(this.r, rect, y_label, false).show();
+  };
+
+  BarChart.prototype.draw = function() {
+    var bar, i, points, scaled_x, scaled_y, tl_bar_corner, value, _len, _ref, _results;
+    points = (function() {
+      var _len, _ref, _results;
+      _ref = this.values;
+      _results = [];
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        value = _ref[i];
+        _results.push(new Point(i, value));
+      }
+      return _results;
+    }).call(this);
+    points.push(new Point(0, 0));
+    this.scaled_values = Scaling.scale_points(this.width, this.height, points, this.options.x_padding, this.options.y_padding);
+    _ref = this.bars;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      bar = _ref[i];
+      scaled_x = i * (this.options.bar_width + this.options.bar_spacing) + this.options.x_padding;
+      scaled_y = this.scaled_values[i].y;
+      tl_bar_corner = new Point(scaled_x, scaled_y);
+      _results.push(this.render_bar(bar.label, bar.value, tl_bar_corner, this.bar_options[i]));
+    }
+    return _results;
+  };
+
+  return BarChart;
+
+})(BaseChart);
+
+exports.BarChart = BarChart;
 
     })

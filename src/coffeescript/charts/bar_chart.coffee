@@ -33,9 +33,6 @@ class BarChart extends BaseChart
       "stroke-width": 0
     })
 
-
-    console.log @options
-
     new Label(
       @r,
       topleft_corner.x + @options.bar_width/2,

@@ -25,7 +25,8 @@ class BarChart extends BaseChart
       topleft_corner.x,
       topleft_corner.y,
       @options.bar_width,
-      @effective_height - topleft_corner.y
+      @effective_height - topleft_corner.y,
+      @options.rounding
     )
 
     rect.attr({

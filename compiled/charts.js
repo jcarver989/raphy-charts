@@ -1081,7 +1081,7 @@ BarChart = (function(_super) {
 
   BarChart.prototype.render_bar = function(x_label, y_label, topleft_corner, options) {
     var rect;
-    rect = this.r.rect(topleft_corner.x, topleft_corner.y, this.options.bar_width, this.effective_height - topleft_corner.y);
+    rect = this.r.rect(topleft_corner.x, topleft_corner.y, this.options.bar_width, this.effective_height - topleft_corner.y, this.options.rounding);
     rect.attr({
       "fill": options.bar_color,
       "stroke-width": 0

@@ -450,12 +450,13 @@ BarChartOptions = (function() {
     bar_spacing: 20,
     bar_color: "#00aadd",
     rounding: 0,
+    font_family: "Helvetica, Arial, sans-serif",
     show_x_labels: true,
     show_y_labels: true,
-    font_family: "Helvetica, Arial, sans-serif",
     x_label_size: 14,
-    y_label_size: 14,
     x_label_color: "#333",
+    y_label_size: 14,
+    y_label_color: "#333",
     show_grid: false,
     x_padding: 25,
     y_padding: 40
@@ -1087,7 +1088,7 @@ BarChart = (function(_super) {
     });
     console.log(this.options);
     new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size, this.options.font_family, this.options.x_label_color).draw();
-    return new Tooltip(this.r, rect, y_label, false).show();
+    return new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.options.x_label_size + 5, y_label, "", this.options.y_label_size, this.options.font_family, this.options.y_label_color).draw();
   };
 
   BarChart.prototype.draw = function() {

@@ -47,12 +47,16 @@ class BarChart extends BaseChart
       @options.x_label_color
     ).draw()
 
-    new Tooltip(
+    new Label(
       @r,
-      rect,
+      topleft_corner.x + @options.bar_width/2,
+      @options.x_label_size + 5
       y_label,
-      false
-    ).show()
+      "",
+      @options.y_label_size,
+      @options.font_family,
+      @options.y_label_color
+    ).draw()
 
   draw: ->
     points = (new Point(i, value) for value, i in @values)

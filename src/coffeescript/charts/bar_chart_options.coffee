@@ -5,13 +5,17 @@ class BarChartOptions
     bar_color: "#00aadd"
     rounding: 0
 
+    font_family: "Helvetica, Arial, sans-serif"
+
     show_x_labels: true
     show_y_labels: true
-    font_family: "Helvetica, Arial, sans-serif"
-    x_label_size: 14
-    y_label_size: 14
 
+
+    x_label_size: 14
     x_label_color: "#333"
+
+    y_label_size: 14
+    y_label_color: "#333"
 
     show_grid: false
 

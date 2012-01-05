@@ -1088,7 +1088,7 @@ BarChart = (function(_super) {
     });
     console.log(this.options);
     new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size, this.options.font_family, this.options.x_label_color).draw();
-    return new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.options.x_label_size + 5, y_label, "", this.options.y_label_size, this.options.font_family, this.options.y_label_color).draw();
+    return new Label(this.r, topleft_corner.x + this.options.bar_width / 2, topleft_corner.y + this.options.y_label_size + 5, y_label, "", this.options.y_label_size, this.options.font_family, this.options.y_label_color).draw();
   };
 
   BarChart.prototype.draw = function() {

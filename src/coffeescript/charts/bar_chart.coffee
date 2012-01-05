@@ -21,8 +21,6 @@ class BarChart extends BaseChart
     @bars.push { label: label, value: value}
 
   render_bar: (x_label, y_label, topleft_corner, options) ->
-    console.log x_label, topleft_corner.x, topleft_corner.y
-
     rect = @r.rect(
       topleft_corner.x,
       topleft_corner.y,
@@ -35,13 +33,18 @@ class BarChart extends BaseChart
       "stroke-width": 0
     })
 
+
+    console.log @options
+
     new Label(
       @r,
       topleft_corner.x + @options.bar_width/2,
       @height - (@options.x_label_size + 5),
       x_label,
       "",
-      @options.x_label_size
+      @options.x_label_size,
+      @options.font_family,
+      @options.x_label_color
     ).draw()
 
     new Tooltip(

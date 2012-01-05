@@ -11,6 +11,8 @@ class BarChartOptions
     x_label_size: 14
     y_label_size: 14
 
+    x_label_color: "#333"
+
     show_grid: false
 
     x_padding: 25

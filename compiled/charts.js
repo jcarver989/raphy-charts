@@ -324,7 +324,7 @@ var Label;
 
 Label = (function() {
 
-  function Label(r, x, y, text, format, size, font_family) {
+  function Label(r, x, y, text, format, size, font_family, color) {
     this.r = r;
     this.x = x;
     this.y = y;
@@ -332,6 +332,7 @@ Label = (function() {
     this.format = format;
     this.size = size != null ? size : 14;
     this.font_family = font_family;
+    this.color = color != null ? color : "#333";
   }
 
   Label.prototype.is_date = function(potential_date) {
@@ -428,7 +429,7 @@ Label = (function() {
     margin = 5;
     x = this.x < width ? (width / 2) + margin : this.x;
     return this.element.attr({
-      "fill": "#333",
+      "fill": this.color,
       "font-size": this.size,
       "font-weight": "bold",
       "x": x,
@@ -454,6 +455,7 @@ BarChartOptions = (function() {
     font_family: "Helvetica, Arial, sans-serif",
     x_label_size: 14,
     y_label_size: 14,
+    x_label_color: "#333",
     show_grid: false,
     x_padding: 25,
     y_padding: 40
@@ -1078,13 +1080,13 @@ BarChart = (function(_super) {
 
   BarChart.prototype.render_bar = function(x_label, y_label, topleft_corner, options) {
     var rect;
-    console.log(x_label, topleft_corner.x, topleft_corner.y);
     rect = this.r.rect(topleft_corner.x, topleft_corner.y, this.options.bar_width, this.effective_height - topleft_corner.y);
     rect.attr({
       "fill": options.bar_color,
       "stroke-width": 0
     });
-    new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size).draw();
+    console.log(this.options);
+    new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size, this.options.font_family, this.options.x_label_color).draw();
     return new Tooltip(this.r, rect, y_label, false).show();
   };
 

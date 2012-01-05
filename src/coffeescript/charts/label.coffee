@@ -1,5 +1,5 @@
 class Label
-  constructor: (@r, @x, @y, @text, @format, @size = 14, @font_family) ->
+  constructor: (@r, @x, @y, @text, @format, @size = 14, @font_family, @color = "#333") ->
 
   is_date: (potential_date) -> 
     Object.prototype.toString.call(potential_date) == '[object Date]'
@@ -63,7 +63,7 @@ class Label
     x = if @x < width then (width/2) + margin else @x 
 
     @element.attr({ 
-      "fill"        : "#333"
+      "fill"        : @color
       "font-size"   : @size
       "font-weight" : "bold"
       "x"           : x

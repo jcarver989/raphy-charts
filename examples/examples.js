@@ -209,10 +209,14 @@ $(document).ready(function() {
    bullet.draw();
 
 
-   var bars = new Charts.BarChart('normalbarchart');
+   var bars = new Charts.BarChart('normalbarchart', {
+     x_label_color: "#00aadd"
+    });
+
    bars.add({
      label: "foo",
-     value: 600
+     value: 600,
+     
    });
 
    bars.add({

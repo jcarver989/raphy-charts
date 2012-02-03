@@ -7,25 +7,17 @@
 # @import line.coffee
 # @import line_bar.coffee
 # @import grid.coffee
+# @import base_chart.coffee
 
 
-class LineChart
+class LineChart extends BaseChart
   constructor: (dom_id, options = {}) ->
-    container = document.getElementById(dom_id)
-    [@width, @height] = @get_dimensions(container)
+    super dom_id, new LineChartOptions(options)
     @padding = 26
-    @options = new LineChartOptions(options)
-
-    @r = Raphael(container, @width, @height)
 
     @all_points   = []
     @line_indices = []
     @line_options = []
-
-  get_dimensions: (container) ->
-    width  = parseInt(container.style.width)
-    height = parseInt(container.style.height)
-    [width, height]
 
   add_line: (args) ->
     point_pairs = args.data

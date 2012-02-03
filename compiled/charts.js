@@ -628,92 +628,6 @@ Point = (function() {
 })();
 
 exports.Point = Point;
-var BulletChart, bar;
-
-bar = function(label, value, average, comparison) {
-  return {
-    label: label,
-    value: value,
-    average: average,
-    comparison: comparison
-  };
-};
-
-BulletChart = (function() {
-
-  function BulletChart(dom_id, options) {
-    var container, _ref;
-    if (options == null) options = {};
-    container = document.getElementById(dom_id);
-    _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
-    this.options = new BulletChartOptions(options);
-    this.r = Raphael(container, this.width, this.height);
-    this.bars = [];
-  }
-
-  BulletChart.prototype.get_dimensions = function(container) {
-    var height, width;
-    width = parseInt(container.style.width);
-    height = parseInt(container.style.height);
-    return [width, height];
-  };
-
-  BulletChart.prototype.add = function(label, value, average, comparison) {
-    return this.bars.push(bar.apply(bar, arguments));
-  };
-
-  BulletChart.prototype.draw_background = function(point, y_offset) {
-    var rect;
-    rect = this.r.rect(this.options.x_padding, y_offset, point.x, this.options.area_width);
-    return rect.attr({
-      fill: this.options.area_color,
-      "stroke-width": 0
-    });
-  };
-
-  BulletChart.prototype.draw_line = function(point, background_midpoint) {
-    var rect, y;
-    y = background_midpoint.y - this.options.line_width / 2;
-    rect = this.r.rect(this.options.x_padding, y, point.x, this.options.line_width);
-    return rect.attr({
-      fill: this.options.line_color,
-      "stroke-width": 0
-    });
-  };
-
-  BulletChart.prototype.draw_average = function(point, midpoint_y) {
-    var rect;
-    rect = this.r.rect(point.x - (this.options.average_width / 2), midpoint_y - this.options.average_height / 2, this.options.average_width, this.options.average_height);
-    return rect.attr({
-      fill: this.options.average_color,
-      "stroke-width": 0
-    });
-  };
-
-  BulletChart.prototype.draw_label = function(text, offset) {};
-
-  BulletChart.prototype.draw = function() {
-    var bar, i, midpoint_y, points, y_offset, _len, _ref, _results;
-    _ref = this.bars;
-    _results = [];
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      bar = _ref[i];
-      points = Scaling.scale_points(this.width, this.height, [new Point(bar.comparison, 0), new Point(bar.value, 0), new Point(bar.average, 0), new Point(0, 0)], this.options.x_padding, this.options.y_padding);
-      y_offset = i * (this.options.area_width + this.options.bar_margin);
-      this.draw_background(points[0], y_offset);
-      midpoint_y = y_offset + this.options.area_width / 2;
-      this.draw_line(points[1], new Point(points[0].x, midpoint_y));
-      this.draw_average(points[2], midpoint_y);
-      _results.push(new Label(this.r, 0, y_offset + this.options.area_width / 2, bar.label, "", this.size = 14, this.options.font_family).draw());
-    }
-    return _results;
-  };
-
-  return BulletChart;
-
-})();
-
-exports.BulletChart = BulletChart;
 var Bezier;
 
 Bezier = (function() {
@@ -848,29 +762,44 @@ Line = (function() {
   return Line;
 
 })();
-var LineChart;
+var BaseChart;
 
-LineChart = (function() {
+BaseChart = (function() {
 
-  function LineChart(dom_id, options) {
+  function BaseChart(dom_id, options) {
     var container, _ref;
-    if (options == null) options = {};
     container = document.getElementById(dom_id);
     _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
-    this.padding = 26;
-    this.options = new LineChartOptions(options);
     this.r = Raphael(container, this.width, this.height);
-    this.all_points = [];
-    this.line_indices = [];
-    this.line_options = [];
+    this.options = options;
   }
 
-  LineChart.prototype.get_dimensions = function(container) {
+  BaseChart.prototype.get_dimensions = function(container) {
     var height, width;
     width = parseInt(container.style.width);
     height = parseInt(container.style.height);
     return [width, height];
   };
+
+  return BaseChart;
+
+})();
+var LineChart,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+LineChart = (function(_super) {
+
+  __extends(LineChart, _super);
+
+  function LineChart(dom_id, options) {
+    if (options == null) options = {};
+    LineChart.__super__.constructor.call(this, dom_id, new LineChartOptions(options));
+    this.padding = 26;
+    this.all_points = [];
+    this.line_indices = [];
+    this.line_options = [];
+  }
 
   LineChart.prototype.add_line = function(args) {
     var pair, point_pairs, points, points_count;
@@ -1026,30 +955,88 @@ LineChart = (function() {
 
   return LineChart;
 
-})();
+})(BaseChart);
 
 exports.LineChart = LineChart;
-var BaseChart;
+var BulletChart, bar,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-BaseChart = (function() {
+bar = function(label, value, average, comparison) {
+  return {
+    label: label,
+    value: value,
+    average: average,
+    comparison: comparison
+  };
+};
 
-  function BaseChart(dom_id, options) {
-    var container, _ref;
-    container = document.getElementById(dom_id);
-    _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
-    this.r = Raphael(container, this.width, this.height);
+BulletChart = (function(_super) {
+
+  __extends(BulletChart, _super);
+
+  function BulletChart(dom_id, options) {
+    if (options == null) options = {};
+    BulletChart.__super__.constructor.call(this, dom_id, new BulletChartOptions(options));
+    this.bars = [];
   }
 
-  BaseChart.prototype.get_dimensions = function(container) {
-    var height, width;
-    width = parseInt(container.style.width);
-    height = parseInt(container.style.height);
-    return [width, height];
+  BulletChart.prototype.add = function(label, value, average, comparison) {
+    return this.bars.push(bar.apply(bar, arguments));
   };
 
-  return BaseChart;
+  BulletChart.prototype.draw_background = function(point, y_offset) {
+    var rect;
+    rect = this.r.rect(this.options.x_padding, y_offset, point.x, this.options.area_width);
+    return rect.attr({
+      fill: this.options.area_color,
+      "stroke-width": 0
+    });
+  };
 
-})();
+  BulletChart.prototype.draw_line = function(point, background_midpoint) {
+    var rect, y;
+    y = background_midpoint.y - this.options.line_width / 2;
+    rect = this.r.rect(this.options.x_padding, y, point.x, this.options.line_width);
+    return rect.attr({
+      fill: this.options.line_color,
+      "stroke-width": 0
+    });
+  };
+
+  BulletChart.prototype.draw_average = function(point, midpoint_y) {
+    var rect;
+    rect = this.r.rect(point.x - (this.options.average_width / 2), midpoint_y - this.options.average_height / 2, this.options.average_width, this.options.average_height);
+    return rect.attr({
+      fill: this.options.average_color,
+      "stroke-width": 0
+    });
+  };
+
+  BulletChart.prototype.draw_label = function(text, offset) {};
+
+  BulletChart.prototype.draw = function() {
+    var bar, i, midpoint_y, points, y_offset, _len, _ref, _results;
+    _ref = this.bars;
+    _results = [];
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      bar = _ref[i];
+      points = Scaling.scale_points(this.width, this.height, [new Point(bar.comparison, 0), new Point(bar.value, 0), new Point(bar.average, 0), new Point(0, 0)], this.options.x_padding, this.options.y_padding);
+      y_offset = i * (this.options.area_width + this.options.bar_margin);
+      this.draw_background(points[0], y_offset);
+      midpoint_y = y_offset + this.options.area_width / 2;
+      this.draw_line(points[1], new Point(points[0].x, midpoint_y));
+      this.draw_average(points[2], midpoint_y);
+      _results.push(new Label(this.r, 0, y_offset + this.options.area_width / 2, bar.label, "", this.size = 14, this.options.font_family).draw());
+    }
+    return _results;
+  };
+
+  return BulletChart;
+
+})(BaseChart);
+
+exports.BulletChart = BulletChart;
 var BarChart,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
@@ -1060,8 +1047,7 @@ BarChart = (function(_super) {
 
   function BarChart(dom_id, options) {
     if (options == null) options = {};
-    BarChart.__super__.constructor.apply(this, arguments);
-    this.options = new BarChartOptions(options);
+    BarChart.__super__.constructor.call(this, dom_id, new BarChartOptions(options));
     this.effective_height = this.height - this.options.y_padding;
     this.bar_options = [];
     this.bars = [];

@@ -3,6 +3,7 @@ class BaseChart
     container = document.getElementById(dom_id)
     [@width, @height] = @get_dimensions(container)
     @r = Raphael(container, @width, @height)
+    @options = options
 
   get_dimensions: (container) ->
     width  = parseInt(container.style.width)

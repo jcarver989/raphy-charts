@@ -5,8 +5,7 @@
 
 class BarChart extends BaseChart
   constructor: (dom_id, options = {}) ->
-    super
-    @options = new BarChartOptions(options)
+    super dom_id, new BarChartOptions(options)
     @effective_height = @height - @options.y_padding
     @bar_options = []
     @bars = []

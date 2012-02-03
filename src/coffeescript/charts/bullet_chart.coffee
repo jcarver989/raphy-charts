@@ -1,6 +1,7 @@
 # @import point.coffee
 # @import label.coffee
 # @import scaling.coffee
+# @import base_chart.coffee
 
 bar = (label, value, average, comparison) ->
   {
@@ -11,22 +12,11 @@ bar = (label, value, average, comparison) ->
   }
 
 
-class BulletChart
+class BulletChart extends BaseChart
   constructor: (dom_id, options = {}) ->
-    container = document.getElementById(dom_id)
-
-    [@width, @height] = @get_dimensions(container)
-    @options = new BulletChartOptions(options)
-
-    @r = Raphael(container, @width, @height)
+    super dom_id, new BulletChartOptions(options)
     @bars = []
 
-  get_dimensions: (container) ->
-    width  = parseInt(container.style.width)
-    height = parseInt(container.style.height)
-    [width, height]
-
-  
   add: (label, value, average, comparison) ->
     @bars.push bar.apply(bar, arguments)
 

@@ -1,5 +1,31 @@
+class LabelFactory
+  constructor: (@r, @format = "") ->
+    @num = 0
+    @font_family = "Helvetica, Arial, sans-serif"
+    @color = "#333"
+
+  x: (@x_func)         -> this
+  y: (@y_func)         -> this
+  size: (@size)        -> this
+  attr: (@options)     -> this
+ 
+  build: (text) ->
+    label = new Label(
+      @r,
+      @x_func(@num),
+      @y_func(@num),
+      text,
+      @format,
+      @size,
+      @font_family,
+      @color,
+      @options
+    )
+    @num += 1
+    label
+
 class Label
-  constructor: (@r, @x, @y, @text, @format, @size = 14, @font_family, @color = "#333") ->
+  constructor: (@r, @x, @y, @text, @format = "", @size = 14, @font_family = "Helvetica, Arial, sans-serif", @color = "#333", @options = undefined) ->
 
   is_date: (potential_date) -> 
     Object.prototype.toString.call(potential_date) == '[object Date]'
@@ -60,14 +86,20 @@ class Label
     @element = @r.text(@x, @y, text)
     width = @element.getBBox().width
     margin = 5
-    x = if @x < width then (width/2) + margin else @x 
 
     @element.attr({ 
       "fill"        : @color
       "font-size"   : @size
-      "font-weight" : "bold"
-      "x"           : x
+      "font-weight" : "normal"
       "text-anchor" : "middle"
       "font-family" : @font_family
     })
+
+    if @options?
+      @element.attr(@options)
+    else
+      x = if @x < width then (width/2) + margin else @x
+      @element.attr({
+        "x"           : x
+      })
 

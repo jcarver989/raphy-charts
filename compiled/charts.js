@@ -320,19 +320,61 @@ BulletChartOptions = (function() {
   return BulletChartOptions;
 
 })();
-var Label;
+var Label, LabelFactory;
+
+LabelFactory = (function() {
+
+  function LabelFactory(r, format) {
+    this.r = r;
+    this.format = format != null ? format : "";
+    this.num = 0;
+    this.font_family = "Helvetica, Arial, sans-serif";
+    this.color = "#333";
+  }
+
+  LabelFactory.prototype.x = function(x_func) {
+    this.x_func = x_func;
+    return this;
+  };
+
+  LabelFactory.prototype.y = function(y_func) {
+    this.y_func = y_func;
+    return this;
+  };
+
+  LabelFactory.prototype.size = function(size) {
+    this.size = size;
+    return this;
+  };
+
+  LabelFactory.prototype.attr = function(options) {
+    this.options = options;
+    return this;
+  };
+
+  LabelFactory.prototype.build = function(text) {
+    var label;
+    label = new Label(this.r, this.x_func(this.num), this.y_func(this.num), text, this.format, this.size, this.font_family, this.color, this.options);
+    this.num += 1;
+    return label;
+  };
+
+  return LabelFactory;
+
+})();
 
 Label = (function() {
 
-  function Label(r, x, y, text, format, size, font_family, color) {
+  function Label(r, x, y, text, format, size, font_family, color, options) {
     this.r = r;
     this.x = x;
     this.y = y;
     this.text = text;
-    this.format = format;
+    this.format = format != null ? format : "";
     this.size = size != null ? size : 14;
-    this.font_family = font_family;
+    this.font_family = font_family != null ? font_family : "Helvetica, Arial, sans-serif";
     this.color = color != null ? color : "#333";
+    this.options = options != null ? options : void 0;
   }
 
   Label.prototype.is_date = function(potential_date) {
@@ -427,15 +469,21 @@ Label = (function() {
     this.element = this.r.text(this.x, this.y, text);
     width = this.element.getBBox().width;
     margin = 5;
-    x = this.x < width ? (width / 2) + margin : this.x;
-    return this.element.attr({
+    this.element.attr({
       "fill": this.color,
       "font-size": this.size,
-      "font-weight": "bold",
-      "x": x,
+      "font-weight": "normal",
       "text-anchor": "middle",
       "font-family": this.font_family
     });
+    if (this.options != null) {
+      return this.element.attr(this.options);
+    } else {
+      x = this.x < width ? (width / 2) + margin : this.x;
+      return this.element.attr({
+        "x": x
+      });
+    }
   };
 
   return Label;
@@ -496,7 +544,39 @@ BarChartOptions = (function() {
   return BarChartOptions;
 
 })();
-var Scaling;
+var Scaler, Scaling,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+Scaler = (function() {
+
+  function Scaler() {
+    this.scale = __bind(this.scale, this);
+  }
+
+  Scaler.prototype.domain = function(points) {
+    this.domain_min = Math.min.apply(Math.min, points);
+    this.domain_max = Math.max.apply(Math.max, points);
+    return this;
+  };
+
+  Scaler.prototype.range = function(points) {
+    this.range_min = Math.min.apply(Math.min, points);
+    this.range_max = Math.max.apply(Math.max, points);
+    return this.scale;
+  };
+
+  Scaler.prototype.scale = function(value) {
+    var domain_span, range_span, term1, term2;
+    domain_span = this.domain_max - this.domain_min;
+    range_span = this.range_max - this.range_min;
+    term1 = (this.domain_max * this.range_min - this.domain_min * this.range_max) / domain_span;
+    term2 = term1 + value * (range_span / domain_span);
+    return term2;
+  };
+
+  return Scaler;
+
+})();
 
 Scaling = (function() {
 
@@ -958,6 +1038,178 @@ LineChart = (function(_super) {
 })(BaseChart);
 
 exports.LineChart = LineChart;
+var IndexChart, bar_struct,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+bar_struct = function(label, raw_value, index_value) {
+  return {
+    label: label,
+    raw_value: raw_value,
+    index_value: index_value
+  };
+};
+
+IndexChart = (function(_super) {
+
+  __extends(IndexChart, _super);
+
+  function IndexChart(dom_id, options) {
+    if (options == null) options = {};
+    IndexChart.__super__.constructor.call(this, dom_id, options);
+    this.bars = [];
+    this.options = {
+      bar_margin: 30,
+      threshold: 1000,
+      bar_color: "90-#2f5e78-#4284a8",
+      beyond_avg_color: "90-#173e53-#225d7c",
+      bg_color: "#bdced3",
+      x_padding: 150,
+      y_padding: 50,
+      rounding: 3,
+      dash_width: 3,
+      font_family: "Helvetica, Arial, sans-serif"
+    };
+  }
+
+  IndexChart.prototype.add = function(label, raw_value, index_value) {
+    return this.bars.push(bar_struct(label, raw_value, index_value));
+  };
+
+  IndexChart.prototype.threshold = function(index_value) {
+    if (index_value > this.options.threshold) {
+      return this.options.threshold;
+    } else {
+      return index_value;
+    }
+  };
+
+  IndexChart.prototype.set_bar_height = function() {
+    var effective_height, margin, num_bars;
+    num_bars = this.bars.length;
+    margin = this.options.bar_margin;
+    effective_height = this.height - this.options.y_padding;
+    return this.bar_height = (effective_height / num_bars) - margin;
+  };
+
+  IndexChart.prototype.draw_bg_bar = function(raw_value, scaler, y) {
+    var offset, padding, rect, x;
+    x = scaler(raw_value);
+    padding = 14;
+    offset = Math.floor(padding / 2);
+    rect = this.r.rect(this.options.x_padding - offset, y - offset, this.width, this.bar_height + padding, this.options.rounding);
+    return rect.attr({
+      fill: this.options.bg_color,
+      "stroke-width": 0
+    }).toBack();
+  };
+
+  IndexChart.prototype.draw_bar = function(raw_value, scaler, y) {
+    var rect, x;
+    x = scaler(this.threshold(raw_value));
+    if (raw_value > 100) {
+      rect = this.r.rect(this.options.x_padding, y, scaler(100) - this.options.x_padding, this.bar_height, this.options.rounding);
+      rect.attr({
+        fill: this.options.bar_color,
+        "stroke-width": 0
+      });
+      rect = this.r.rect(scaler(100), y, x - scaler(100), this.bar_height, this.options.rounding);
+      rect.attr({
+        fill: this.options.beyond_avg_color,
+        "stroke-width": 0
+      });
+    } else {
+      rect = this.r.rect(this.options.x_padding, y, x - this.options.x_padding, this.bar_height, this.options.rounding);
+      rect.attr({
+        fill: this.options.bar_color,
+        "stroke-width": 0
+      });
+    }
+    this.r.path("M" + this.options.x_padding + "," + y + "L" + x + "," + y).attr({
+      "stroke-width": 0.5,
+      "stroke": "rgba(0,0,0,0.5)"
+    });
+    return this.r.path("M" + this.options.x_padding + "," + (y + 2) + "L" + x + "," + (y + 2)).attr({
+      "stroke-width": 1,
+      "stroke": "rgba(255,255,255,0.3)"
+    });
+  };
+
+  IndexChart.prototype.draw_guide_line = function(label, index_value, x, opacity) {
+    var i, rect, spacing, ticks, _ref;
+    if (opacity == null) opacity = 1;
+    spacing = 10;
+    ticks = Math.floor((this.height - this.options.y_padding) / spacing);
+    for (i = 0, _ref = ticks - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+      if (i % 2 !== 0) continue;
+      rect = this.r.rect(x - (0.5 * this.options.dash_width), i * spacing + this.options.y_padding, this.options.dash_width, spacing);
+      rect.attr({
+        fill: "rgba(0,0,0," + opacity + ")",
+        "stroke-width": 0
+      });
+    }
+    new Label(this.r, x, 20, label, "", 14).draw();
+    return new Label(this.r, x, 35, index_value, "", 10).draw();
+  };
+
+  IndexChart.prototype.sort_bars = function() {
+    var bar, bar_copy;
+    bar_copy = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.bars;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        bar = _ref[_i];
+        _results.push(bar);
+      }
+      return _results;
+    }).call(this);
+    bar_copy.sort(function(a, b) {
+      return b.index_value - a.index_value;
+    });
+    return bar_copy;
+  };
+
+  IndexChart.prototype.Labels = function() {
+    return new LabelFactory(this.r);
+  };
+
+  IndexChart.prototype.draw = function() {
+    var bar, half_bar_height, i, labels, spacing_factor, x, y, y_padding, _len, _ref,
+      _this = this;
+    this.set_bar_height();
+    spacing_factor = this.bar_height + this.options.bar_margin;
+    half_bar_height = this.bar_height / 2;
+    y_padding = this.options.y_padding;
+    labels = this.Labels().y(function(num) {
+      return (num * spacing_factor) + y_padding + half_bar_height;
+    }).x(function(num) {
+      return 5;
+    }).size(12).attr({
+      "fill": "#333",
+      "text-anchor": "start"
+    });
+    x = new Scaler().domain([0, this.options.threshold]).range([this.options.x_padding, this.width - this.options.x_padding]);
+    y = function(i) {
+      return i * (_this.bar_height + _this.options.bar_margin) + _this.options.y_padding;
+    };
+    this.draw_guide_line("Above Average", 500, x(500), 0.25);
+    this.draw_guide_line("High", 1000, x(1000), 0.25);
+    _ref = this.sort_bars();
+    for (i = 0, _len = _ref.length; i < _len; i++) {
+      bar = _ref[i];
+      this.draw_bg_bar(bar.index_value, x, y(i));
+      this.draw_bar(bar.index_value, x, y(i));
+      labels.build(bar.label).draw();
+    }
+    return this.draw_guide_line("Average", 100, x(100), 1.00);
+  };
+
+  return IndexChart;
+
+})(BaseChart);
+
+exports.IndexChart = IndexChart;
 var BulletChart, bar,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };

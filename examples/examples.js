@@ -231,4 +231,17 @@ $(document).ready(function() {
 
    bars.draw();
 
+
+
+   
+
+   var index = new Charts.IndexChart('indexchart');
+   index.add("Retail",18316,65)
+   index.add("IT Software",28977,1331)
+   index.add("Engineering/Technical",28977,282)
+   index.add("Education",20839,106)
+   index.add("Media & Internet",22488,92)
+   index.add("Business Services",19397,85)
+   index.draw()
+
 })

@@ -1,3 +1,23 @@
+class Scaler
+  constructor: () ->
+  domain: (points) ->
+    @domain_min = Math.min.apply(Math.min, points)
+    @domain_max = Math.max.apply(Math.max, points)
+    this
+
+  range:  (points) ->
+    @range_min = Math.min.apply(Math.min, points)
+    @range_max = Math.max.apply(Math.max, points)
+    @scale
+
+  scale: (value) =>
+    domain_span = @domain_max - @domain_min
+    range_span = @range_max - @range_min
+    term1 = (@domain_max * @range_min - @domain_min * @range_max) / domain_span
+    term2 = term1 + value * (range_span/domain_span)
+    term2
+
+
 class Scaling 
   @get_ranges_for_points: (points) ->
     xs = []
@@ -61,6 +81,5 @@ class Scaling
       scaled_points.push(new Point(sx, sy))
 
     scaled_points
-
 
 exports.Scaling = Scaling

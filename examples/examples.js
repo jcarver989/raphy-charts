@@ -245,7 +245,7 @@ $(document).ready(function() {
    index.add_guide_line("Average", 100, 1)
    index.add_guide_line("Above Average", 500, 0.25)
    index.add_guide_line("High", 1000, 0.25)
-   index.add_raw_label("Unique Visits")
+   index.add_raw_label("Uniques")
    index.draw()
 
 })

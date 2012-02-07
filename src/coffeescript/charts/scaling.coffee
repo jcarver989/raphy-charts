@@ -82,4 +82,9 @@ class Scaling
 
     scaled_points
 
+ 
+  @threshold: (value, threshold) -> 
+    if value > threshold then threshold else value
+
 exports.Scaling = Scaling
+exports.Scaler  = Scaler

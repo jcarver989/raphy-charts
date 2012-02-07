@@ -1,4 +1,4 @@
-class LabelFactory
+class LabelSet
   constructor: (@r, @format = "") ->
     @num = 0
     @font_family = "Helvetica, Arial, sans-serif"
@@ -9,7 +9,7 @@ class LabelFactory
   size: (@size)        -> this
   attr: (@options)     -> this
  
-  build: (text) ->
+  draw: (text) ->
     label = new Label(
       @r,
       @x_func(@num),
@@ -22,7 +22,7 @@ class LabelFactory
       @options
     )
     @num += 1
-    label
+    label.draw()
 
 class Label
   constructor: (@r, @x, @y, @text, @format = "", @size = 14, @font_family = "Helvetica, Arial, sans-serif", @color = "#333", @options = undefined) ->
@@ -102,4 +102,6 @@ class Label
       @element.attr({
         "x"           : x
       })
+
+    @element
 

@@ -78,93 +78,6 @@ LineChartOptions = (function() {
   return LineChartOptions;
 
 })();
-var Tooltip;
-
-Raphael.fn.triangle = function(cx, cy, r) {
-  r *= 1.75;
-  return this.path("M".concat(cx, ",", cy, "m0-", r * .58, "l", r * .5, ",", r * .87, "-", r, ",0z"));
-};
-
-Tooltip = (function() {
-
-  function Tooltip(r, target, text, hover_enabled) {
-    var box, box_height, box_midpoint, box_width, height, offset, rounding, size, width, x, y,
-      _this = this;
-    this.r = r;
-    if (hover_enabled == null) hover_enabled = true;
-    size = 30;
-    width = 50;
-    height = 25;
-    offset = 10;
-    rounding = 5;
-    if (typeof text === "number") text = Math.round(text * 100) / 100;
-    box = target.getBBox();
-    x = box.x;
-    y = box.y;
-    box_width = box.width;
-    box_height = box.height;
-    box_midpoint = x + box_width / 2;
-    this.popup = this.r.set();
-    this.popup.push(this.r.rect(box_midpoint - width / 2, y - (height + offset), width, height, rounding));
-    this.popup.push(this.r.triangle(box_midpoint, y - offset + 4, 4).rotate(180));
-    this.popup.attr({
-      "fill": "rgba(0,0,0,.4)",
-      "fill-opacity": 0,
-      "stroke": "transparent",
-      "stroke-width": 0
-    });
-    this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
-    this.text.attr({
-      "fill": "#fff",
-      "font-size": 14,
-      "text-anchor": "middle",
-      "width": width,
-      "height": height,
-      "fill-opacity": 0,
-      "font-weight": "bold"
-    });
-    this.popup.toFront();
-    this.text.toFront();
-    if (hover_enabled === true) {
-      target.mouseover(function() {
-        return _this.show();
-      });
-      target.mouseout(function() {
-        return _this.hide();
-      });
-    }
-  }
-
-  Tooltip.prototype.animate_opacity = function(element, value, time) {
-    var _this = this;
-    if (time == null) time = 200;
-    return element.animate({
-      "fill-opacity": value
-    }, time, function() {
-      if (value === 0) {
-        _this.text.toBack();
-        return _this.popup.toBack();
-      }
-    });
-  };
-
-  Tooltip.prototype.hide = function() {
-    this.animate_opacity(this.popup, 0);
-    return this.animate_opacity(this.text, 0);
-  };
-
-  Tooltip.prototype.show = function() {
-    this.popup.toFront();
-    this.text.toFront();
-    this.animate_opacity(this.popup, 0.8);
-    return this.animate_opacity(this.text, 1);
-  };
-
-  return Tooltip;
-
-})();
-
-exports.Tooltip = Tooltip;
 var Grid;
 
 Grid = (function() {
@@ -320,11 +233,11 @@ BulletChartOptions = (function() {
   return BulletChartOptions;
 
 })();
-var Label, LabelFactory;
+var Label, LabelSet;
 
-LabelFactory = (function() {
+LabelSet = (function() {
 
-  function LabelFactory(r, format) {
+  function LabelSet(r, format) {
     this.r = r;
     this.format = format != null ? format : "";
     this.num = 0;
@@ -332,34 +245,34 @@ LabelFactory = (function() {
     this.color = "#333";
   }
 
-  LabelFactory.prototype.x = function(x_func) {
+  LabelSet.prototype.x = function(x_func) {
     this.x_func = x_func;
     return this;
   };
 
-  LabelFactory.prototype.y = function(y_func) {
+  LabelSet.prototype.y = function(y_func) {
     this.y_func = y_func;
     return this;
   };
 
-  LabelFactory.prototype.size = function(size) {
+  LabelSet.prototype.size = function(size) {
     this.size = size;
     return this;
   };
 
-  LabelFactory.prototype.attr = function(options) {
+  LabelSet.prototype.attr = function(options) {
     this.options = options;
     return this;
   };
 
-  LabelFactory.prototype.build = function(text) {
+  LabelSet.prototype.draw = function(text) {
     var label;
     label = new Label(this.r, this.x_func(this.num), this.y_func(this.num), text, this.format, this.size, this.font_family, this.color, this.options);
     this.num += 1;
-    return label;
+    return label.draw();
   };
 
-  return LabelFactory;
+  return LabelSet;
 
 })();
 
@@ -477,18 +390,84 @@ Label = (function() {
       "font-family": this.font_family
     });
     if (this.options != null) {
-      return this.element.attr(this.options);
+      this.element.attr(this.options);
     } else {
       x = this.x < width ? (width / 2) + margin : this.x;
-      return this.element.attr({
+      this.element.attr({
         "x": x
       });
     }
+    return this.element;
   };
 
   return Label;
 
 })();
+var BaseChartOptions;
+
+BaseChartOptions = (function() {
+
+  BaseChartOptions.merge = function(from, to) {
+    var option, opts, value;
+    if (from == null) from = {};
+    if (to == null) to = {};
+    opts = {};
+    for (option in from) {
+      value = from[option];
+      opts[option] = value;
+    }
+    for (option in to) {
+      value = to[option];
+      if (to.hasOwnProperty(option)) opts[option] = value;
+    }
+    return opts;
+  };
+
+  function BaseChartOptions(options, defaults) {
+    var option, opts, value;
+    opts = {};
+    for (option in defaults) {
+      value = defaults[option];
+      opts[option] = value;
+    }
+    for (option in options) {
+      value = options[option];
+      if (options.hasOwnProperty(option)) opts[option] = value;
+    }
+    return opts;
+  }
+
+  return BaseChartOptions;
+
+})();
+var IndexChartOptions,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+IndexChartOptions = (function(_super) {
+
+  __extends(IndexChartOptions, _super);
+
+  IndexChartOptions.DEFAULTS = {
+    bar_margin: 30,
+    bar_bg_color: "#bdced3",
+    bar1_color: "90-#2f5e78-#4284a8",
+    bar2_color: "90-#173e53-#225d7c",
+    x_padding: 160,
+    y_padding: 50,
+    rounding: 3,
+    dash_width: 3,
+    label_size: 14,
+    font_family: "Helvetica, Arial, sans-serif"
+  };
+
+  function IndexChartOptions(options) {
+    return IndexChartOptions.__super__.constructor.call(this, options, IndexChartOptions.DEFAULTS);
+  }
+
+  return IndexChartOptions;
+
+})(BaseChartOptions);
 var BarChartOptions;
 
 BarChartOptions = (function() {
@@ -633,11 +612,219 @@ Scaling = (function() {
     return scaled_points;
   };
 
+  Scaling.threshold = function(value, threshold) {
+    if (value > threshold) {
+      return threshold;
+    } else {
+      return value;
+    }
+  };
+
   return Scaling;
 
 })();
 
 exports.Scaling = Scaling;
+
+exports.Scaler = Scaler;
+var Point;
+
+Point = (function() {
+
+  function Point(x, y) {
+    this.y = y;
+    if (this.is_date(x)) {
+      this.x = x.getTime();
+      this.is_date_type = true;
+    } else {
+      this.x = x;
+    }
+    return;
+  }
+
+  Point.prototype.is_date = function(potential_date) {
+    return Object.prototype.toString.call(potential_date) === '[object Date]';
+  };
+
+  return Point;
+
+})();
+
+exports.Point = Point;
+var Effects;
+
+Raphael.fn.triangle = function(cx, cy, r) {
+  r *= 1.75;
+  return this.path("M".concat(cx, ",", cy, "m0-", r * .58, "l", r * .5, ",", r * .87, "-", r, ",0z"));
+};
+
+Effects = (function() {
+
+  function Effects(r) {
+    this.r = r;
+  }
+
+  Effects.prototype.black_nub = function(target, h_padding, v_padding, offset, rounding) {
+    var box, box_height, box_midpoint, box_width, height, popup, width, x, y;
+    if (h_padding == null) h_padding = 10;
+    if (v_padding == null) v_padding = 8;
+    if (offset == null) offset = 0;
+    if (rounding == null) rounding = 0;
+    box = target.getBBox();
+    x = box.x;
+    y = box.y;
+    box_width = box.width;
+    box_height = box.height;
+    box_midpoint = x + box_width / 2;
+    width = box_width + (2 * h_padding);
+    height = box_height + (2 * v_padding);
+    popup = this.r.set();
+    popup.push(this.r.rect(box_midpoint - width / 2, y - v_padding, width, height, rounding));
+    popup.push(this.r.triangle(x + box_width + h_padding + 2, y + 2 + (0.5 * box_height), 4).rotate(90));
+    return popup.attr({
+      "fill": "#333",
+      "stroke": "transparent",
+      "stroke-width": 0
+    }).toBack();
+  };
+
+  Effects.prototype.straight_line = function(start_point, end_point) {
+    return this.r.path("M" + start_point.x + "," + start_point.y + "L" + end_point.x + "," + end_point.y);
+  };
+
+  Effects.prototype.vertical_dashed_line = function(start_point, end_point, dash_width, spacing) {
+    var dashes, height, i, rect, ticks, _ref;
+    if (dash_width == null) dash_width = 3;
+    if (spacing == null) spacing = 10;
+    height = end_point.y - start_point.y;
+    ticks = Math.floor(height / spacing);
+    dashes = this.r.set();
+    for (i = 0, _ref = ticks - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
+      if (i % 2 !== 0) continue;
+      rect = this.r.rect(start_point.x - (0.5 * dash_width), i * spacing + start_point.y, dash_width, spacing);
+      dashes.push(rect);
+    }
+    return dashes;
+  };
+
+  Effects.prototype.get_points_along_top_of_bbox = function(rect, y_offset) {
+    var bounding_box, x1, x2, y1, y2;
+    if (y_offset == null) y_offset = 0;
+    bounding_box = rect.getBBox();
+    x1 = bounding_box.x;
+    x2 = bounding_box.x + bounding_box.width;
+    y1 = bounding_box.y + y_offset;
+    y2 = y1;
+    return [new Point(x1, y1), new Point(x2, y2)];
+  };
+
+  Effects.prototype.one_px_highlight = function(rect) {
+    var end, start, _ref;
+    _ref = this.get_points_along_top_of_bbox(rect, 2), start = _ref[0], end = _ref[1];
+    this.straight_line(start, end).attr({
+      "stroke-width": 1,
+      "stroke": "rgba(255,255,255,0.3)"
+    });
+    return this.straight_line;
+  };
+
+  Effects.prototype.one_px_shadow = function(rect) {
+    var end, start, _ref;
+    _ref = this.get_points_along_top_of_bbox(rect), start = _ref[0], end = _ref[1];
+    this.straight_line(start, end).attr({
+      "stroke-width": 0.5,
+      "stroke": "rgba(0,0,0,0.5)"
+    });
+    return this.straight_line;
+  };
+
+  return Effects;
+
+})();
+
+exports.Effects = Effects;
+var Tooltip;
+
+Tooltip = (function() {
+
+  function Tooltip(r, target, text, hover_enabled) {
+    var box, box_height, box_midpoint, box_width, height, offset, rounding, size, width, x, y,
+      _this = this;
+    this.r = r;
+    if (hover_enabled == null) hover_enabled = true;
+    size = 30;
+    width = 50;
+    height = 25;
+    offset = 10;
+    rounding = 5;
+    if (typeof text === "number") text = Math.round(text * 100) / 100;
+    box = target.getBBox();
+    x = box.x;
+    y = box.y;
+    box_width = box.width;
+    box_height = box.height;
+    box_midpoint = x + box_width / 2;
+    this.popup = this.r.set();
+    this.popup.push(this.r.rect(box_midpoint - width / 2, y - (height + offset), width, height, rounding));
+    this.popup.push(this.r.triangle(box_midpoint, y - offset + 4, 4).rotate(180));
+    this.popup.attr({
+      "fill": "rgba(0,0,0,.4)",
+      "fill-opacity": 0,
+      "stroke": "transparent",
+      "stroke-width": 0
+    });
+    this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
+    this.text.attr({
+      "fill": "#fff",
+      "font-size": 14,
+      "text-anchor": "middle",
+      "width": width,
+      "height": height,
+      "fill-opacity": 0,
+      "font-weight": "bold"
+    });
+    this.popup.toFront();
+    this.text.toFront();
+    if (hover_enabled === true) {
+      target.mouseover(function() {
+        return _this.show();
+      });
+      target.mouseout(function() {
+        return _this.hide();
+      });
+    }
+  }
+
+  Tooltip.prototype.animate_opacity = function(element, value, time) {
+    var _this = this;
+    if (time == null) time = 200;
+    return element.animate({
+      "fill-opacity": value
+    }, time, function() {
+      if (value === 0) {
+        _this.text.toBack();
+        return _this.popup.toBack();
+      }
+    });
+  };
+
+  Tooltip.prototype.hide = function() {
+    this.animate_opacity(this.popup, 0);
+    return this.animate_opacity(this.text, 0);
+  };
+
+  Tooltip.prototype.show = function() {
+    this.popup.toFront();
+    this.text.toFront();
+    this.animate_opacity(this.popup, 0.8);
+    return this.animate_opacity(this.text, 1);
+  };
+
+  return Tooltip;
+
+})();
+
+exports.Tooltip = Tooltip;
 var LineBar;
 
 LineBar = (function() {
@@ -684,30 +871,6 @@ LineBar = (function() {
   return LineBar;
 
 })();
-var Point;
-
-Point = (function() {
-
-  function Point(x, y) {
-    this.y = y;
-    if (this.is_date(x)) {
-      this.x = x.getTime();
-      this.is_date_type = true;
-    } else {
-      this.x = x;
-    }
-    return;
-  }
-
-  Point.prototype.is_date = function(potential_date) {
-    return Object.prototype.toString.call(potential_date) === '[object Date]';
-  };
-
-  return Point;
-
-})();
-
-exports.Point = Point;
 var Bezier;
 
 Bezier = (function() {
@@ -1038,7 +1201,7 @@ LineChart = (function(_super) {
 })(BaseChart);
 
 exports.LineChart = LineChart;
-var IndexChart, bar_struct,
+var IndexChart, bar_struct, guide_struct,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -1050,38 +1213,53 @@ bar_struct = function(label, raw_value, index_value) {
   };
 };
 
+guide_struct = function(label, index_value, opacity) {
+  return {
+    label: label,
+    index_value: index_value,
+    opacity: opacity
+  };
+};
+
 IndexChart = (function(_super) {
 
   __extends(IndexChart, _super);
 
   function IndexChart(dom_id, options) {
     if (options == null) options = {};
-    IndexChart.__super__.constructor.call(this, dom_id, options);
+    IndexChart.__super__.constructor.call(this, dom_id, new IndexChartOptions(options));
+    this.effects = new Effects(this.r);
     this.bars = [];
-    this.options = {
-      bar_margin: 30,
-      threshold: 1000,
-      bar_color: "90-#2f5e78-#4284a8",
-      beyond_avg_color: "90-#173e53-#225d7c",
-      bg_color: "#bdced3",
-      x_padding: 150,
-      y_padding: 50,
-      rounding: 3,
-      dash_width: 3,
-      font_family: "Helvetica, Arial, sans-serif"
-    };
+    this.guides = [];
+    this.index = 100;
   }
 
   IndexChart.prototype.add = function(label, raw_value, index_value) {
     return this.bars.push(bar_struct(label, raw_value, index_value));
   };
 
-  IndexChart.prototype.threshold = function(index_value) {
-    if (index_value > this.options.threshold) {
-      return this.options.threshold;
-    } else {
-      return index_value;
-    }
+  IndexChart.prototype.add_guide_line = function(label, index_value, opacity) {
+    if (opacity == null) opacity = 1;
+    return this.guides.push(guide_struct(label, index_value, opacity));
+  };
+
+  IndexChart.prototype.add_raw_label = function(label) {
+    var labels,
+      _this = this;
+    labels = new LabelSet(this.r).x(function(num) {
+      return _this.width - 10;
+    }).y(function(i) {
+      return i * 15 + 15;
+    }).size(this.options.label_size).attr({
+      "fill": "#333",
+      "text-anchor": "end",
+      "font-weight": "bold"
+    });
+    labels.draw(label);
+    return labels.draw("(raw value)").attr({
+      "font-weight": "normal",
+      "font-size": 10
+    });
   };
 
   IndexChart.prototype.set_bar_height = function() {
@@ -1092,6 +1270,38 @@ IndexChart = (function(_super) {
     return this.bar_height = (effective_height / num_bars) - margin;
   };
 
+  IndexChart.prototype.set_threshold = function() {
+    var guide, thresholds;
+    thresholds = (function() {
+      var _i, _len, _ref, _results;
+      _ref = this.guides;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        guide = _ref[_i];
+        _results.push(guide.index_value);
+      }
+      return _results;
+    }).call(this);
+    return this.threshold = Math.max.apply(Math.max, thresholds);
+  };
+
+  IndexChart.prototype.draw_raw_bar = function(raw_value, y) {
+    var margin, offset, padding, rect, width;
+    padding = 14;
+    offset = Math.floor(padding / 2);
+    margin = 10;
+    width = this.options.x_padding - margin;
+    rect = this.r.rect(this.width - width, y - offset, this.width - this.options.x_padding, this.bar_height + padding, this.options.rounding);
+    rect.attr({
+      fill: "rgba(0,0,0,.1)",
+      "stroke-width": 0
+    });
+    return this.effects.straight_line(new Point(this.width - width, this.options.y_padding - 10), new Point(this.width - width, this.height)).attr({
+      stroke: "rgba(0,0,0,0.25)",
+      "stroke-width": 0.1
+    });
+  };
+
   IndexChart.prototype.draw_bg_bar = function(raw_value, scaler, y) {
     var offset, padding, rect, x;
     x = scaler(raw_value);
@@ -1099,60 +1309,65 @@ IndexChart = (function(_super) {
     offset = Math.floor(padding / 2);
     rect = this.r.rect(this.options.x_padding - offset, y - offset, this.width, this.bar_height + padding, this.options.rounding);
     return rect.attr({
-      fill: this.options.bg_color,
+      fill: this.options.bar_bg_color,
       "stroke-width": 0
     }).toBack();
   };
 
-  IndexChart.prototype.draw_bar = function(raw_value, scaler, y) {
-    var rect, x;
-    x = scaler(this.threshold(raw_value));
-    if (raw_value > 100) {
-      rect = this.r.rect(this.options.x_padding, y, scaler(100) - this.options.x_padding, this.bar_height, this.options.rounding);
-      rect.attr({
-        fill: this.options.bar_color,
-        "stroke-width": 0
-      });
-      rect = this.r.rect(scaler(100), y, x - scaler(100), this.bar_height, this.options.rounding);
-      rect.attr({
-        fill: this.options.beyond_avg_color,
-        "stroke-width": 0
-      });
+  IndexChart.prototype.shade_bar = function(bar, color) {
+    if (color == null) color = this.options.bar1_color;
+    bar.attr({
+      fill: color,
+      "stroke-width": 0
+    });
+    this.effects.one_px_shadow(bar);
+    return this.effects.one_px_highlight(bar);
+  };
+
+  IndexChart.prototype.render_bar = function(startx, starty, width, color) {
+    var rect;
+    if (color == null) color = this.options.bar1_color;
+    rect = this.r.rect(startx, starty, width, this.bar_height, this.options.rounding);
+    return this.shade_bar(rect, color);
+  };
+
+  IndexChart.prototype.draw_bar = function(raw_value, x_scaler, y) {
+    var index_x, x;
+    x = x_scaler(Scaling.threshold(raw_value, this.threshold));
+    if (raw_value > this.index) {
+      index_x = x_scaler(this.index);
+      this.render_bar(this.options.x_padding, y, index_x - this.options.x_padding);
+      return this.render_bar(index_x, y, x - index_x, this.options.bar2_color);
     } else {
-      rect = this.r.rect(this.options.x_padding, y, x - this.options.x_padding, this.bar_height, this.options.rounding);
-      rect.attr({
-        fill: this.options.bar_color,
-        "stroke-width": 0
-      });
+      return this.render_bar(this.options.x_padding, y, x - this.options.x_padding);
     }
-    this.r.path("M" + this.options.x_padding + "," + y + "L" + x + "," + y).attr({
-      "stroke-width": 0.5,
-      "stroke": "rgba(0,0,0,0.5)"
-    });
-    return this.r.path("M" + this.options.x_padding + "," + (y + 2) + "L" + x + "," + (y + 2)).attr({
-      "stroke-width": 1,
-      "stroke": "rgba(255,255,255,0.3)"
-    });
   };
 
   IndexChart.prototype.draw_guide_line = function(label, index_value, x, opacity) {
-    var i, rect, spacing, ticks, _ref;
+    var end, labels, start;
     if (opacity == null) opacity = 1;
-    spacing = 10;
-    ticks = Math.floor((this.height - this.options.y_padding) / spacing);
-    for (i = 0, _ref = ticks - 1; 0 <= _ref ? i <= _ref : i >= _ref; 0 <= _ref ? i++ : i--) {
-      if (i % 2 !== 0) continue;
-      rect = this.r.rect(x - (0.5 * this.options.dash_width), i * spacing + this.options.y_padding, this.options.dash_width, spacing);
-      rect.attr({
-        fill: "rgba(0,0,0," + opacity + ")",
-        "stroke-width": 0
-      });
-    }
-    new Label(this.r, x, 20, label, "", 14).draw();
-    return new Label(this.r, x, 35, index_value, "", 10).draw();
+    start = new Point(x, this.options.y_padding);
+    end = new Point(x, this.height);
+    this.effects.vertical_dashed_line(start, end, this.options.dash_width).attr({
+      fill: "rgba(0,0,0," + opacity + ")",
+      "stroke-width": 0
+    });
+    labels = new LabelSet(this.r).x(function() {
+      return x;
+    }).y(function(i) {
+      return i * 15 + 15;
+    }).size(this.options.label_size).attr({
+      fill: "rgba(0,0,0," + opacity + ")"
+    });
+    labels.draw(label).attr({
+      "font-weight": "bold"
+    });
+    return labels.draw(index_value).attr({
+      "font-size": 10
+    });
   };
 
-  IndexChart.prototype.sort_bars = function() {
+  IndexChart.prototype.sort_bars_by_index = function() {
     var bar, bar_copy;
     bar_copy = (function() {
       var _i, _len, _ref, _results;
@@ -1170,39 +1385,51 @@ IndexChart = (function(_super) {
     return bar_copy;
   };
 
-  IndexChart.prototype.Labels = function() {
-    return new LabelFactory(this.r);
-  };
-
   IndexChart.prototype.draw = function() {
-    var bar, half_bar_height, i, labels, spacing_factor, x, y, y_padding, _len, _ref,
+    var bar, guide, half_bar_height, i, label, labels, raw_label, raw_value_labels, spacing_factor, x, y, y_padding, _i, _len, _len2, _ref, _ref2, _results,
       _this = this;
     this.set_bar_height();
+    this.set_threshold();
     spacing_factor = this.bar_height + this.options.bar_margin;
     half_bar_height = this.bar_height / 2;
     y_padding = this.options.y_padding;
-    labels = this.Labels().y(function(num) {
+    labels = new LabelSet(this.r).y(function(num) {
       return (num * spacing_factor) + y_padding + half_bar_height;
     }).x(function(num) {
       return 5;
     }).size(12).attr({
-      "fill": "#333",
+      "fill": "#fff",
       "text-anchor": "start"
     });
-    x = new Scaler().domain([0, this.options.threshold]).range([this.options.x_padding, this.width - this.options.x_padding]);
+    raw_value_labels = new LabelSet(this.r).y(function(num) {
+      return (num * spacing_factor) + y_padding + half_bar_height;
+    }).x(function(num) {
+      return _this.width - 10;
+    }).size(this.options.label_size).attr({
+      "fill": "#333",
+      "text-anchor": "end"
+    });
+    x = new Scaler().domain([0, this.threshold]).range([this.options.x_padding, this.width - this.options.x_padding]);
     y = function(i) {
       return i * (_this.bar_height + _this.options.bar_margin) + _this.options.y_padding;
     };
-    this.draw_guide_line("Above Average", 500, x(500), 0.25);
-    this.draw_guide_line("High", 1000, x(1000), 0.25);
-    _ref = this.sort_bars();
+    _ref = this.sort_bars_by_index();
     for (i = 0, _len = _ref.length; i < _len; i++) {
       bar = _ref[i];
       this.draw_bg_bar(bar.index_value, x, y(i));
+      this.draw_raw_bar(bar.raw_value, y(i));
       this.draw_bar(bar.index_value, x, y(i));
-      labels.build(bar.label).draw();
+      raw_label = raw_value_labels.draw(bar.raw_value);
+      label = labels.draw(bar.label);
+      this.effects.black_nub(label);
     }
-    return this.draw_guide_line("Average", 100, x(100), 1.00);
+    _ref2 = this.guides;
+    _results = [];
+    for (_i = 0, _len2 = _ref2.length; _i < _len2; _i++) {
+      guide = _ref2[_i];
+      _results.push(this.draw_guide_line(guide.label, guide.index_value, x(guide.index_value), guide.opacity));
+    }
+    return _results;
   };
 
   return IndexChart;

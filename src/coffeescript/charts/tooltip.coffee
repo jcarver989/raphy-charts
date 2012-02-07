@@ -1,7 +1,4 @@
-Raphael.fn.triangle = (cx, cy, r) ->
-    r *= 1.75
-    this.path("M".concat(cx, ",", cy, "m0-", r * .58, "l", r * .5, ",", r * .87, "-", r, ",0z"))
-
+# @import effects.coffee 
 
 class Tooltip
   constructor: (@r, target, text, hover_enabled = true) ->

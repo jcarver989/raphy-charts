@@ -1005,13 +1005,21 @@ Line = (function() {
   return Line;
 
 })();
-var BaseChart;
+var BaseChart, is_element;
+
+is_element = function(o) {
+  if (o.hasOwnProperty("tagName")) {
+    return true;
+  } else {
+    return false;
+  }
+};
 
 BaseChart = (function() {
 
-  function BaseChart(dom_id, options) {
+  function BaseChart(dom_container, options) {
     var container, _ref;
-    container = document.getElementById(dom_id);
+    container = is_element(dom_container) ? dom_container : document.getElementById(dom_container);
     _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
     this.r = Raphael(container, this.width, this.height);
     this.options = options;

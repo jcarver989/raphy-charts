@@ -1,6 +1,9 @@
+is_element = (o) ->
+  if o.hasOwnProperty("tagName") then true else false
+
 class BaseChart
-  constructor: (dom_id, options) ->
-    container = document.getElementById(dom_id)
+  constructor: (dom_container, options) ->
+    container = if is_element(dom_container) then dom_container else document.getElementById(dom_container)
     [@width, @height] = @get_dimensions(container)
     @r = Raphael(container, @width, @height)
     @options = options

@@ -235,7 +235,8 @@ $(document).ready(function() {
 
    
 
-   var index = new Charts.IndexChart('indexchart');
+   var node = document.getElementById('indexchart');
+   var index = new Charts.IndexChart(node);
    index.add("Retail",18316,65)
    index.add("IT Software",28977,1331)
    index.add("Engineering/Technical",28977,282)

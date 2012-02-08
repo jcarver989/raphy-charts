@@ -247,4 +247,5 @@ class IndexChart extends BaseChart
         guide.opacity
       )
 
-exports.IndexChart = IndexChart
+exports.IndexChart = (container, options) -> 
+  return new IndexChart(container, options)

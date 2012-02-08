@@ -4,6 +4,7 @@ is_element = (o) ->
 class BaseChart
   constructor: (dom_container, options) ->
     container = if is_element(dom_container) then dom_container else document.getElementById(dom_container)
+    console.log(this)
     [@width, @height] = @get_dimensions(container)
     @r = Raphael(container, @width, @height)
     @options = options

@@ -1021,6 +1021,7 @@ BaseChart = (function() {
     var container, _ref;
     container = is_element(dom_container) ? dom_container : document.getElementById(dom_container);
     console.log(this);
+    alert(this);
     _ref = this.get_dimensions(container), this.width = _ref[0], this.height = _ref[1];
     this.r = Raphael(container, this.width, this.height);
     this.options = options;

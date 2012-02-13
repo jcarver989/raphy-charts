@@ -169,6 +169,13 @@ class LineChart extends BaseChart
         options
       ).draw()
 
+
+  clear: () ->
+    super()
+    @all_points   = []
+    @line_indices = []
+    @line_options = []
+
   draw: () ->
     return if @all_points.length < 1
 

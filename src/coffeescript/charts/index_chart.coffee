@@ -194,6 +194,12 @@ class IndexChart extends BaseChart
     bar_copy = (bar for bar in @bars)
     bar_copy.sort (a, b) -> b.index_value - a.index_value
     bar_copy
+
+
+  clear: () ->
+    super()
+    @bars    = []
+    @guides  = []
   
   draw: () ->
     @set_bar_height()

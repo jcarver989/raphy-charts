@@ -13,3 +13,6 @@ class BaseChart
     height = parseInt(container.style.height)
     [width, height]
 
+
+  clear: () ->
+    @r.clear()

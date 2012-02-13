@@ -1032,6 +1032,10 @@ BaseChart = (function() {
     return [width, height];
   };
 
+  BaseChart.prototype.clear = function() {
+    return this.r.clear();
+  };
+
   return BaseChart;
 
 })();
@@ -1175,6 +1179,13 @@ LineChart = (function(_super) {
     } else {
       return new Line(this.r, raw_points, points, this.height, this.width, options).draw();
     }
+  };
+
+  LineChart.prototype.clear = function() {
+    LineChart.__super__.clear.call(this);
+    this.all_points = [];
+    this.line_indices = [];
+    return this.line_options = [];
   };
 
   LineChart.prototype.draw = function() {
@@ -1391,6 +1402,12 @@ IndexChart = (function(_super) {
       return b.index_value - a.index_value;
     });
     return bar_copy;
+  };
+
+  IndexChart.prototype.clear = function() {
+    IndexChart.__super__.clear.call(this);
+    this.bars = [];
+    return this.guides = [];
   };
 
   IndexChart.prototype.draw = function() {

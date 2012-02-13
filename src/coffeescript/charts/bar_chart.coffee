@@ -55,6 +55,13 @@ class BarChart extends BaseChart
       @options.y_label_color
     ).draw()
 
+
+  clear: () ->
+    super()
+    @bars = []
+    @values = []
+
+
   draw: ->
     points = (new Point(i, value) for value, i in @values)
     points.push new Point(0,0)

@@ -65,6 +65,11 @@ class BulletChart extends BaseChart
   draw_label: (text, offset) ->
 
 
+  clear: () ->
+    super()
+    @bars = []
+
+
   draw: () ->
     for bar, i in @bars
       points = Scaling.scale_points(

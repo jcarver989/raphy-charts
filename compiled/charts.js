@@ -1521,6 +1521,11 @@ BulletChart = (function(_super) {
 
   BulletChart.prototype.draw_label = function(text, offset) {};
 
+  BulletChart.prototype.clear = function() {
+    BulletChart.__super__.clear.call(this);
+    return this.bars = [];
+  };
+
   BulletChart.prototype.draw = function() {
     var bar, i, midpoint_y, points, y_offset, _len, _ref, _results;
     _ref = this.bars;
@@ -1580,6 +1585,12 @@ BarChart = (function(_super) {
     });
     new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size, this.options.font_family, this.options.x_label_color).draw();
     return new Label(this.r, topleft_corner.x + this.options.bar_width / 2, topleft_corner.y - this.options.y_label_size - 5, y_label, "", this.options.y_label_size, this.options.font_family, this.options.y_label_color).draw();
+  };
+
+  BarChart.prototype.clear = function() {
+    BarChart.__super__.clear.call(this);
+    this.bars = [];
+    return this.values = [];
   };
 
   BarChart.prototype.draw = function() {

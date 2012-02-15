@@ -454,6 +454,7 @@ IndexChartOptions = (function(_super) {
     bar1_color: "90-#2f5e78-#4284a8",
     bar2_color: "90-#173e53-#225d7c",
     x_padding: 160,
+    x_padding_right: 100,
     y_padding: 50,
     rounding: 3,
     dash_width: 3,
@@ -766,7 +767,8 @@ Tooltip = (function() {
     box_midpoint = x + box_width / 2;
     this.popup = this.r.set();
     this.popup.push(this.r.rect(box_midpoint - width / 2, y - (height + offset), width, height, rounding));
-    this.popup.push(this.r.triangle(box_midpoint, y - offset + 4, 4).rotate(180));
+    this.triangle = this.r.triangle(box_midpoint, y - offset + 4, 4).rotate(180);
+    this.popup.push(this.triangle);
     this.popup.attr({
       "fill": "rgba(0,0,0,.4)",
       "fill-opacity": 0,
@@ -818,6 +820,12 @@ Tooltip = (function() {
     this.text.toFront();
     this.animate_opacity(this.popup, 0.8);
     return this.animate_opacity(this.text, 1);
+  };
+
+  Tooltip.prototype.translate = function(x, y) {
+    this.popup.translate(x, y);
+    this.text.translate(x, y);
+    return this.triangle.translate(-2 * x, y);
   };
 
   return Tooltip;
@@ -1309,8 +1317,8 @@ IndexChart = (function(_super) {
     padding = 14;
     offset = Math.floor(padding / 2);
     margin = 10;
-    width = this.options.x_padding - margin;
-    rect = this.r.rect(this.width - width, y - offset, this.width - this.options.x_padding, this.bar_height + padding, this.options.rounding);
+    width = this.options.x_padding_right - margin;
+    rect = this.r.rect(this.width - width, y - offset, this.width - this.options.x_padding_right, this.bar_height + padding, this.options.rounding);
     rect.attr({
       fill: "rgba(0,0,0,.1)",
       "stroke-width": 0
@@ -1347,18 +1355,29 @@ IndexChart = (function(_super) {
     var rect;
     if (color == null) color = this.options.bar1_color;
     rect = this.r.rect(startx, starty, width, this.bar_height, this.options.rounding);
-    return this.shade_bar(rect, color);
+    this.shade_bar(rect, color);
+    return rect;
   };
 
   IndexChart.prototype.draw_bar = function(raw_value, x_scaler, y) {
-    var index_x, x;
+    var index_x, rect, rect1, rect2, tooltip, x;
     x = x_scaler(Scaling.threshold(raw_value, this.threshold));
     if (raw_value > this.index) {
       index_x = x_scaler(this.index);
-      this.render_bar(this.options.x_padding, y, index_x - this.options.x_padding);
-      return this.render_bar(index_x, y, x - index_x, this.options.bar2_color);
+      rect1 = this.render_bar(this.options.x_padding, y, index_x - this.options.x_padding);
+      rect2 = this.render_bar(index_x, y, x - index_x, this.options.bar2_color);
+      tooltip = new Tooltip(this.r, rect2, raw_value);
+      tooltip.translate(rect2.getBBox().width / 2, 0);
+      rect1.mouseover(function() {
+        return tooltip.show();
+      });
+      return rect1.mouseout(function() {
+        return tooltip.hide();
+      });
     } else {
-      return this.render_bar(this.options.x_padding, y, x - this.options.x_padding);
+      rect = this.render_bar(this.options.x_padding, y, x - this.options.x_padding);
+      tooltip = new Tooltip(this.r, rect, raw_value);
+      return tooltip.translate(rect.getBBox().width / 2, 0);
     }
   };
 
@@ -1434,7 +1453,7 @@ IndexChart = (function(_super) {
       "fill": "#333",
       "text-anchor": "end"
     });
-    x = new Scaler().domain([0, this.threshold]).range([this.options.x_padding, this.width - this.options.x_padding]);
+    x = new Scaler().domain([0, this.threshold]).range([this.options.x_padding, this.width - this.options.x_padding_right]);
     y = function(i) {
       return i * (_this.bar_height + _this.options.bar_margin) + _this.options.y_padding;
     };

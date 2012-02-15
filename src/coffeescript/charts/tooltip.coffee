@@ -28,11 +28,13 @@ class Tooltip
       rounding
     )
 
-    @popup.push @r.triangle(
+    @triangle = @r.triangle(
       box_midpoint,
       y - offset + 4,
       4 
     ).rotate(180)
+
+    @popup.push @triangle
 
     @popup.attr({
       "fill" : "rgba(0,0,0,.4)"
@@ -78,6 +80,12 @@ class Tooltip
     @animate_opacity(@popup, 0.8)
     @animate_opacity(@text, 1)
 
+
+  translate: (x, y) ->
+    @popup.translate(x, y)
+    @text.translate(x, y)
+    # -2 * x due to 180 degree rotation above
+    @triangle.translate(-2 * x, y)
 
 
 exports.Tooltip = Tooltip

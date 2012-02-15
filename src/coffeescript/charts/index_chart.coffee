@@ -67,12 +67,12 @@ class IndexChart extends BaseChart
     padding = 14
     offset = Math.floor(padding / 2)
     margin = 10
-    width  = @options.x_padding  - margin
+    width  = @options.x_padding_right  - margin
 
     rect = @r.rect(
       @width - width,
       y - offset,
-      @width - @options.x_padding,
+      @width - @options.x_padding_right,
       @bar_height + padding,
       @options.rounding
     )
@@ -138,6 +138,8 @@ class IndexChart extends BaseChart
 
     @shade_bar(rect, color)
 
+    rect
+
   draw_bar: (raw_value, x_scaler, y) ->
     x = x_scaler(Scaling.threshold(raw_value, @threshold))
 
@@ -145,27 +147,36 @@ class IndexChart extends BaseChart
       index_x = x_scaler(@index)
 
       # bar for < @index
-      @render_bar(
+      rect1 = @render_bar(
         @options.x_padding,
         y,
         index_x - @options.x_padding
       )
 
       # bar for > @index
-      @render_bar(
+      rect2 = @render_bar(
         index_x,
         y,
         x - index_x,
         @options.bar2_color
       )
 
+      tooltip = new Tooltip(@r, rect2, raw_value)
+      tooltip.translate(rect2.getBBox().width/2, 0)
+
+      # enable tooltip on both bars
+      rect1.mouseover () -> tooltip.show()
+      rect1.mouseout  () -> tooltip.hide()
+
     else
-      # single bar
-      @render_bar(
+      rect = @render_bar(
         @options.x_padding,
         y,
         x - @options.x_padding,
       )
+
+      tooltip = new Tooltip(@r, rect, raw_value)
+      tooltip.translate(rect.getBBox().width/2, 0)
 
   draw_guide_line: (label, index_value, x, opacity = 1) ->
     start = new Point(x, @options.y_padding)
@@ -230,7 +241,7 @@ class IndexChart extends BaseChart
 
     x = new Scaler()
     .domain([0, @threshold])
-    .range([@options.x_padding, @width - @options.x_padding])
+    .range([@options.x_padding, @width - @options.x_padding_right])
 
     y = (i) =>
       i * (@bar_height + @options.bar_margin) + @options.y_padding

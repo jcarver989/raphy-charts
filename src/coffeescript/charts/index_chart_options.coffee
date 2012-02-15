@@ -9,6 +9,7 @@ class IndexChartOptions extends BaseChartOptions
       bar2_color: "90-#173e53-#225d7c"
 
       x_padding: 160
+      x_padding_right: 100 
       y_padding: 50
 
       rounding: 3

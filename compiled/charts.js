@@ -1312,6 +1312,10 @@ IndexChart = (function(_super) {
     return this.threshold = Math.max.apply(Math.max, thresholds);
   };
 
+  IndexChart.prototype.format_tooltip = function(raw_value) {
+    return (raw_value / 100) + "x";
+  };
+
   IndexChart.prototype.draw_raw_bar = function(raw_value, y) {
     var margin, offset, padding, rect, width;
     padding = 14;
@@ -1366,7 +1370,7 @@ IndexChart = (function(_super) {
       index_x = x_scaler(this.index);
       rect1 = this.render_bar(this.options.x_padding, y, index_x - this.options.x_padding);
       rect2 = this.render_bar(index_x, y, x - index_x, this.options.bar2_color);
-      tooltip = new Tooltip(this.r, rect2, raw_value);
+      tooltip = new Tooltip(this.r, rect2, this.format_tooltip(raw_value));
       tooltip.translate(rect2.getBBox().width / 2, 0);
       rect1.mouseover(function() {
         return tooltip.show();
@@ -1376,7 +1380,7 @@ IndexChart = (function(_super) {
       });
     } else {
       rect = this.render_bar(this.options.x_padding, y, x - this.options.x_padding);
-      tooltip = new Tooltip(this.r, rect, raw_value);
+      tooltip = new Tooltip(this.r, rect, this.format_tooltip(raw_value));
       return tooltip.translate(rect.getBBox().width / 2, 0);
     }
   };

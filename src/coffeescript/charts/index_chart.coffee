@@ -63,6 +63,10 @@ class IndexChart extends BaseChart
     thresholds = (guide.index_value for guide in @guides)
     @threshold  = Math.max.apply(Math.max, thresholds)
 
+
+  format_tooltip: (raw_value) ->
+    (raw_value / 100) + "x"
+
   draw_raw_bar: (raw_value, y) ->
     padding = 14
     offset = Math.floor(padding / 2)
@@ -161,7 +165,7 @@ class IndexChart extends BaseChart
         @options.bar2_color
       )
 
-      tooltip = new Tooltip(@r, rect2, raw_value)
+      tooltip = new Tooltip(@r, rect2, @format_tooltip(raw_value))
       tooltip.translate(rect2.getBBox().width/2, 0)
 
       # enable tooltip on both bars
@@ -175,7 +179,7 @@ class IndexChart extends BaseChart
         x - @options.x_padding,
       )
 
-      tooltip = new Tooltip(@r, rect, raw_value)
+      tooltip = new Tooltip(@r, rect, @format_tooltip(raw_value))
       tooltip.translate(rect.getBBox().width/2, 0)
 
   draw_guide_line: (label, index_value, x, opacity = 1) ->

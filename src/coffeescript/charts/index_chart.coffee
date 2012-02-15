@@ -219,14 +219,15 @@ class IndexChart extends BaseChart
     spacing_factor = @bar_height + @options.bar_margin
     half_bar_height = @bar_height / 2
     y_padding = @options.y_padding
+    x_padding = @options.x_padding
 
     labels = new LabelSet(@r)
     .y((num) -> (num * spacing_factor) + y_padding + half_bar_height)
-    .x((num) -> 5)
+    .x((num) -> x_padding - 30)
     .size(12)
     .attr({
       "fill" : "#fff"
-      "text-anchor" : "start"
+      "text-anchor" : "end"
     })
 
 

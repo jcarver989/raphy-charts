@@ -1430,20 +1430,21 @@ IndexChart = (function(_super) {
   };
 
   IndexChart.prototype.draw = function() {
-    var bar, guide, half_bar_height, i, label, labels, raw_label, raw_value_labels, spacing_factor, x, y, y_padding, _i, _len, _len2, _ref, _ref2, _results,
+    var bar, guide, half_bar_height, i, label, labels, raw_label, raw_value_labels, spacing_factor, x, x_padding, y, y_padding, _i, _len, _len2, _ref, _ref2, _results,
       _this = this;
     this.set_bar_height();
     this.set_threshold();
     spacing_factor = this.bar_height + this.options.bar_margin;
     half_bar_height = this.bar_height / 2;
     y_padding = this.options.y_padding;
+    x_padding = this.options.x_padding;
     labels = new LabelSet(this.r).y(function(num) {
       return (num * spacing_factor) + y_padding + half_bar_height;
     }).x(function(num) {
-      return 5;
+      return x_padding - 30;
     }).size(12).attr({
       "fill": "#fff",
-      "text-anchor": "start"
+      "text-anchor": "end"
     });
     raw_value_labels = new LabelSet(this.r).y(function(num) {
       return (num * spacing_factor) + y_padding + half_bar_height;

@@ -39,8 +39,7 @@ class Tooltip
     @popup.attr({
       "fill" : "rgba(0,0,0,.4)"
       "fill-opacity": 0 
-      "stroke" : "transparent"
-      "stroke-width" : 0
+      "stroke" : "none"
     })
 
     @text = @r.text(box_midpoint, y - (height/2 + offset), text)

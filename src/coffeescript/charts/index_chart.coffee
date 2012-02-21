@@ -84,7 +84,7 @@ class IndexChart extends BaseChart
 
     rect.attr({
       fill: "rgba(0,0,0,.1)" 
-      "stroke-width": 0
+      "stroke" : "none"
     })
 
 
@@ -119,13 +119,13 @@ class IndexChart extends BaseChart
 
     rect.attr({
       fill: @options.bar_bg_color
-      "stroke-width": 0
+      "stroke" : "none"
     }).toBack()
 
   shade_bar: (bar, color = @options.bar1_color) ->
     bar.attr({
       fill: color 
-      "stroke-width": 0
+      "stroke" : "none"
     })
 
     @effects.one_px_shadow(bar)
@@ -189,7 +189,7 @@ class IndexChart extends BaseChart
 
     @effects.vertical_dashed_line(start, end, @options.dash_width).attr({
       fill: "rgba(0,0,0,#{opacity})"
-      "stroke-width": 0
+      "stroke" : "none"
     })
 
     labels = new LabelSet(@r)

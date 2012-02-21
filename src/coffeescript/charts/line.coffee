@@ -35,7 +35,7 @@ class Line
     area.attr({
       "fill" : @options.area_color 
       "fill-opacity" : @options.area_opacity 
-      "stroke-width" : 0
+      "stroke" : "none"
     })
     area.toBack()
 

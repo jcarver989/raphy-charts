@@ -685,8 +685,7 @@ Effects = (function() {
     popup.push(this.r.triangle(x + box_width + h_padding + 2, y + 2 + (0.5 * box_height), 4).rotate(90));
     return popup.attr({
       "fill": "#333",
-      "stroke": "transparent",
-      "stroke-width": 0
+      "stroke": "none"
     }).toBack();
   };
 
@@ -773,8 +772,7 @@ Tooltip = (function() {
     this.popup.attr({
       "fill": "rgba(0,0,0,.4)",
       "fill-opacity": 0,
-      "stroke": "transparent",
-      "stroke-width": 0
+      "stroke": "none"
     });
     this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
     this.text.attr({
@@ -981,7 +979,7 @@ Line = (function() {
     area.attr({
       "fill": this.options.area_color,
       "fill-opacity": this.options.area_opacity,
-      "stroke-width": 0
+      "stroke": "none"
     });
     return area.toBack();
   };
@@ -1326,7 +1324,7 @@ IndexChart = (function(_super) {
     rect = this.r.rect(this.width - width, y - offset, this.width - this.options.x_padding_right, this.bar_height + padding, this.options.rounding);
     rect.attr({
       fill: "rgba(0,0,0,.1)",
-      "stroke-width": 0
+      "stroke": "none"
     });
     return this.effects.straight_line(new Point(this.width - width, this.options.y_padding - 10), new Point(this.width - width, this.height)).attr({
       stroke: "rgba(0,0,0,0.25)",
@@ -1342,7 +1340,7 @@ IndexChart = (function(_super) {
     rect = this.r.rect(this.options.x_padding - offset, y - offset, this.width, this.bar_height + padding, this.options.rounding);
     return rect.attr({
       fill: this.options.bar_bg_color,
-      "stroke-width": 0
+      "stroke": "none"
     }).toBack();
   };
 
@@ -1350,7 +1348,7 @@ IndexChart = (function(_super) {
     if (color == null) color = this.options.bar1_color;
     bar.attr({
       fill: color,
-      "stroke-width": 0
+      "stroke": "none"
     });
     this.effects.one_px_shadow(bar);
     return this.effects.one_px_highlight(bar);
@@ -1393,7 +1391,7 @@ IndexChart = (function(_super) {
     end = new Point(x, this.height);
     this.effects.vertical_dashed_line(start, end, this.options.dash_width).attr({
       fill: "rgba(0,0,0," + opacity + ")",
-      "stroke-width": 0
+      "stroke": "none"
     });
     labels = new LabelSet(this.r).x(function() {
       return x;
@@ -1521,7 +1519,7 @@ BulletChart = (function(_super) {
     rect = this.r.rect(this.options.x_padding, y_offset, point.x, this.options.area_width);
     return rect.attr({
       fill: this.options.area_color,
-      "stroke-width": 0
+      "stroke": "none"
     });
   };
 
@@ -1531,7 +1529,7 @@ BulletChart = (function(_super) {
     rect = this.r.rect(this.options.x_padding, y, point.x, this.options.line_width);
     return rect.attr({
       fill: this.options.line_color,
-      "stroke-width": 0
+      "stroke": "none"
     });
   };
 
@@ -1540,7 +1538,7 @@ BulletChart = (function(_super) {
     rect = this.r.rect(point.x - (this.options.average_width / 2), midpoint_y - this.options.average_height / 2, this.options.average_width, this.options.average_height);
     return rect.attr({
       fill: this.options.average_color,
-      "stroke-width": 0
+      "stroke": "none"
     });
   };
 
@@ -1606,7 +1604,7 @@ BarChart = (function(_super) {
     rect = this.r.rect(topleft_corner.x, topleft_corner.y, this.options.bar_width, this.effective_height - topleft_corner.y, this.options.rounding);
     rect.attr({
       "fill": options.bar_color,
-      "stroke-width": 0
+      "stroke": "none"
     });
     new Label(this.r, topleft_corner.x + this.options.bar_width / 2, this.height - (this.options.x_label_size + 5), x_label, "", this.options.x_label_size, this.options.font_family, this.options.x_label_color).draw();
     return new Label(this.r, topleft_corner.x + this.options.bar_width / 2, topleft_corner.y - this.options.y_label_size - 5, y_label, "", this.options.y_label_size, this.options.font_family, this.options.y_label_color).draw();

@@ -30,7 +30,7 @@ class BarChart extends BaseChart
 
     rect.attr({
       "fill" : options.bar_color
-      "stroke-width": 0
+      "stroke" : "none"
     })
 
     new Label(

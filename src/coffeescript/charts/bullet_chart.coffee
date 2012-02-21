@@ -31,7 +31,7 @@ class BulletChart extends BaseChart
 
     rect.attr({
       fill: @options.area_color
-      "stroke-width": 0
+      "stroke": "none" 
     })
 
   draw_line: (point, background_midpoint) ->
@@ -45,7 +45,7 @@ class BulletChart extends BaseChart
 
     rect.attr({
       fill: @options.line_color
-      "stroke-width": 0
+      "stroke" : "none"
     })
 
   
@@ -59,7 +59,7 @@ class BulletChart extends BaseChart
 
     rect.attr({
       fill: @options.average_color
-      "stroke-width": 0
+      "stroke" : "none"
     })
 
   draw_label: (text, offset) ->

@@ -39,8 +39,7 @@ class Effects
 
     popup.attr({
       "fill" : "#333"
-      "stroke" : "transparent"
-      "stroke-width" : 0
+      "stroke" : "none"
     }).toBack()
 
   straight_line: (start_point, end_point) ->

@@ -4,6 +4,7 @@
 # @import base_chart.coffee
 # @import index_chart_options.coffee
 # @import effects.coffee
+# @import tooltip.coffee
 
 
 # TODO: Refactor, getting a bit messy
@@ -105,7 +106,7 @@ class IndexChart extends BaseChart
 
   draw_bg_bar: (raw_value, scaler, y) ->
     x = scaler(raw_value)
-    padding = 14
+    padding = @options.bg_bar_padding
     offset = Math.floor(padding / 2)
 
     rect = @r.rect(

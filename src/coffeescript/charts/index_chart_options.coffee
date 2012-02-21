@@ -12,6 +12,8 @@ class IndexChartOptions extends BaseChartOptions
       x_padding_right: 100 
       y_padding: 50
 
+      bg_bar_padding: 14
+
       rounding: 3
       dash_width: 3 
 

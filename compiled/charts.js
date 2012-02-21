@@ -456,6 +456,7 @@ IndexChartOptions = (function(_super) {
     x_padding: 160,
     x_padding_right: 100,
     y_padding: 50,
+    bg_bar_padding: 14,
     rounding: 3,
     dash_width: 3,
     label_size: 14,
@@ -1336,7 +1337,7 @@ IndexChart = (function(_super) {
   IndexChart.prototype.draw_bg_bar = function(raw_value, scaler, y) {
     var offset, padding, rect, x;
     x = scaler(raw_value);
-    padding = 14;
+    padding = this.options.bg_bar_padding;
     offset = Math.floor(padding / 2);
     rect = this.r.rect(this.options.x_padding - offset, y - offset, this.width, this.bar_height + padding, this.options.rounding);
     return rect.attr({

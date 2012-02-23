@@ -72,6 +72,10 @@ class Tooltip
     @text.toFront()
 
     if hover_enabled == true
+      @text.attr({
+        "fill" : "rgba(0,0,0,0)"
+      })
+
       target.mouseover () => @show()
       target.mouseout  () => @hide()
 
@@ -92,6 +96,9 @@ class Tooltip
     @popup.toFront()
     @text.toFront()
     @animate_opacity(@popup, 0.8)
+    @text.attr({
+      "fill" : "#fff"
+    })
     @animate_opacity(@text, 1)
 
 

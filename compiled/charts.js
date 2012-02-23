@@ -787,6 +787,9 @@ Tooltip = (function() {
     this.popup.toFront();
     this.text.toFront();
     if (hover_enabled === true) {
+      this.text.attr({
+        "fill": "rgba(0,0,0,0)"
+      });
       target.mouseover(function() {
         return _this.show();
       });
@@ -818,6 +821,9 @@ Tooltip = (function() {
     this.popup.toFront();
     this.text.toFront();
     this.animate_opacity(this.popup, 0.8);
+    this.text.attr({
+      "fill": "#fff"
+    });
     return this.animate_opacity(this.text, 1);
   };
 

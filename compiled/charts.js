@@ -771,7 +771,7 @@ Tooltip = (function() {
     this.popup.push(this.triangle);
     this.popup.attr({
       "fill": "rgba(0,0,0,.4)",
-      "fill-opacity": 0,
+      "opacity": 0,
       "stroke": "none"
     });
     this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
@@ -781,15 +781,12 @@ Tooltip = (function() {
       "text-anchor": "middle",
       "width": width,
       "height": height,
-      "fill-opacity": 0,
+      "opacity": 0,
       "font-weight": "bold"
     });
     this.popup.toFront();
     this.text.toFront();
     if (hover_enabled === true) {
-      this.text.attr({
-        "fill": "rgba(0,0,0,0)"
-      });
       target.mouseover(function() {
         return _this.show();
       });
@@ -803,6 +800,7 @@ Tooltip = (function() {
     var _this = this;
     if (time == null) time = 200;
     return element.animate({
+      "opacity": value,
       "fill-opacity": value
     }, time, function() {
       if (value === 0) {
@@ -820,10 +818,7 @@ Tooltip = (function() {
   Tooltip.prototype.show = function() {
     this.popup.toFront();
     this.text.toFront();
-    this.animate_opacity(this.popup, 0.8);
-    this.text.attr({
-      "fill": "#fff"
-    });
+    this.animate_opacity(this.popup, 0.9);
     return this.animate_opacity(this.text, 1);
   };
 

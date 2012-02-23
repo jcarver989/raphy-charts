@@ -53,7 +53,7 @@ class Tooltip
 
     @popup.attr({
       "fill" : "rgba(0,0,0,.4)"
-      "fill-opacity": 0 
+      "opacity": 0 
       "stroke" : "none"
     })
 
@@ -64,7 +64,7 @@ class Tooltip
       "text-anchor" : "middle" 
       "width"       : width
       "height"      : height 
-      "fill-opacity": 0
+      "opacity": 0
       "font-weight" : "bold"
     })
 
@@ -72,15 +72,12 @@ class Tooltip
     @text.toFront()
 
     if hover_enabled == true
-      @text.attr({
-        "fill" : "rgba(0,0,0,0)"
-      })
-
       target.mouseover () => @show()
       target.mouseout  () => @hide()
 
   animate_opacity: (element, value, time = 200) ->
     element.animate({
+      "opacity" : value
       "fill-opacity" : value
     }, time, () =>
       if value == 0
@@ -95,12 +92,8 @@ class Tooltip
   show: () ->
     @popup.toFront()
     @text.toFront()
-    @animate_opacity(@popup, 0.8)
-    @text.attr({
-      "fill" : "#fff"
-    })
+    @animate_opacity(@popup, 0.9)
     @animate_opacity(@text, 1)
-
 
   translate: (x, y) ->
     @popup.translate(x, y)

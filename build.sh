@@ -1,1 +1,1 @@
-dependence src/coffeescript/ -o compiled -c -w
+dependence src/coffeescript/ -o compiled -c

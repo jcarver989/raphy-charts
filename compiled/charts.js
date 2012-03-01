@@ -453,6 +453,7 @@ IndexChartOptions = (function(_super) {
     bar_bg_color: "#bdced3",
     bar1_color: "90-#2f5e78-#4284a8",
     bar2_color: "90-#173e53-#225d7c",
+    raw_value_bar_color: "#9eb7bf",
     x_padding: 160,
     x_padding_right: 100,
     y_padding: 50,
@@ -1324,7 +1325,7 @@ IndexChart = (function(_super) {
     width = this.options.x_padding_right - margin;
     rect = this.r.rect(this.width - width, y - offset, this.width - this.options.x_padding_right, this.bar_height + padding, this.options.rounding);
     rect.attr({
-      fill: "rgba(0,0,0,.1)",
+      fill: this.options.raw_value_bar_color,
       "stroke": "none"
     });
     return this.effects.straight_line(new Point(this.width - width, this.options.y_padding - 10), new Point(this.width - width, this.height)).attr({

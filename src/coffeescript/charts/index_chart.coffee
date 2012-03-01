@@ -22,8 +22,6 @@
 # @import tooltip.coffee
 
 
-# TODO: Refactor, getting a bit messy
-
 bar_struct = (label, raw_value, index_value) ->
   label :      label
   raw_value:   raw_value
@@ -98,7 +96,7 @@ class IndexChart extends BaseChart
     )
 
     rect.attr({
-      fill: "rgba(0,0,0,.1)" 
+      fill: @options.raw_value_bar_color
       "stroke" : "none"
     })
 

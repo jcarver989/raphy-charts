@@ -233,7 +233,23 @@ BulletChartOptions = (function() {
   return BulletChartOptions;
 
 })();
-var Label, LabelSet;
+var Label, LabelSet, format_number;
+
+format_number = function(number, percision) {
+  var millions, rounding, thousands;
+  if (percision == null) percision = 2;
+  rounding = percision > 0 ? Math.pow(10, percision) : 1;
+  if (number > 1000000) {
+    millions = number / 1000000;
+    millions = Math.round(millions * rounding) / rounding;
+    return millions + "m";
+  } else if (number > 1000) {
+    thousands = number / 1000;
+    return Math.round(thousands * rounding) / rounding + "k";
+  } else {
+    return Math.round(number * rounding) / rounding;
+  }
+};
 
 LabelSet = (function() {
 
@@ -326,20 +342,6 @@ Label = (function() {
     }
   };
 
-  Label.prototype.format_number = function(number) {
-    var millions, thousands;
-    if (number > 1000000) {
-      millions = number / 1000000;
-      millions = Math.round(millions * 100) / 100;
-      return millions + "m";
-    } else if (number > 1000) {
-      thousands = number / 1000;
-      return Math.round(thousands * 10) / 10 + "k";
-    } else {
-      return Math.round(number * 10) / 10;
-    }
-  };
-
   Label.prototype.fmt_minutes = function(date) {
     var minutes;
     minutes = date.getMinutes();
@@ -375,7 +377,7 @@ Label = (function() {
     if (this.is_date(this.text)) {
       text = this.parse_date(this.text);
     } else if (typeof this.text === "number") {
-      text = this.format_number(this.text);
+      text = format_number(this.text);
     } else {
       text = this.text;
     }
@@ -1048,6 +1050,390 @@ BaseChart = (function() {
   return BaseChart;
 
 })();
+var PathMenu, PathMenuOptions, bounce_to_and_back, draw_circle, point_on_circle,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+PathMenuOptions = (function(_super) {
+
+  __extends(PathMenuOptions, _super);
+
+  PathMenuOptions.DEFAULTS = {
+    main_circle_radius: 70,
+    child_radius_multiplier: 0.15,
+    hover_scale_multiplier: 1.2,
+    inactive_opacity: 0.4,
+    outer_radius_multiplier: 1.35,
+    outer_radius2_multiplier: 1.5,
+    bounce_radius: 1.2,
+    fill_color: "#00a6dd"
+  };
+
+  function PathMenuOptions(options) {
+    return PathMenuOptions.__super__.constructor.call(this, options, PathMenuOptions.DEFAULTS);
+  }
+
+  return PathMenuOptions;
+
+})(BaseChartOptions);
+
+point_on_circle = function(center_point, r, theta) {
+  var x, y;
+  x = r * Math.cos(theta) + center_point.x;
+  y = r * Math.sin(theta) + center_point.y;
+  return new Point(x, y);
+};
+
+bounce_to_and_back = function(shape, bounce_point, final_point, bounce_time, return_time) {
+  var translate;
+  translate = function(shape, point, time, callback) {
+    if (callback == null) callback = void 0;
+    return shape.animate({
+      "x": point.x,
+      "y": point.y,
+      "cx": point.x,
+      "cy": point.y
+    }, time, "<", callback);
+  };
+  return translate(shape, bounce_point, bounce_time, function() {
+    return translate(shape, final_point, return_time);
+  });
+};
+
+draw_circle = function(x, y, r, text_size) {
+  var attrs, set;
+  attrs = {
+    fill: this.options.fill_color,
+    stroke: "none"
+  };
+  set = this.r.set();
+  set.push(this.r.circle(x, y, r).attr(attrs));
+  set.push(this.r.text(x, y, "+").attr({
+    "font-size": text_size,
+    "fill": "#fff"
+  }));
+  return set.attr({
+    cursor: "pointer"
+  }).toFront();
+};
+
+PathMenu = (function(_super) {
+
+  __extends(PathMenu, _super);
+
+  function PathMenu(dom_id, options) {
+    if (options == null) options = {};
+    PathMenu.__super__.constructor.call(this, dom_id, new PathMenuOptions(options));
+    this.center_point = new Point(this.width / 2, this.height / 2);
+    this.main_radius = this.options.main_circle_radius;
+    this.child_radius = this.main_radius * this.options.child_radius_multiplier;
+    this.outer_radius = this.main_radius * this.options.outer_radius_multiplier;
+    this.outer_radius2 = this.outer_radius * this.options.outer_radius2_multiplier;
+    this.bounce_radius = this.outer_radius * this.options.bounce_radius;
+    this.children = [];
+  }
+
+  PathMenu.prototype.add_hover = function(circle) {
+    var hover_in, hover_out,
+      _this = this;
+    hover_in = function(e) {
+      circle[0].animate({
+        "r": _this.options.hover_scale_multiplier * _this.child_radius,
+        "opacity": 1,
+        "stroke-width": 2,
+        "stroke": "rgba(0,0,0,.4)"
+      }, 200);
+      circle[1].animate({
+        "font-size": 22,
+        "opacity": 1,
+        "fill": "#fff"
+      }, 200);
+      return circle._label.animate({
+        "opacity": 1
+      }, 200);
+    };
+    hover_out = function(e) {
+      circle[0].animate({
+        r: _this.child_radius,
+        opacity: _this.options.inactive_opacity,
+        stroke: "none",
+        "stroke-width": 0
+      }, 200);
+      circle[1].animate({
+        opacity: 0
+      }, 200);
+      return circle._label.animate({
+        "opacity": 0
+      }, 200);
+    };
+    circle._activate = hover_in;
+    circle._deactivate = hover_out;
+    return circle.hover(hover_in, hover_out);
+  };
+
+  PathMenu.prototype.add = function(data) {
+    return this.children.push(data);
+  };
+
+  PathMenu.prototype.create_circles_along_radius = function(items, circle_radius, outer_radius, callback) {
+    var circle, i, item, radians, step_size, x, y, _len, _ref, _results;
+    step_size = (2 * Math.PI) / 24;
+    _results = [];
+    for (i = 0, _len = items.length; i < _len; i++) {
+      item = items[i];
+      radians = i * step_size;
+      _ref = point_on_circle(this.center_point, outer_radius, radians), x = _ref.x, y = _ref.y;
+      circle = this.draw_circle(this.center_point.x, this.center_point.y, circle_radius, 16);
+      circle._realx = x;
+      circle._realy = y;
+      circle._radians = radians;
+      circle.attr({
+        opacity: this.options.inactive_opacity
+      }).toFront();
+      circle[1].attr({
+        opacity: 0
+      });
+      this.add_label_to_circle(item, circle);
+      this.add_hover(circle);
+      _results.push(callback(item, circle));
+    }
+    return _results;
+  };
+
+  PathMenu.prototype.bounce_circles = function(parent_circle, circles) {
+    var base, bounce_time, bounce_to, circle, i, index, interval, radians, return_time, return_to, x, y, _len, _ref, _results;
+    if (!circles) return;
+    base = 100;
+    interval = 10;
+    return_time = 100;
+    _results = [];
+    for (i = 0, _len = circles.length; i < _len; i++) {
+      circle = circles[i];
+      radians = circle._radians;
+      _ref = point_on_circle(this.center_point, this.bounce_radius, radians), x = _ref.x, y = _ref.y;
+      bounce_to = new Point(x, y);
+      index = void 0;
+      return_to = void 0;
+      if (parent_circle._active) {
+        index = circles.length - i;
+        return_to = this.center_point;
+        circle.toBack();
+      } else {
+        index = i;
+        return_to = new Point(circle._realx, circle._realy);
+        circle.toFront();
+      }
+      bounce_time = base + index * interval;
+      _results.push(bounce_to_and_back(circle, bounce_to, return_to, bounce_time, return_time));
+    }
+    return _results;
+  };
+
+  PathMenu.prototype.add_click_to_circle = function(circle, is_root) {
+    var handler,
+      _this = this;
+    if (is_root == null) is_root = false;
+    handler = function(e) {
+      var child, degrees, _i, _len, _ref;
+      if (circle._active) {
+        circle.hover(circle._activate, circle._deactivate);
+        degrees = 0;
+        if (circle._children) {
+          _ref = circle._children;
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            child = _ref[_i];
+            if (!child._active) continue;
+            child._deactivate();
+            child._click_handler();
+          }
+        }
+      } else {
+        circle.unhover(circle._activate, circle._deactivate);
+        degrees = 45;
+      }
+      _this.bounce_circles(circle, circle._children);
+      circle.animate({
+        transform: "r" + degrees
+      }, 200);
+      return circle._active = !circle._active;
+    };
+    circle._click_handler = handler;
+    return circle.click(handler);
+  };
+
+  PathMenu.prototype.add_label_to_circle = function(data, circle) {
+    var anchor, label, label2, labels, offset;
+    label = this.r.text(circle._realx, circle._realy, data.label).attr({
+      "font-size": 14
+    });
+    label2 = this.r.text(circle._realx, circle._realy + 15, format_number(data.value)).attr({
+      "font-size": 12,
+      "fill": this.options.fill_color
+    }).toBack();
+    labels = this.r.set();
+    labels.push(label);
+    labels.push(label2);
+    if (circle._realx > this.center_point.x) {
+      anchor = "start";
+      offset = 30;
+    } else {
+      anchor = "end";
+      offset = -30;
+    }
+    labels.attr({
+      "text-anchor": anchor,
+      "x": circle._realx + offset,
+      "opacity": 0
+    });
+    return circle._label = labels;
+  };
+
+  PathMenu.prototype.add_grandchildren = function(data, circle) {
+    var _this = this;
+    if (!data.children) return;
+    circle._children = [];
+    return this.create_circles_along_radius(data.children, this.child_radius, this.outer_radius2, function(grandchild, grandchild_circle) {
+      circle._active = false;
+      return circle._children.push(grandchild_circle);
+    });
+  };
+
+  PathMenu.prototype.draw_circle = function(x, y, r, text_size) {
+    var attrs, set;
+    attrs = {
+      fill: this.options.fill_color,
+      stroke: "none"
+    };
+    set = this.r.set();
+    set.push(this.r.circle(x, y, r).attr(attrs));
+    set.push(this.r.text(x, y, "+").attr({
+      "font-size": text_size,
+      "fill": "#fff"
+    }));
+    return set.attr({
+      cursor: "pointer"
+    }).toFront();
+  };
+
+  PathMenu.prototype.draw = function() {
+    var children, main_circle, step_size,
+      _this = this;
+    main_circle = this.draw_circle(this.center_point.x, this.center_point.y, this.main_radius, 100);
+    main_circle._active = false;
+    main_circle._children = [];
+    this.add_click_to_circle(main_circle, true);
+    children = this.children.length;
+    step_size = (2 * Math.PI) / children;
+    this.create_circles_along_radius(this.children, this.child_radius, this.outer_radius, function(child, circle) {
+      _this.add_grandchildren(child, circle);
+      _this.add_click_to_circle(circle);
+      return main_circle._children.push(circle);
+    });
+    return main_circle.toFront();
+  };
+
+  return PathMenu;
+
+})(BaseChart);
+
+exports.PathMenu = PathMenu;
+var CircleProgress, CircleProgressOptions, arc,
+  __hasProp = Object.prototype.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+arc = function(xloc, yloc, value, total, R) {
+  var a, alpha, path, x, y;
+  alpha = 360 / total * value;
+  a = (90 - alpha) * Math.PI / 180;
+  x = xloc + R * Math.cos(a);
+  y = yloc - R * Math.sin(a);
+  path = void 0;
+  if (total === value) {
+    path = [["M", xloc, yloc - R], ["A", R, R, 0, 1, 1, xloc - 0.01, yloc - R]];
+  } else {
+    path = [["M", xloc, yloc - R], ["A", R, R, 0, +(alpha > 180), 1, x, y]];
+  }
+  return {
+    path: path
+  };
+};
+
+CircleProgressOptions = (function(_super) {
+
+  __extends(CircleProgressOptions, _super);
+
+  CircleProgressOptions.DEFAULTS = {
+    radius: 55,
+    stroke_width: 30,
+    font_color: "#333333",
+    label_color: "#333333",
+    fill_color: "#fff",
+    stroke_color: "#81ae14",
+    background_color: "#222222",
+    text_shadow: false
+  };
+
+  function CircleProgressOptions(options) {
+    return CircleProgressOptions.__super__.constructor.call(this, options, CircleProgressOptions.DEFAULTS);
+  }
+
+  return CircleProgressOptions;
+
+})(BaseChartOptions);
+
+CircleProgress = (function(_super) {
+
+  __extends(CircleProgress, _super);
+
+  function CircleProgress(dom_id, label, value, options) {
+    this.label = label;
+    this.value = value;
+    if (options == null) options = {};
+    CircleProgress.__super__.constructor.call(this, dom_id, new CircleProgressOptions(options));
+    this.center_point = new Point(this.width / 2, this.height / 2);
+    this.r.customAttributes.arc = arc;
+  }
+
+  CircleProgress.prototype.draw = function() {
+    var label, path, percent;
+    path = this.r.path().attr({
+      "stroke-width": this.options.stroke_width,
+      "stroke": this.options.stroke_color,
+      arc: [this.center_point.x, this.center_point.y, 0, 100, this.options.radius]
+    });
+    this.r.circle(this.center_point.x, this.center_point.y, this.options.radius).attr({
+      "fill": this.options.fill_color,
+      "stroke": "none",
+      "stroke-width": 0
+    });
+    percent = Math.round(this.value * 100 / 100) + "%";
+    this.r.text(this.center_point.x, this.center_point.y, percent).attr({
+      'font-size': this.options.radius / 2.5,
+      'fill': this.options.font_color,
+      'font-weight': 'bold'
+    });
+    label = this.r.text(this.center_point.x, this.center_point.y + 1.8 * this.options.radius, this.label).attr({
+      'font-size': this.options.radius / 2.5,
+      'font-weight': 'bold',
+      'fill': this.options.label_color
+    });
+    if (this.options.text_shadow) {
+      this.r.text(this.center_point.x, this.center_point.y + 1.8 * this.options.radius + 1, this.label).attr({
+        'font-size': this.options.radius / 2.5,
+        'font-weight': 'bold',
+        'fill': this.options.text_shadow
+      }).toBack();
+    }
+    return path.animate({
+      arc: [this.center_point.x, this.center_point.y, this.value, 100, this.options.radius]
+    }, 1500, '<');
+  };
+
+  return CircleProgress;
+
+})(BaseChart);
+
+exports.CircleProgress = CircleProgress;
 var LineChart,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };

@@ -13,6 +13,20 @@
 # limitations under the License. 
 
 
+format_number =  (number, percision = 2) -> 
+  rounding = if percision > 0 then Math.pow(10, percision) else 1
+
+  if number > 1000000
+    millions = number / 1000000
+    millions = Math.round(millions * rounding) / rounding 
+    millions + "m"
+  else if number > 1000
+    thousands = number / 1000
+    Math.round(thousands * rounding) / rounding + "k"
+  else
+    Math.round(number * rounding) / rounding
+
+
 class LabelSet
   constructor: (@r, @format = "") ->
     @num = 0
@@ -63,17 +77,6 @@ class Label
     fmt_hour = hour % 12
     if fmt_hour == 0 then 12 else fmt_hour
 
-  format_number: (number) -> 
-    if number > 1000000
-      millions = number / 1000000
-      millions = Math.round(millions * 100) / 100 
-      millions + "m"
-    else if number > 1000
-      thousands = number / 1000
-      Math.round(thousands * 10) / 10 + "k"
-    else
-      Math.round(number*10)/10
-
   fmt_minutes: (date) ->
     minutes = date.getMinutes()
     if minutes < 10 then "0#{minutes}" else minutes
@@ -94,7 +97,7 @@ class Label
     if @is_date(@text) 
       text = @parse_date(@text)
     else if typeof @text == "number" 
-      text = @format_number(@text) 
+      text = format_number(@text) 
     else
       text = @text
 

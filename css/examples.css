@@ -1406,7 +1406,6 @@ button.button {
     background-image: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(255, 255, 255, 0.17) 15px, rgba(255, 255, 255, 0.17) 30px); }
 
 body {
-  background: #eeeeee;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
   font-weight: normal;
@@ -1420,14 +1419,25 @@ hr {
   margin-bottom: 20px; }
 
 h1 {
-  font-size: 60px;
-  letter-spacing: -3px;
-  position: relative; }
-  h1 small {
-    position: absolute;
-    right: 0;
-    top: 30px;
-    letter-spacing: 0; }
+  font-size: 80px;
+  letter-spacing: -4px;
+  position: relative;
+  text-align: center;
+  margin-top: 40px; }
+
+h2 {
+  font-size: 36px;
+  font-weight: 200;
+  color: #333333; }
+  h2 small {
+    font-size: 18px;
+    color: #555555; }
+
+h3 {
+  text-align: center;
+  color: #818181;
+  font-weight: normal;
+  font-size: 22px; }
 
 pre {
   background: #333333;
@@ -1440,10 +1450,61 @@ pre {
   -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; }
 
+.buttons {
+  margin: 30px auto 0;
+  text-align: center; }
+
 #container {
   width: 1000px;
   margin: 0 auto;
   color: #333333; }
+
+.menu {
+  margin: 80px auto 0;
+  width: 600px;
+  position: relative;
+  padding-left: 40px; }
+  .menu:after {
+    content: ".";
+    clear: both;
+    display: block;
+    visibility: hidden; }
+  .menu hr {
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+    top: 50px;
+    left: 0;
+    z-index: 1; }
+
+.menu .circle {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  z-index: 2;
+  border-radius: 100%;
+  background: white;
+  -moz-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.4), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent;
+  float: left;
+  margin-right: 10px;
+  display: block; }
+  .menu .circle.active, .menu .circle:active {
+    background: #92bc4b; }
+  .menu .circle:hover {
+    background: #b0df61; }
+  .menu .circle:last-child {
+    margin-right: 0; }
+  .menu .circle a {
+    border-radius: 100%;
+    width: 80px;
+    height: 80px;
+    margin: 10px auto 0;
+    display: block;
+    background: #eeeeee;
+    overflow: hidden; }
 
 table {
   width: 100%;
@@ -1525,3 +1586,11 @@ ul {
   margin-left: 0;
   padding: 0;
   list-style: none; }
+
+#charts {
+  padding: 30px;
+  background: rgba(0, 0, 0, 0.1); }
+
+.chart {
+  margin-bottom: 30px;
+  background: white; }

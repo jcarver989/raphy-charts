@@ -1,7 +1,6 @@
 @import pretty-pieces
 
 body
-    background: #eee
     +sans-serif
 
 h1, h3
@@ -12,16 +11,27 @@ hr
     margin-bottom: 20px
 
 h1
-    font-size: 60px
-    letter-spacing: -3px
+    font-size: 80px
+    letter-spacing: -4px
     position: relative
+    text-align: center
+    margin-top: 40px
+
+h2
+    font-size: 36px
+    font-weight: 200
+    color: #333
 
     small
-        position: absolute
-        right: 0
-        top: 30px
-        letter-spacing: 0
+        font-size: 18px
+        color: #555
 
+h3
+    text-align: center
+    color: #818181
+    font-weight: normal
+    font-size: 22px
+    
 pre
     background: #333
     color: #fff
@@ -29,11 +39,71 @@ pre
     +border-radius(4px)
     +box-shadow(inset 0 2px 5px rgba(0,0,0,.5))
 
+
+.buttons
+    margin: 30px auto 0
+    text-align: center
+
 #container
     width: 1000px
     margin: 0 auto
     color: #333
+ 
 
+.menu
+    margin: 80px auto 0 
+    width: 600px 
+    position: relative
+    padding-left: 40px
+
+    &:after
+        content: "."
+        clear: both
+        display: block
+        visibility: hidden
+
+
+    hr
+        margin: 0
+        padding: 0
+        position: absolute
+        width: 100%
+        top: 50px 
+        left: 0
+        z-index: 1
+
+.menu .circle
+    width: 100px
+    height: 100px 
+    position: relative
+    z-index: 2
+    border-radius: 100%
+    background: #fff
+    +box-shadow(inset 0 3px 5px rgba(0,0,0,.4))
+    float: left
+    margin-right: 10px
+    display: block
+
+
+    &.active, &:active
+        background: #92bc4b
+
+    &:hover
+        background: #b0df61
+
+
+    &:last-child
+        margin-right: 0
+
+    a
+        border-radius: 100%
+        width: 80px
+        height: 80px
+        margin: 10px auto 0
+        display: block
+        background: #eee
+        overflow: hidden
+    
 
 table
     width: 100%
@@ -83,3 +153,13 @@ ul
     margin-left: 0
     padding: 0
     list-style: none
+
+#charts
+    padding: 30px
+    background: rgba(0,0,0,.1)
+
+#charts-inner
+
+.chart
+    margin-bottom: 30px
+    background: #fff

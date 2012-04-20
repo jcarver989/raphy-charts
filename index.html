@@ -51,68 +51,48 @@
         Raphy Charts 
       </h1>
     <h3>Easy, beautiful line charts with sane defaults. Works in all major browsers.</h3>
-    <hr />
 
-    <div id="menu" class='inset-button-group dark-gray'>
-          <a href='#' data-item="overview" class='active'>Overview</a>
-          <a href='#' data-item="examples" >Examples</a>
-          <a href='#' data-item="documentation" >Documenation</a>
-          <a href='#' data-item="download" >Download</a>
+    <div class="buttons">
+      <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered green button">View on Github</a>
+      <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered dark-gray button">Download RaphyCharts</a>
     </div>
 
+    <div class="menu">
+      <hr />
+      <div class="active circle">
+        <a href="#line-chart"><img src="images/line-chart.png" /></a>
+      </div>
 
-    <div id="overview">
-        <h2>Example Chart</h2>
-        <div style="width:1000px; height: 300px;" id="chart1"></div>
-        <h2>Usage</h2>
-        <pre>
-        <code>
-c = new Charts.LineChart('chart1', {
-  show_grid: true;
-});
+      <div class="circle">
+        <a href="#bar-chart"><img src="images/bar-chart.png" /></a>
+      </div>
 
-c.add_line ({ 
-  // 2d array of x,y values ex:  [[1,1], [2,3], [3,20]]
-  // OR x values may be dates: [[new Date(),100]...]
-  data: create_squared_points() 
-})
+      <div class="circle">
+        <a href="#bullet-chart"><img src="images/bullet-chart.png" /></a>
+      </div>
 
-c.add_line {
-  data: create_exponential_points() 
-                                   
-  options: {
-    line_color : "#55bb00"
-    area_color : "#55bb00"
-    dot_color  :  "#55bb00"
-  }
-}
+      <div class="circle">
+        <a href="#index-chart"><img src="images/index-chart.png" /></a>
+      </div>
 
-c.draw()
-        </code>
-        </pre>
+      <div class="circle">
+        <a href="#progress-chart"><img src="images/progress-chart.png" /></a>
+      </div>
+    </div>
+
+    <h2>Line Chart <small>The granddaddy of all charts. Time series and multi-axis lines supported out of the box</small></h2>
+
+    <div id="charts">
+        <div id="charts-inner">
+          <div style="width:940px; height: 300px;" id="line-chart-1" class="chart"></div>
+          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="chart2" class="chart"></div>
+          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="areanoline" class="chart"></div>
+          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="barchart" class="chart"></div>
+          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="chart4" class="chart"></div>
         </div>
-
-
-
-        <div id="download" style="display:none;">
-            <h2>Installation</h2>
-            <p>Just include these two scripts in your page to load them directly from Github. Or Download the files below.</p>
-<pre>
-<code>
-&lt;script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"&gt;&lt;/script&gt;
-&lt;script src="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js"&gt;&lt;/script&gt;
-</code>
-</pre>
-              <p>
-                  <a href="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js" class="small green bordered pill button">Download Raphael.js</a>
-                  <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="small blue bordered pill button">Download Raphy Charts</a>
-              </p>
     </div>
 
-
-
-
-    <div id="documentation" style="display:none;">
+    <div id="documentation" >
         <h2>Browser Support</h2>
         <img src="images/browsers-64.png" />
 
@@ -447,97 +427,6 @@ c.draw()
 
     <div id="examples" style="opacity:0;">
 
-    <h2>Smoothed Line Chart with Gradient</h2>
-    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart2"></div>
-    <pre>
-    <code>
-c = new Charts.LineChart('chart2', {
-  line_color : "#118800",
-  dot_color  : "#118800",
-  // gradients: angle-color[-color[:offset]]*-color
-  // eg: 90-#fff-#118800
-  // 0-#fff-#118800:20-rgb(255,180, 180)
-  area_color : "90-#fff-#118800",
-  dot_stroke_color: "#aaa",
-  dot_stroke_size: 3, 
-  label_min  : false,
-  smoothing  : 0.5,
-  show_grid  : true
-})
-
-c.add_line({
-  data: create_random_points2()
-})
-
-c.draw()
-    </code>
-    </pre>
-
-
-    <h2>Area Chart Without Line  </h2>
-    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="areanoline"></div>
-    <pre>
-    <code>
-c = new Charts.LineChart('chart2', {
-  line_width : 0
-  label_min  : true,
-  label_max  : true,
-  show_grid  : true
-})
-
-c.add_line({
-  data: create_random_points2()
-})
-
-c.draw()
-    </code>
-    </pre>
-
-    <h2>Bar Chart with Gradient</h2>
-    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="barchart"></div>
-    <pre>
-    <code>
-c = new Charts.LineChart('chart2', {
-  // gradients: angle-color[-color[:offset]]*-color
-  // eg: 90-#fff-#118800
-  // 0-#fff-#118800:20-rgb(255,180, 180)
-  line_color : "90-#0a5200-#118800",
-  label_min  : false,
-  show_grid  : true,
-  render: "bar"
-})
-
-c.add_line({
-  data: create_random_points2()
-})
-
-c.draw()
-    </code>
-    </pre>
-
-    <h2>Line Chart, No Smoothing</h2>
-    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="chart4"></div>
-
-    <pre>
-    <code>
-c = new Charts.LineChart('chart4', {
-  line_color : "#9900cc",
-  dot_color  : "#000",
-  dot_size: 7,
-  dot_stroke_color: "#9900cc",
-  dot_stroke_size: 2, 
-  label_min  : false,
-  label_max  : false,
-  fill_area  : false,
-  smoothing  : 0,
-})
-
-c.add_line { 
-  data: create_random_points2() 
-}
-c.draw()
-    </code>
-    </pre>
 
     <h2>Spark Lines</h2>
     <table>
@@ -565,101 +454,6 @@ c.draw()
         </tr>
       </tbody>
     </table>
-
-<pre>
-<code>
-var sparkline_options  = {
-  show_x_labels: false,
-  show_y_labels: false,
-  show_grid: false,
-  smoothing: 0,
-  label_min: false,
-  label_max: false,
-  dot_size: 0,
-  x_padding: 10,
-  y_padding: 5,
-  line_color: "#00bbee",
-  area_color: "#00bbee"
-}
-
-visitors_chart = new Charts.LineChart('sparkline-visitors', sparkline_options);
-visitors_chart.add_line({data: create_random_points2() });
-visitors_chart.draw();
-
-signups_chart = new Charts.LineChart('sparkline-signups', sparkline_options);
-signups_chart.add_line({
-  data: create_random_points2(),
-  options: {
-    line_color: "#0066cc",
-    area_color: "#0066cc"
-  }
-});
-
-signups_chart.draw();
-
-conversions_chart = new Charts.LineChart('sparkline-conversions', sparkline_options);
-conversions_chart.add_line({
-  data: create_random_points2(),
-  options: {
-    line_color: "#002299",
-    area_color: "#002299"
-  }
-})
-conversions_chart.draw();
-</code>
-</pre>
-
-    <h2>Lots of Data</h2>
-    <div style="width:1000px; height: 300px; margin-bottom: 50px;" id="lotsofdata"></div>
-
-    <pre>
-    <code>
-var colors = [
-  "#00aadd",
-  "#ffee33",
-  "#ff3366",
-  "#00cc33"
-]
-
-c = new Charts.LineChart('lotsofdata', {
-  show_grid: true,
-  label_format: "%I:%M %p",
-  x_label_size: 11,
-  show_y_labels: true,
-  y_label_size: 11,
-  smoothing: 1,
-  max_x_labels: 5,
-  max_y_labels: 10,
-  x_padding: 50,
-})
-
-
-for (var i = 0, len = data.length; i < len; i++) {
-  var yvals = [];
-  for (var j = 0, len2 = data[i].length; j++) {
-    var datapair = data[i][j];
-    yvals.push([new Date(datapair[0]), datapair[1]);
-  }
-
-  c.add_line({
-    data: yvals,
-    options: {
-      line_color: colors[ i % colors.length],
-      dot_color:  colors[ i % colors.length],
-      area_color:  colors[ i % colors.length],
-      area_opacity: 0.3,
-      dot_size: 0,
-      label_min: false,
-      label_max: false
-    }
-  })
-}
-
-
-c.draw()
-    </code>
-    </pre>
-
 
   </div>
 

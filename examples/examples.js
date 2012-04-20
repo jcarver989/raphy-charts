@@ -202,14 +202,7 @@ $(document).ready(function() {
      x_padding: 45 
    });
 
-    multi_axis.add_line({
-      data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
-      options: {
-        line_color: colors[1],
-        dot_color: colors[1],
-        area_color: colors[1],
-      }
-    });
+
 
 
     multi_axis.add_line({
@@ -217,7 +210,21 @@ $(document).ready(function() {
       options: {
         line_color: colors[0],
         dot_color: colors[0],
-        area_color: colors[0],
+        area_color: "230-#88c9dd-rgba(255,255,255,0)",
+        area_opacity: 0.2,
+        dot_size: 5,
+        line_width: 4 
+      }
+    });
+
+    multi_axis.add_line({
+      data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+      options: {
+        line_color: colors[1],
+        dot_color: colors[1],
+        fill_area: false,
+        line_width: 2,
+        dot_size: 3
       }
     });
 

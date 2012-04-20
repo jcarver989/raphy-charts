@@ -40,6 +40,7 @@ LineChartOptions = (function() {
     show_grid: false,
     x_padding: 45,
     y_padding: 40,
+    multi_axis: false,
     render: "line",
     bar_width: 20
   };
@@ -1436,11 +1437,12 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_grid = function(x_coordinates, y_coordinates) {
-    var height, paths, val, width, _i, _j, _len, _len2;
+    var height, paths, val, width, x_offset, _i, _j, _len, _len2;
     if (x_coordinates == null) x_coordinates = [];
     if (y_coordinates == null) y_coordinates = [];
+    x_offset = this.options.multi_axis ? this.options.x_padding * 2 : this.options.x_padding;
     height = this.height - this.options.y_padding;
-    width = this.width - this.options.x_padding;
+    width = this.width - x_offset;
     paths = this.r.set();
     for (_i = 0, _len = x_coordinates.length; _i < _len; _i++) {
       val = x_coordinates[_i];
@@ -1457,10 +1459,11 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.create_scalers = function(points) {
-    var max_x, max_y, min_x, min_y, x, y, y_scaler, _ref,
+    var max_x, max_y, min_x, min_y, x, x_offset, y, y_scaler, _ref,
       _this = this;
-    _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
-    x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - this.options.x_padding]);
+    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    x_offset = this.options.multi_axis ? this.options.x_padding * 2 : this.options.x_padding;
+    x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - x_offset]);
     y_scaler = new Scaler().domain([min_y, max_y]).range([this.options.y_padding, this.height - this.options.y_padding]);
     y = function(i) {
       return _this.height - y_scaler(i);
@@ -1468,17 +1471,19 @@ LineChart = (function(_super) {
     return [x, y];
   };
 
-  LineChart.prototype._draw_y_labels = function(labels) {
-    var fmt, font_family, i, label, label_coordinates, padding, size, x, y, _len, _ref;
+  LineChart.prototype._draw_y_labels = function(labels, x_offset) {
+    var fmt, font_family, i, label, label_coordinates, offset, padding, size, x, y, _len, _ref;
+    if (x_offset == null) x_offset = 0;
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     font_family = this.options.font_family;
     padding = size + 5;
+    offset = this.options.multi_axis && x_offset > 0 ? x_offset : x_offset + padding;
     _ref = this.create_scalers(labels), x = _ref[0], y = _ref[1];
     label_coordinates = [];
     for (i = 0, _len = labels.length; i < _len; i++) {
       label = labels[i];
-      new Label(this.r, padding, y(label.y), label.y, fmt, size, font_family).draw();
+      new Label(this.r, offset, y(label.y), label.y, fmt, size, font_family).draw();
       label_coordinates.push(y(label.y));
     }
     return label_coordinates;
@@ -1495,9 +1500,10 @@ LineChart = (function(_super) {
     return step_size;
   };
 
-  LineChart.prototype.draw_y_labels = function() {
+  LineChart.prototype.draw_y_labels = function(points, x_offset) {
     var labels, max_x, max_y, min_x, min_y, step_size, y, _ref;
-    _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (x_offset == null) x_offset = 0;
+    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
     if (max_y === min_y) return this._draw_y_labels([new Point(0, max_y)]);
     y = min_y;
     step_size = this.calc_y_label_step_size(min_y, max_y);
@@ -1507,7 +1513,7 @@ LineChart = (function(_super) {
       y += step_size;
     }
     if (max_y > 1) labels[labels.length - 1].y = Math.round(max_y);
-    return this._draw_y_labels(labels);
+    return this._draw_y_labels(labels, x_offset);
   };
 
   LineChart.prototype.draw_x_label = function(raw_point, point) {
@@ -1561,7 +1567,7 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw = function() {
-    var begin, end, i, line_indices, options, point, points, raw_points, x, y, _len, _ref, _ref2;
+    var begin, end, i, line_indices, line_x, line_y, options, point, points, raw_points, x, y, _len, _ref, _ref2, _ref3;
     if (this.all_points.length < 1) return;
     this.r.clear();
     _ref = this.create_scalers(this.all_points), x = _ref[0], y = _ref[1];
@@ -1570,12 +1576,18 @@ LineChart = (function(_super) {
       line_indices = _ref2[i];
       begin = line_indices[0], end = line_indices[1];
       raw_points = this.all_points.slice(begin, end + 1 || 9e9);
+      if (this.options.multi_axis) {
+        _ref3 = this.create_scalers(raw_points), line_x = _ref3[0], line_y = _ref3[1];
+      } else {
+        line_x = x;
+        line_y = y;
+      }
       points = (function() {
         var _i, _len2, _results;
         _results = [];
         for (_i = 0, _len2 = raw_points.length; _i < _len2; _i++) {
           point = raw_points[_i];
-          _results.push(new Point(x(point.x), y(point.y)));
+          _results.push(new Point(line_x(point.x), line_y(point.y)));
         }
         return _results;
       })();
@@ -1585,11 +1597,17 @@ LineChart = (function(_super) {
         if (this.options.show_x_labels === true) {
           this.x_label_coordinates = this.draw_x_labels(raw_points, points);
         }
-        if (this.options.show_y_labels === true) {
-          this.y_label_coordinates = this.draw_y_labels();
+        if (this.options.multi_axis && this.options.show_y_labels === true) {
+          this.y_label_coordinates = this.draw_y_labels(raw_points);
+        } else if (this.options.show_y_labels === true) {
+          this.y_label_coordinates = this.draw_y_labels(this.all_points);
         }
         if (this.options.show_grid === true) {
           this.draw_grid(this.x_label_coordinates, this.y_label_coordinates);
+        }
+      } else if (i === 1 && this.options.multi_axis) {
+        if (this.options.show_y_labels === true) {
+          this.draw_y_labels(raw_points, this.width - this.options.x_padding);
         }
       }
     }

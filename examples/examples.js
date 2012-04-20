@@ -1,13 +1,3 @@
-
-
-
-
-
-
-
-
-
-
 (function() {
   var create_exponential_points, create_random_points2, create_squared_points, draw_bars;
   create_exponential_points = function() {
@@ -173,7 +163,7 @@ $(document).ready(function() {
       smoothing: 1,
       max_x_labels: 5,
       max_y_labels: 10,
-      x_padding: 50,
+      x_padding: 50
     });
 
     var ret = data["result"];
@@ -200,6 +190,38 @@ $(document).ready(function() {
 
     c.draw()
 
+
+
+   var multi_axis = new Charts.LineChart('multiaxis', {
+     show_grid: true,
+     show_y_labels: true,
+     label_max: false,
+     label_min: false,
+     multi_axis: true,
+     max_y_labels: 4,
+     x_padding: 45 
+   });
+
+    multi_axis.add_line({
+      data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+      options: {
+        line_color: colors[1],
+        dot_color: colors[1],
+        area_color: colors[1],
+      }
+    });
+
+
+    multi_axis.add_line({
+      data: [[1, 828906],[2, 566933],[3, 584150],[4, 1072143],[5, 1622455],[6, 2466746],[7, 2427789]],
+      options: {
+        line_color: colors[0],
+        dot_color: colors[0],
+        area_color: colors[0],
+      }
+    });
+
+    multi_axis.draw()
 
 
    var bullet = new Charts.BulletChart('bulletchart');

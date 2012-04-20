@@ -582,41 +582,6 @@ Scaling = (function() {
     return [max_x, min_x, max_y, min_y];
   };
 
-  /*
-    Helper for mapping numbers into a new range:
-    existing range: A to B
-    target range: C to D
-    R1 = B - A
-    R2 = D - C
-    new number = (B*C - A*D)/R1 + old_number *(R2/R1) 
-    returns [(B*C - A*D) / R1, R2/R1)]
-  */
-
-  Scaling.calc_scaling_factors = function(old_max, old_min, new_max, new_min) {
-    var new_range, old_range, scaling_factor;
-    old_range = old_max - old_min;
-    new_range = new_max - new_min;
-    scaling_factor = old_max * new_min - new_max * old_min;
-    return [scaling_factor / old_range, new_range / old_range];
-  };
-
-  Scaling.scale_points = function(x_max, y_max, points, x_padding, y_padding) {
-    var max_x, max_y, min_x, min_y, point, scaled_points, sx, sy, x_range_ratio, x_scaling, y_range_ratio, y_scaling, _i, _len, _ref, _ref2, _ref3;
-    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
-    if (min_y === max_y) max_y += 1;
-    if (min_x === max_x) max_x += 1;
-    _ref2 = Scaling.calc_scaling_factors(max_x, min_x, x_max - x_padding, x_padding), x_scaling = _ref2[0], x_range_ratio = _ref2[1];
-    _ref3 = Scaling.calc_scaling_factors(max_y, min_y, y_max - y_padding, y_padding), y_scaling = _ref3[0], y_range_ratio = _ref3[1];
-    scaled_points = [];
-    for (_i = 0, _len = points.length; _i < _len; _i++) {
-      point = points[_i];
-      sx = x_scaling + point.x * x_range_ratio;
-      sy = y_max - (y_scaling + point.y * y_range_ratio);
-      scaled_points.push(new Point(sx, sy));
-    }
-    return scaled_points;
-  };
-
   Scaling.threshold = function(value, threshold) {
     if (value > threshold) {
       return threshold;
@@ -1491,18 +1456,30 @@ LineChart = (function(_super) {
     }).toBack();
   };
 
+  LineChart.prototype.create_scalers = function(points) {
+    var max_x, max_y, min_x, min_y, x, y, y_scaler, _ref,
+      _this = this;
+    _ref = Scaling.get_ranges_for_points(this.all_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - this.options.x_padding]);
+    y_scaler = new Scaler().domain([min_y, max_y]).range([this.options.y_padding, this.height - this.options.y_padding]);
+    y = function(i) {
+      return _this.height - y_scaler(i);
+    };
+    return [x, y];
+  };
+
   LineChart.prototype._draw_y_labels = function(labels) {
-    var fmt, font_family, i, label, label_coordinates, padding, scaled_labels, size, _len;
+    var fmt, font_family, i, label, label_coordinates, padding, size, x, y, _len, _ref;
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     font_family = this.options.font_family;
     padding = size + 5;
-    scaled_labels = Scaling.scale_points(this.width, this.height, labels, this.options.x_padding, this.options.y_padding);
+    _ref = this.create_scalers(labels), x = _ref[0], y = _ref[1];
     label_coordinates = [];
-    for (i = 0, _len = scaled_labels.length; i < _len; i++) {
-      label = scaled_labels[i];
-      new Label(this.r, padding, label.y, labels[i].y, fmt, size, font_family).draw();
-      label_coordinates.push(label.y);
+    for (i = 0, _len = labels.length; i < _len; i++) {
+      label = labels[i];
+      new Label(this.r, padding, y(label.y), label.y, fmt, size, font_family).draw();
+      label_coordinates.push(y(label.y));
     }
     return label_coordinates;
   };
@@ -1584,16 +1561,24 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw = function() {
-    var begin, end, i, line_indices, options, points, raw_points, _len, _ref;
+    var begin, end, i, line_indices, options, point, points, raw_points, x, y, _len, _ref, _ref2;
     if (this.all_points.length < 1) return;
     this.r.clear();
-    this.scaled_points = Scaling.scale_points(this.width, this.height, this.all_points, this.options.x_padding, this.options.y_padding);
-    _ref = this.line_indices;
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      line_indices = _ref[i];
+    _ref = this.create_scalers(this.all_points), x = _ref[0], y = _ref[1];
+    _ref2 = this.line_indices;
+    for (i = 0, _len = _ref2.length; i < _len; i++) {
+      line_indices = _ref2[i];
       begin = line_indices[0], end = line_indices[1];
-      points = this.scaled_points.slice(begin, end + 1 || 9e9);
       raw_points = this.all_points.slice(begin, end + 1 || 9e9);
+      points = (function() {
+        var _i, _len2, _results;
+        _results = [];
+        for (_i = 0, _len2 = raw_points.length; _i < _len2; _i++) {
+          point = raw_points[_i];
+          _results.push(new Point(x(point.x), y(point.y)));
+        }
+        return _results;
+      })();
       options = this.line_options[i];
       this.draw_line(raw_points, points, options);
       if (i === 0) {
@@ -1938,12 +1923,23 @@ BulletChart = (function(_super) {
   };
 
   BulletChart.prototype.draw = function() {
-    var bar, i, midpoint_y, points, y_offset, _len, _ref, _results;
+    var bar, i, max_x, max_y, midpoint_y, min_x, min_y, p, point, points, x, y_offset, _len, _ref, _ref2, _results;
     _ref = this.bars;
     _results = [];
     for (i = 0, _len = _ref.length; i < _len; i++) {
       bar = _ref[i];
-      points = Scaling.scale_points(this.width, this.height, [new Point(bar.comparison, 0), new Point(bar.value, 0), new Point(bar.average, 0), new Point(0, 0)], this.options.x_padding, this.options.y_padding);
+      p = [new Point(bar.comparison, 0), new Point(bar.value, 0), new Point(bar.average, 0), new Point(0, 0)];
+      _ref2 = Scaling.get_ranges_for_points(p), max_x = _ref2[0], min_x = _ref2[1], max_y = _ref2[2], min_y = _ref2[3];
+      x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - this.options.x_padding]);
+      points = (function() {
+        var _i, _len2, _results2;
+        _results2 = [];
+        for (_i = 0, _len2 = p.length; _i < _len2; _i++) {
+          point = p[_i];
+          _results2.push(new Point(x(point.x), 0));
+        }
+        return _results2;
+      })();
       y_offset = i * (this.options.area_width + this.options.bar_margin);
       this.draw_background(points[0], y_offset);
       midpoint_y = y_offset + this.options.area_width / 2;
@@ -2005,7 +2001,8 @@ BarChart = (function(_super) {
   };
 
   BarChart.prototype.draw = function() {
-    var bar, i, points, scaled_x, scaled_y, tl_bar_corner, value, _len, _ref, _results;
+    var bar, i, max_x, max_y, min_x, min_y, points, scaled_x, scaled_y, tl_bar_corner, value, y, y_scaler, _len, _ref, _ref2, _results,
+      _this = this;
     points = (function() {
       var _len, _ref, _results;
       _ref = this.values;
@@ -2017,13 +2014,17 @@ BarChart = (function(_super) {
       return _results;
     }).call(this);
     points.push(new Point(0, 0));
-    this.scaled_values = Scaling.scale_points(this.width, this.height, points, this.options.x_padding, this.options.y_padding);
-    _ref = this.bars;
+    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    y_scaler = new Scaler().domain([min_y, max_y]).range([this.options.y_padding, this.height - this.options.y_padding]);
+    y = function(i) {
+      return _this.height - y_scaler(i);
+    };
+    _ref2 = this.bars;
     _results = [];
-    for (i = 0, _len = _ref.length; i < _len; i++) {
-      bar = _ref[i];
+    for (i = 0, _len = _ref2.length; i < _len; i++) {
+      bar = _ref2[i];
       scaled_x = i * (this.options.bar_width + this.options.bar_spacing) + this.options.x_padding;
-      scaled_y = this.scaled_values[i].y;
+      scaled_y = y(points[i].y);
       tl_bar_corner = new Point(scaled_x, scaled_y);
       _results.push(this.render_bar(bar.label, bar.value, tl_bar_corner, this.bar_options[i]));
     }

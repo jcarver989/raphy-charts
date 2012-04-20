@@ -81,19 +81,19 @@ class BarChart extends BaseChart
     points = (new Point(i, value) for value, i in @values)
     points.push new Point(0,0)
 
-    @scaled_values = Scaling.scale_points(
-      @width,
-      @height,
-      points
-      @options.x_padding,
-      @options.y_padding
-    )
+    [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(points)
+    
+    y_scaler = new Scaler()
+    .domain([min_y, max_y])
+    .range([@options.y_padding, @height - @options.y_padding])
+
+    # top of chart is 0,0 so need to reflect y axis
+    y = (i) => @height - y_scaler(i)
 
     for bar, i in @bars
       scaled_x = i * (@options.bar_width + @options.bar_spacing) + @options.x_padding
-      scaled_y = @scaled_values[i].y
+      scaled_y = y(points[i].y)
       tl_bar_corner = new Point(scaled_x, scaled_y)
       @render_bar(bar.label, bar.value, tl_bar_corner, @bar_options[i])
-
 
 exports.BarChart = BarChart

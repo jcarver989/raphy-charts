@@ -62,25 +62,43 @@ class LineChart extends BaseChart
       "stroke-width": 1
     }).toBack()
 
+
+  create_scalers: (points) ->
+    [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(@all_points)
+    
+    x = new Scaler()
+    .domain([min_x, max_x])
+    .range([@options.x_padding, @width - @options.x_padding])
+
+    y_scaler = new Scaler()
+    .domain([min_y, max_y])
+    .range([@options.y_padding, @height - @options.y_padding])
+
+    # top of chart is 0,0 so need to reflect y axis
+    y = (i) => @height - y_scaler(i)
+
+    [x, y]
+
   _draw_y_labels: (labels) ->
     fmt = @options.label_format
     size = @options.y_label_size
     font_family = @options.font_family
     padding = size + 5 
-    scaled_labels = Scaling.scale_points(@width, @height, labels, @options.x_padding, @options.y_padding)
+
+    [x, y] = @create_scalers(labels)
 
     label_coordinates = []
-    for label, i in scaled_labels
+    for label, i in labels
       new Label(
         @r, 
         padding, 
+        y(label.y), 
         label.y, 
-        labels[i].y, 
         fmt, 
         size,
         font_family
       ).draw()
-      label_coordinates.push label.y
+      label_coordinates.push y(label.y)
 
     label_coordinates
 
@@ -112,9 +130,6 @@ class LineChart extends BaseChart
     labels[labels.length-1].y = Math.round(max_y) if max_y > 1
 
     return @_draw_y_labels(labels)
-
-    
-
 
   draw_x_label: (raw_point, point) ->
     fmt = @options.label_format
@@ -195,12 +210,13 @@ class LineChart extends BaseChart
     return if @all_points.length < 1
 
     @r.clear()
-    @scaled_points = Scaling.scale_points(@width, @height, @all_points, @options.x_padding, @options.y_padding)
+
+    [x, y] = @create_scalers(@all_points)
 
     for line_indices, i in @line_indices
       [begin, end] = line_indices
-      points     = @scaled_points[begin..end]
       raw_points = @all_points[begin..end]
+      points = (new Point(x(point.x), y(point.y)) for point in raw_points)
       options    = @line_options[i]
       @draw_line(raw_points, points, options)
       
@@ -211,7 +227,5 @@ class LineChart extends BaseChart
 
     return
       
-
-
 
 exports.LineChart = LineChart

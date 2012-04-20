@@ -87,18 +87,21 @@ class BulletChart extends BaseChart
 
   draw: () ->
     for bar, i in @bars
-      points = Scaling.scale_points(
-        @width,
-        @height,
-        [
-          new Point(bar.comparison, 0),
-          new Point(bar.value, 0),
-          new Point(bar.average, 0),
-          new Point(0,0) # dummy for scaling
-        ],
-        @options.x_padding,
-        @options.y_padding
-      )
+
+      p = [
+            new Point(bar.comparison, 0),
+            new Point(bar.value, 0),
+            new Point(bar.average, 0),
+            new Point(0,0) # dummy for scaling
+          ]
+
+      [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(p)
+
+      x = new Scaler()
+      .domain([min_x, max_x])
+      .range([@options.x_padding, @width - @options.x_padding])
+
+      points = (new Point(x(point.x), 0) for point in p)
 
       y_offset = i * (@options.area_width + @options.bar_margin)
       @draw_background(points[0], y_offset)

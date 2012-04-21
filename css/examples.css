@@ -1429,6 +1429,9 @@ h2 {
   font-size: 36px;
   font-weight: 200;
   color: #333333; }
+  h2.subtitle {
+    margin: 0 auto;
+    text-align: center; }
   h2 small {
     font-size: 18px;
     color: #555555; }
@@ -1437,7 +1440,8 @@ h3 {
   text-align: center;
   color: #818181;
   font-weight: normal;
-  font-size: 22px; }
+  font-size: 22px;
+  font-weight: 200; }
 
 pre {
   background: #333333;
@@ -1451,7 +1455,7 @@ pre {
   box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.5), 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent, 0 0 0 transparent; }
 
 .buttons {
-  margin: 30px auto 0;
+  margin: 20px auto 0;
   text-align: center; }
 
 #container {
@@ -1460,8 +1464,8 @@ pre {
   color: #333333; }
 
 .menu {
-  margin: 80px auto 0;
-  width: 600px;
+  margin: 50px auto 0;
+  width: 100%;
   position: relative;
   padding-left: 40px; }
   .menu:after {
@@ -1505,6 +1509,10 @@ pre {
     display: block;
     background: #eeeeee;
     overflow: hidden; }
+
+.menu-container {
+  width: 675px;
+  margin: 0 auto; }
 
 table {
   width: 100%;
@@ -1587,10 +1595,12 @@ ul {
   padding: 0;
   list-style: none; }
 
-#charts {
+.charts {
   padding: 30px;
+  width: 100%;
   background: rgba(0, 0, 0, 0.1); }
 
 .chart {
   margin-bottom: 30px;
+  padding: 10px 30px;
   background: white; }

@@ -7,30 +7,45 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
     <script type="text/javascript" src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"></script>
     <script type="text/javascript" src="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js"></script>
-    <script type="text/javascript" src="js/examples.js"></script>
+    <script type="text/javascript" src="js/line_chart_examples.js"></script>
+    <script type="text/javascript" src="js/bar_chart_examples.js"></script>
+    <script type="text/javascript" src="js/index_chart_examples.js"></script>
+    <script type="text/javascript" src="js/bullet_chart_examples.js"></script>
+    <script type="text/javascript" src="js/progress_chart_examples.js"></script>
+    <script type="text/javascript" src="js/path_menu_chart_examples.js"></script>
     <script type="text/javascript">
         function switch_divs(hide, show) {
-          hide.slideUp(200)
-          show.show()
-          show.css({ "opacity" : 1 })
+          hide.fadeOut(200)
+          show.fadeIn(200, function() {
+            show.trigger('draw');
+          });
         }
 
         $(document).ready(function() {
-          $("#menu").click(function(e) {
+          $(".menu").click(function(e) {
             e.preventDefault()
-            var active = $("#menu .active")
-            var target = $(e.target)
-            var show_id = "#" + target.attr("data-item")
-            var hide_id = "#" + active.attr("data-item")
+            var active = $(".menu .active")
+            var active_link = active.find("a")
+
+
+            var target = $(e.target).parents("a")
+            var target_parent = target.parents(".circle")
+
+
+            var show_id = target.attr("href")
+            var hide_id = active_link.attr("href")
 
             if (show_id === hide_id) { return }
 
             active.removeClass("active")
-
-            target.addClass("active")
+            target_parent.addClass("active")
 
             switch_divs($(hide_id), $(show_id))
-            })
+          });
+
+
+            // initial setup
+            $("#line-charts").trigger("draw");
         })
     </script>
 
@@ -47,51 +62,129 @@
 
 
     <div id="container">
-      <h1> 
-        Raphy Charts 
-      </h1>
-    <h3>Easy, beautiful line charts with sane defaults. Works in all major browsers.</h3>
+      <h1>Raphy Charts</h1>
+    <h3 class="subtitle">Beautiful HTML5/SVG Charts with sane defaults. Apache 2 Licensed</h3>
 
     <div class="buttons">
       <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered green button">View on Github</a>
       <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered dark-gray button">Download RaphyCharts</a>
     </div>
 
+
     <div class="menu">
       <hr />
-      <div class="active circle">
-        <a href="#line-chart"><img src="images/line-chart.png" /></a>
-      </div>
 
-      <div class="circle">
-        <a href="#bar-chart"><img src="images/bar-chart.png" /></a>
-      </div>
-
-      <div class="circle">
-        <a href="#bullet-chart"><img src="images/bullet-chart.png" /></a>
-      </div>
-
-      <div class="circle">
-        <a href="#index-chart"><img src="images/index-chart.png" /></a>
-      </div>
-
-      <div class="circle">
-        <a href="#progress-chart"><img src="images/progress-chart.png" /></a>
-      </div>
-    </div>
-
-    <h2>Line Chart <small>The granddaddy of all charts. Time series and multi-axis lines supported out of the box</small></h2>
-
-    <div id="charts">
-        <div id="charts-inner">
-          <div style="width:940px; height: 300px;" id="line-chart-1" class="chart"></div>
-          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="chart2" class="chart"></div>
-          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="areanoline" class="chart"></div>
-          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="barchart" class="chart"></div>
-          <div style="width:940px; height: 300px; margin-bottom: 50px;" id="chart4" class="chart"></div>
+      <div class="menu-container">
+        <div class="active circle">
+          <a href="#line-charts"><img src="images/line-chart.png" /></a>
         </div>
+
+        <div class="circle">
+          <a href="#bar-charts"><img src="images/bar-chart.png" /></a>
+        </div>
+
+        <div class="circle">
+          <a href="#index-charts"><img src="images/index-chart.png" /></a>
+        </div>
+
+        <div class="circle">
+          <a href="#bullet-charts"><img src="images/bullet-chart.png" /></a>
+        </div>
+
+        <div class="circle">
+          <a href="#progress-charts"><img src="images/progress-chart.png" /></a>
+        </div>
+
+
+        <div class="circle">
+          <a href="#fly-charts"><img src="images/fly-chart.png" /></a>
+        </div>
+
+      </div>
     </div>
 
+
+      <div id="line-charts">
+          <h2>Line Chart <small>The granddaddy of all charts. Time series and multi-axis lines supported out of the box</small></h2>
+          <div class="charts">
+              <div style="width:940px; height: 300px;" id="line-chart-1" class="chart"></div>
+              <div style="width:940px; height: 300px;" id="multiaxis" class="chart"></div>
+              <div style="width:940px; height: 300px;" id="chart2" class="chart"></div>
+              <div style="width:940px; height: 300px;" id="areanoline" class="chart"></div>
+
+
+                  <table>
+                    <thead>
+                      <th>Action</th>
+                      <th>Total</th>
+                      <th>Sparkline</th>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Visitors</td>
+                        <td>500k</td>
+                        <td><div id="sparkline-visitors" style="width: 120px; height: 30px;"></div></td>
+                      </tr>
+                      <tr>
+                        <td>Signups</td>
+                        <td>250k</td>
+                        <td><div id="sparkline-signups" style="width: 120px; height: 30px;"></div></td>
+                      </tr>
+
+                      <tr>
+                        <td>Conversions</td>
+                        <td>10k</td>
+                        <td><div id="sparkline-conversions" style="width: 120px; height: 30px;"></div></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+          </div>
+       </div>
+
+       <div id="bar-charts" style="display: none;">
+          <h2>Bar Chart <small>Your standard bar charts with all the fixin's</small></h2>
+          <div class="charts">
+              <div style="width:940px; height: 300px;" id="barchart" class="chart"></div>
+              <div style="width:940px; height: 300px;" id="normalbarchart" class="chart"></div>
+          </div>
+       </div>
+
+       <div id="bullet-charts" style="display: none;">
+          <h2>Bullet Charts <small>When you need more than a simple bar chart</small></h2>
+          <div class="charts">
+              <div style="width:940px; height: 300px;" id="bulletchart" class="chart"></div>
+          </div>
+       </div>
+
+       <div id="index-charts" style="display: none;">
+          <h2>Index Chart <small>A specialized chart to show you how well you track against an index</small></h2>
+          <div class="charts">
+              <div style="width:940px; height: 500px;" id="indexchart" class="chart"></div>
+          </div>
+       </div>
+
+       <div id="progress-charts" style="display: none;">
+          <h2>Progress Chart <small>A chart widget to show a percentage of total</small></h2>
+            <div class="charts">
+               <div style="width:150px; height: 150px; float: left;" id="progress-1" class="chart" ></div>
+               <div style="width:150px; height: 150px; float: left;" id="progress-2" class="chart" ></div>
+               <div style="width:150px; height: 150px; float: left;" id="progress-3" class="chart" ></div>
+               <div style="width:150px; height: 150px; float: left;" id="progress-4" class="chart" ></div>
+               <div style="clear:both;"></div>
+           </div>
+       </div>
+
+
+       <div id="fly-charts" style="display: none;">
+          <h2>Fly Chart <small>Visualize parts of a whole by clicking on the circles</small></h2>
+            <div class="charts">
+               <div style="width:940px; height: 500px;" id="fly-1" class="chart"></div>
+           </div>
+       </div>
+       
+
+    <hr />
     <div id="documentation" >
         <h2>Browser Support</h2>
         <img src="images/browsers-64.png" />
@@ -425,35 +518,10 @@
         
     </div>
 
-    <div id="examples" style="opacity:0;">
+    <div id="examples" style="display: none;">
 
 
-    <h2>Spark Lines</h2>
-    <table>
-      <thead>
-        <th>Action</th>
-        <th>Total</th>
-        <th>Sparkline</th>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Visitors</td>
-          <td>500k</td>
-          <td><div id="sparkline-visitors" style="width: 300px; height: 30px;"></div></td>
-        </tr>
-        <tr>
-          <td>Signups</td>
-          <td>250k</td>
-          <td><div id="sparkline-signups" style="width: 300px; height: 30px;"></div></td>
-        </tr>
-
-        <tr>
-          <td>Conversions</td>
-          <td>10k</td>
-          <td><div id="sparkline-conversions" style="width: 300px; height: 30px;"></div></td>
-        </tr>
-      </tbody>
-    </table>
+    
 
   </div>
 

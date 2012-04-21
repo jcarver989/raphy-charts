@@ -61,27 +61,6 @@ function line_chart_1() {
 }
 
 
-function line_chart_2() {
-  clear_chart('chart2');
-
-  var c = new Charts.LineChart('chart2', {
-    line_color: "#118800",
-    dot_color: "#118800",
-    area_color: "90-#fff-#118800",
-    dot_stroke_color: "#aaa",
-    dot_stroke_size: 3,
-    label_min: false,
-    smoothing: 0.5,
-    show_grid: true
-  });
-
-  c.add_line({
-    data: create_random_points()
-  });
-
-  c.draw();
-}
-
 
 function line_chart_3() {
   clear_chart('areanoline');
@@ -164,10 +143,7 @@ function sparklines_chart() {
     x_padding: 10,
     y_padding: 5,
     line_color: "#00bbee",
-    area_color: "#00bbee",
-    render: 'bar',
-    bar_width: 2,
-    tooltip: false
+    area_color: "#00bbee"
   };
 
 
@@ -218,7 +194,6 @@ $(document).ready(function() {
   $("#line-charts").bind('draw', function() {
     line_chart_1();
     multiaxis_chart();
-    line_chart_2();
     line_chart_3();
     sparklines_chart();
   });

@@ -58,17 +58,25 @@
   </head>
   <body>
 
-    <a href="http://github.com/jcarver989/raphy-charts"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub"></a>
-
 
     <div id="container">
       <h1>Raphy Charts</h1>
-    <h3 class="subtitle">Beautiful HTML5/SVG Charts with sane defaults. Apache 2 Licensed</h3>
+      <h3 class="subtitle">Beautiful HTML5/SVG Charts with sane defaults for all browsers, <br/> including Internet Explorer. Built on <a href="http://raphaeljs.com/">Raphael.js</a> &amp; <a href="http://www.apache.org/licenses/LICENSE-2.0.html">Apache 2 Licensed</a></h3>
+
+<pre>
+<code>
+&lt;!-- Raphael.js is required to use Raphy Charts. For a quick install use these scripts: --&gt;
+&lt;script src="https://raw.github.com/DmitryBaranovskiy/raphael/master/raphael-min.js"&gt;&lt;/script&gt;
+&lt;script src="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js"&gt;&lt;/script&gt;
+</code>
+</pre>
 
     <div class="buttons">
-      <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered green button">View on Github</a>
-      <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered dark-gray button">Download RaphyCharts</a>
+      <a href="http://github.com/jcarver989/raphy-charts" class="large pill bordered dark-gray button">View on Github</a>
+      <a href="https://raw.github.com/jcarver989/raphy-charts/master/compiled/charts.min.js" class="large pill bordered green button">Download latest RaphyCharts</a>
     </div>
+
+
 
 
     <div class="menu">
@@ -105,11 +113,10 @@
 
 
       <div id="line-charts">
-          <h2>Line Chart <small>The granddaddy of all charts. Time series and multi-axis lines supported out of the box</small></h2>
+          <h2>Line Chart <small>The granddaddy of all charts. Time series data and multi-axis lines supported out of the box</small></h2>
           <div class="charts">
               <div style="width:940px; height: 300px;" id="line-chart-1" class="chart"></div>
               <div style="width:940px; height: 300px;" id="multiaxis" class="chart"></div>
-              <div style="width:940px; height: 300px;" id="chart2" class="chart"></div>
               <div style="width:940px; height: 300px;" id="areanoline" class="chart"></div>
 
 
@@ -138,9 +145,445 @@
                       </tr>
                     </tbody>
                   </table>
-
           </div>
+
+
+
+<h2>Usage</h2>
+
+<h3>First, initialize the chart</h3>
+<pre>
+<code>
+ &lt;!-- Assuming this Div exists somewhere on the page: (width & height MUST be set) --&gt;
+ &lt;div id='chart1' style='width: 300px; height: 100px;'&gt;&lt;/div&gt;
+</code>
+</pre>
+
+<pre>
+<code>
+// Can pass in the id
+var chart = new Charts.LineChart('chart1');
+
+// Or the DOM node 
+var node  = document.getElementById('chart1');
+var chart = new Charts.LineChart(node);
+</code>
+</pre>
+
+
+<pre>
+<code>
+// If you want to override default options 
+var chart = new Charts.LineChart('chart1', {
+  show_grid: false,
+  label_max: false,
+  label_min: false
+});
+</code>
+</pre>
+
+<h3>Then add some lines</h3>
+<pre>
+<code class="javascript">
+// Data is an array of arrays where the first slot is the x label and the 2nd the (y) value to graph
+chart.add_line({
+  data: [[1, 828906],[2, 566933],[3, 584150],[4, 1072143],[5, 1622455],[6, 2466746],[7, 2427789]]
+});
+
+
+</code>
+</pre>
+
+<pre>
+<code class="javascript">
+// x Labels can also be dates, making time series charts easy 
+var day1 = new Date(d.getFullYear(), d.getMonth(), 1);
+var day2 = new Date(d.getFullYear(), d.getMonth(), 2);
+
+chart.add_line({
+  data: [[day1, 828906],[day2, 566933]],
+
+  // line level options passed here
+  options: {
+    line_color: "#00aadd"
+  }
+});
+</code>
+</pre>
+
+<h3>Finally Draw the Chart</h3>
+<pre>
+<code class="javascript">
+chart.draw();
+</code>
+</pre>
+
+<h2>Complete Example</h2>
+<h3>A MultiAxis Chart With Gradient Fill</h3>
+<pre>
+<code>
+var multi_axis = new Charts.LineChart('multiaxis', {
+  show_grid: true,
+  show_y_labels: true,
+  label_max: false,
+  label_min: false,
+  multi_axis: true,
+  max_y_labels: 4,
+  x_padding: 45 
+});
+
+multi_axis.add_line({
+  data: [[1, 828906],[2, 566933],[3, 584150],[4, 1072143],[5, 1622455],[6, 2466746],[7, 2427789]],
+  options: {
+    line_color: "#00aadd",
+    dot_color: "#00aadd",
+    area_color: "230-#88c9dd-rgba(255,255,255,0)",
+    area_opacity: 0.2,
+    dot_size: 5,
+    line_width: 4 
+  }
+});
+
+multi_axis.add_line({
+  data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+  options: {
+    line_color: "#ffee33",
+    dot_color: "#ffee33",
+    fill_area: false,
+    line_width: 2,
+    dot_size: 3
+  }
+});
+
+multi_axis.draw()
+</code>
+</pre>
+
+
+<h2>Line Chart Options</h2>
+
+<h3>Chart</h3>
+
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Line</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="boolean">boolean</td>
+        <td>show_grid</td>
+        <td>render a background grid</td>
+        <td>true</td>
+        <td>chart only</td>
+    </tr>
+
+
+    <tr>
+        <td class="boolean">boolean</td>
+        <td>multi_axis</td>
+        <td>render chart with 2 y axes</td>
+        <td>false</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>x_padding</td>
+        <td>how much to pad the x-axis (px)</td>
+        <td>45</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>y_padding</td>
+        <td>how much to pad the y-axis</td>
+        <td>40</td>
+        <td>chart only</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Dots</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col> 
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Line</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>dot_size</td>
+        <td>size of dots</td>
+        <td>5</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="color">css-color</td>
+        <td>dot_color</td>
+        <td>color of dots</td>
+        <td>"#00aadd"</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="color">css-color</td>
+        <td>dot_stroke_color</td>
+        <td>color of dot border</td>
+        <td>"#fff"</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="number">number</td>
+        <td>dot_stroke_size</td>
+        <td>size of dot border</td>
+        <td>2</td>
+        <td>both</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<h3>Lines</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Line</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>line_width</td>
+        <td>width of line</td>
+        <td>3</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="color">css-color</td>
+        <td>line_color</td>
+        <td>color of line</td>
+        <td>"#00aadd"</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="number">number</td>
+        <td>smoothing</td>
+        <td>0.0 to 1.0,  0 = no smoothing, 1.0= ultra smoothing</td>
+        <td>0.4</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="boolean">boolean</td>
+        <td>fill_area</td>
+        <td>shade the area under a line</td>
+        <td>true</td>
+        <td>both</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>area_color</td>
+        <td>color of area under a line</td>
+        <td>"#00aadd"</td>
+        <td>both</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>area_opacity</td>
+        <td>0.0 to 1.0 opacity of shading under a line</td>
+        <td>0.2</td>
+        <td>both</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<h3>Bars (for bar time series instead of a line)</h3>
+ <table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Line</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="string">string</td>
+        <td>render</td>
+        <td>"bar" or "line"</td>
+        <td>"line"</td>
+        <td>chart only</td>
+    </tr>
+    <tr>
+        <td class="number">number</td>
+        <td>bar_width</td>
+        <td>width of bars (px)</td>
+        <td>20</td>
+        <td>both</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Labels</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Line</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="boolean">boolean</td>
+        <td>show_x_labels</td>
+        <td>display x axis labels</td>
+        <td>true</td>
+        <td>chart only</td>
+    </tr>
+
+     <tr>
+        <td class="boolean">boolean</td>
+        <td>show_y_labels</td>
+        <td>show y axis labels</td>
+        <td>true</td>
+        <td>chart only</td>
+    </tr>
+
+     <tr>
+        <td class="boolean">boolean</td>
+        <td>label_max</td>
+        <td>label max point of line with tooltip</td>
+        <td>true</td>
+        <td>both</td>
+    </tr>
+
+     <tr>
+        <td class="boolean">boolean</td>
+        <td>label_min</td>
+        <td>label min point of line with tooltip</td>
+        <td>true</td>
+        <td>both</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>max_x_labels</td>
+        <td>max number of x axis labels to show</td>
+        <td>10</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>max_y_labels</td>
+        <td>max number of y axis labels to show</td>
+        <td>3</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>x_label_size</td>
+        <td>size of x labels (pixels)</td>
+        <td>14</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>y_label_size</td>
+        <td>size of y labels (pixels)</td>
+        <td>14</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="string">string</td>
+        <td>font_family</td>
+        <td>which font to use</td>
+        <td>"Helvetica, Arial, sans-serif"</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>label_format</td>
+        <td>format string for date labels</td>
+        <td>"%m%d"</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Label Formatting Macros</h3>
+</p>
+<ul>
+  <li>%m - month (1-12)</li>
+  <li>%d - date (1-31)</li>
+  <li>%Y - year (eg. 2011)</li>
+  <li>%H - hours (0-24)</li>
+  <li>%I - hours (1-12)</li>
+  <li>%p - am/pm indicator</li>
+  <li>%M - minutes (0-59)</li>
+</ul>
+<p>Example: label_format: "%m/%d/%Y" -> "11/05/2011"</p>
+
+
        </div>
+       <!-- END Line Charts -->
 
        <div id="bar-charts" style="display: none;">
           <h2>Bar Chart <small>Your standard bar charts with all the fixin's</small></h2>
@@ -148,21 +591,503 @@
               <div style="width:940px; height: 300px;" id="barchart" class="chart"></div>
               <div style="width:940px; height: 300px;" id="normalbarchart" class="chart"></div>
           </div>
+
+
+<h2>Usage</h2>
+
+<h3>First, initialize the chart</h3>
+<pre>
+<code>
+ &lt;!-- Assuming this Div exists somewhere on the page: (width & height MUST be set) --&gt;
+ &lt;div id='chart1' style='width: 300px; height: 100px;'&gt;&lt;/div&gt;
+</code>
+</pre>
+
+<pre>
+<code>
+// Can pass in the id
+var chart = new Charts.BarChart('chart1');
+
+// Or the DOM node 
+var node  = document.getElementById('chart1');
+var chart = new Charts.BarChart(node);
+</code>
+</pre>
+
+
+<pre>
+<code>
+// If you want to override default options 
+var chart = new Charts.BarChart('chart1', {
+  show_grid: false,
+  label_max: false,
+  label_min: false
+});
+</code>
+</pre>
+
+
+<h3>Then add some bars</h3>
+<pre>
+<code class='javascript'>
+chart.add({
+  label: "doo",
+  value: 300
+});
+
+chart.add({
+  label: "moo",
+  value: 800,
+  options: {
+    bar_color: "#53ba03"
+  }
+});
+</code>
+</pre>
+
+<h3>Finally draw the chart</h3>
+<pre>
+<code class='javascript'>
+chart.draw();
+</code>
+</pre>
+
+
+<h2>Complete Example</h2>
+<pre>
+<code class="javascript">
+var bars = new Charts.BarChart('barchart', {
+  x_label_color: "#333333",
+  bar_width: 45,
+  rounding: 10,
+});
+
+bars.add({
+  label: "foo",
+  value: 600
+});
+
+bars.add({
+  label: "moo",
+  value: 800,
+  options: {
+    bar_color: "#53ba03"
+  }
+});
+
+bars.add({
+  label: "doo",
+  value: 300
+});
+
+bars.draw();
+</code>
+</pre>
+
+
+<h2>Bar Chart Options</h2>
+
+
+
+<h3>Chart</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Bar</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="boolean">boolean</td>
+        <td>show_grid</td>
+        <td>render a background grid</td>
+        <td>false</td>
+        <td>chart only</td>
+    </tr>
+
+     <tr>
+        <td class="boolean">boolean</td>
+        <td>show_x_labels</td>
+        <td>display bar labels</td>
+        <td>true</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="boolean">boolean</td>
+        <td>show_y_labels</td>
+        <td>display bar values</td>
+        <td>true</td>
+        <td>chart only</td>
+    </tr>
+
+
+    <tr>
+        <td class="number">number</td>
+        <td>x_label_size</td>
+        <td>size of bar labels</td>
+        <td>14</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>y_label_size</td>
+        <td>size of bar values</td>
+        <td>14</td>
+        <td>chart only</td>
+    </tr>
+
+     <tr>
+        <td class="color">css-color</td>
+        <td>x_label_color</td>
+        <td>color of bar label</td>
+        <td>#333</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>y_label_color</td>
+        <td>color of bar values</td>
+        <td>#333</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>x_padding</td>
+        <td>how much to pad the x-axis (px)</td>
+        <td>25</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>y_padding</td>
+        <td>how much to pad the y-axis (px)</td>
+        <td>40</td>
+        <td>chart only</td>
+    </tr>
+
+    <tr>
+        <td class="string">string</td>
+        <td>font_family</td>
+        <td>font stack to use for the labels</td>
+        <td>font_family: "Helvetica, Arial, sans-serif"</td>
+        <td>chart only</td>
+    </tr>
+
+  </tbody>
+</table>
+
+
+<h3>Bars</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+        <th>Chart/Bar</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>bar_width</td>
+        <td>width of the bars</td>
+        <td>20</td>
+        <td>both</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>bar_spacing</td>
+        <td>how far apart to place bars</td>
+        <td>20</td>
+        <td>both</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>bar_color</td>
+        <td>color of the bar's fill</td>
+        <td>#00aadd</td>
+        <td>both</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>rounding</td>
+        <td>how much to round the bars (0 makes square bars)</td>
+        <td>0</td>
+        <td>both</td>
+    </tr>
+  </tbody>
+</table>
+
        </div>
+
+       <!-- END Bar Charts -->
 
        <div id="bullet-charts" style="display: none;">
           <h2>Bullet Charts <small>When you need more than a simple bar chart</small></h2>
+          <h3>Bullet Charts are still being developed, it's not recommended for use (yet) as there aren't labels for the values.
           <div class="charts">
               <div style="width:940px; height: 300px;" id="bulletchart" class="chart"></div>
           </div>
        </div>
+       <!-- END Bullet Charts -->
 
        <div id="index-charts" style="display: none;">
           <h2>Index Chart <small>A specialized chart to show you how well you track against an index</small></h2>
           <div class="charts">
               <div style="width:940px; height: 500px;" id="indexchart" class="chart"></div>
           </div>
+
+<h2>Usage</h2>
+<h3>First, initialize the chart</h3>
+<pre>
+<code>
+ &lt;!-- Assuming this Div exists somewhere on the page: (width & height MUST be set) --&gt;
+ &lt;div id='chart1' style='width: 300px; height: 100px;'&gt;&lt;/div&gt;
+</code>
+</pre>
+
+<pre>
+<code>
+// Can pass in the id
+var chart = new Charts.IndexChart('chart1');
+
+// Or the DOM node 
+var node  = document.getElementById('chart1');
+var chart = new Charts.IndexChart(node);
+</code>
+</pre>
+
+
+<pre>
+<code>
+// If you want to override default options 
+var chart = new Charts.IndexChart('chart1', {
+  rounding: 10
+});
+</code>
+</pre>
+
+
+<h3>Then add some bars</h3>
+<pre>
+<code class='javascript'>
+// add(*Label*, *raw value*, *index score*)
+// index score of 100 == average
+
+chart.add("Retail", 18316, 65);
+chart.add("IT Software",28977,1331);
+chart.add("Engineering/Technical",28977,282);
+</code>
+</pre>
+
+
+<h3>Then add the guider (dotted) lines</h3>
+<pre>
+<code class='javascript'>
+// add_guide_line(*Label*, *index value*, *opacity*)
+// index score of 100 == average
+
+chart.add_guide_line("Average", 100, 1)
+chart.add_guide_line("Above Average", 500, 0.25)
+chart.add_guide_line("High", 1000, 0.25)
+</code>
+</pre>
+
+<h3>Label the Raw Values</h3>
+<pre>
+<code class="javascript">
+index.add_raw_label("Uniques")
+</code>
+</pre>
+
+<h3>Finally, draw the chart</h3>
+<pre>
+<code class='javascript'>
+chart.draw();
+</code>
+</pre>
+
+
+<h2>Complete Example</h2>
+<pre>
+<code class="javascript">
+ var node = document.getElementById('indexchart');
+ var index = Charts.IndexChart(node);
+
+ index.add("Retail",18316,65)
+ index.add("IT Software",28977,1331)
+ index.add("Engineering/Technical",28977,282)
+ index.add("Education",20839,106)
+ index.add("Media & Internet",22488,92)
+ index.add("Business Services",19397,85)
+
+ index.add_guide_line("Average", 100, 1)
+ index.add_guide_line("Above Average", 500, 0.25)
+ index.add_guide_line("High", 1000, 0.25)
+
+ index.draw()
+</code>
+</pre>
+
+
+<h2>Index Chart Options</h2>
+
+<h3>Chart</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>x_padding</td>
+        <td>left hand x padding</td>
+        <td>160</td>
+    </tr>
+
+     <tr>
+        <td class="number">number</td>
+        <td>x_padding_right</td>
+        <td>right hand x padding</td>
+        <td>100</td>
+    </tr>
+
+     <tr>
+        <td class="number">number</td>
+        <td>y_padding</td>
+        <td>y padding</td>
+        <td>50</td>
+    </tr>
+
+     <tr>
+        <td class="number">number</td>
+        <td>label_size</td>
+        <td>size of labels</td>
+        <td>14</td>
+    </tr>
+
+     <tr>
+        <td class="string">string</td>
+        <td>font_family</td>
+        <td>font stack to use</td>
+        <td>Helvetica, Arial, sans-serif</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>dash_width</td>
+        <td>how thick to draw guider lines</td>
+        <td>3</td>
+    </tr>
+
+  </tbody>
+</table>
+
+<h3>Bars</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>bar_margin</td>
+        <td>spacing between bars</td>
+        <td>30</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>bar_bg_color</td>
+        <td>background color of bar</td>
+        <td>#bdced3</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>bar1_color</td>
+        <td>color of bar when lower than 100 index</td>
+        <td>90-#2f5e78-#4284a8</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>bar2_color</td>
+        <td>color of bar when higher than 100 index</td>
+        <td>90-#173e53-#225d7c</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>raw_value_bar_color</td>
+        <td>color of bar displaying the raw values</td>
+        <td>9eb7bf</td>
+    </tr>
+
+
+    <tr>
+        <td class="number">number</td>
+        <td>rounding</td>
+        <td>how much to round the bars (0 makes square bars)</td>
+        <td>3</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>bg_bar_padding</td>
+        <td>controls how big the background bar is relative to its contents (px)</td>
+        <td>14</td>
+    </tr>
+  </tbody>
+</table>
+
        </div>
+
+       <!-- END Index  Charts -->
 
        <div id="progress-charts" style="display: none;">
           <h2>Progress Chart <small>A chart widget to show a percentage of total</small></h2>
@@ -173,7 +1098,141 @@
                <div style="width:150px; height: 150px; float: left;" id="progress-4" class="chart" ></div>
                <div style="clear:both;"></div>
            </div>
+
+<h2>Usage</h2>
+<h3>First, initialize the chart</h3>
+<pre>
+<code>
+ &lt;!-- Assuming this Div exists somewhere on the page: (width & height MUST be set) --&gt;
+ &lt;div id='chart1' style='width: 300px; height: 100px;'&gt;&lt;/div&gt;
+</code>
+</pre>
+
+<pre>
+<code>
+// Can pass in the id
+// constructor parameters: *dom_id OR node*, *label*, *percentage value*
+var chart = new Charts.CircleProgress('chart1', 'Sales', 80);
+
+// Or the DOM node 
+var node  = document.getElementById('chart1');
+var chart = new Charts.CircleProgress(node, 'Sales', 80);
+</code>
+</pre>
+
+
+<pre>
+<code>
+// If you want to override default options 
+var chart = new Charts.CircleProgress('chart1', 'Sales', 80, {
+  fill_color: "#222" 
+});
+</code>
+</pre>
+
+<h3>Then draw the chart</h3>
+<pre>
+<code class="javascript">
+  chart.draw();
+</code>
+</pre>
+
+
+<h2>Complete Example</h2>
+
+
+<pre>
+<code class="javascript">
+var progress1 = new Charts.CircleProgress(
+  'progress-1', 
+  'Sales', 
+  80,
+  {
+    font_color: "#fff",
+    fill_color: "#222",
+    label_color: "#333",
+    text_shadow: "rgba(0,0,0,.4)",
+    stroke_color: "#6a329e"
+  });
+
+  progress1.draw()
+</code>
+</pre>
+
+
+<h2>Progress Chart Options</h2>
+
+<h3>Chart</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+  </thead>
+
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>radius</td>
+        <td>radius of circle (how big chart is)</td>
+        <td>55</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>stroke_width</td>
+        <td>size of colored indicator on outside of circle</td>
+        <td>30</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>fill_color</td>
+        <td>color of circle</td>
+        <td>#fff</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>stroke_color</td>
+        <td>color of indicator outside of circle</td>
+        <td>#81ae14</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>font_color</td>
+        <td>color of font inside circle</td>
+        <td>#333</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>label_color</td>
+        <td>color of label outside circle</td>
+        <td>#333</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>text_shadow</td>
+        <td>text shadow on label</td>
+        <td>false</td>
+    </tr>
+  </tbody>
+</table>
+
        </div>
+       <!-- END Progress  Charts -->
+
 
 
        <div id="fly-charts" style="display: none;">
@@ -181,349 +1240,221 @@
             <div class="charts">
                <div style="width:940px; height: 500px;" id="fly-1" class="chart"></div>
            </div>
+
+<h2>Usage</h2>
+<h3>First, initialize the chart</h3>
+<pre>
+<code>
+ &lt;!-- Assuming this Div exists somewhere on the page: (width & height MUST be set) --&gt;
+ &lt;div id='chart1' style='width: 300px; height: 100px;'&gt;&lt;/div&gt;
+</code>
+</pre>
+
+<pre>
+<code>
+// Can pass in the id
+var chart = new Charts.PathMenu('chart1');
+
+// Or the DOM node 
+var node  = document.getElementById('chart1');
+var chart = new Charts.PathMenu('chart1');
+</code>
+</pre>
+
+
+<pre>
+<code>
+// If you want to override default options 
+var chart = new Charts.PathMenu('chart1', {
+  bounce_radius: 1.5 
+});
+</code>
+</pre>
+
+
+<h3>Add some items</h3>
+<pre>
+<code class="javascript">
+menu.add({
+  label: "Software",
+  value: 5000,
+  children: [
+    { label: "Cloud Based", value: 1500 },
+    { label: "OEM Based",   value: 1500 },
+    { label: "Gaming",      value: 2000 }
+  ]
+})
+
+menu.add({
+  label: "Food",
+  value: 400,
+  children: [
+    { label: "Groceries",     value: 100 },
+    { label: "Restaurants",   value: 150 },
+    { label: "Snacks",        value: 150 }
+  ]
+})
+
+menu.add({
+  label: "Movies",
+  value: 1500,
+  children: []
+});
+</code>
+</pre>
+
+<h3>Then draw the chart</h3>
+<pre>
+<code class="javascript">
+  chart.draw();
+</code>
+</pre>
+
+
+<h2>Complete Example</h2>
+<pre>
+<code class="javascript">
+var menu = new Charts.PathMenu("fly-1", {});
+
+menu.add({
+  label: "Manufacturing",
+  value: 3000,
+  children: [
+    { label: "Automobiles", value: 1500 },
+    { label: "Aerospace",   value: 1500 },
+  ]
+});
+
+menu.add({
+  label: "Software",
+  value: 5000,
+  children: [
+    { label: "Cloud Based", value: 1500 },
+    { label: "OEM Based",   value: 1500 },
+    { label: "Gaming",      value: 2000 }
+  ]
+})
+
+menu.add({
+  label: "Food",
+  value: 400,
+  children: [
+    { label: "Groceries",     value: 100 },
+    { label: "Restaurants",   value: 150 },
+    { label: "Snacks",        value: 150 }
+  ]
+})
+
+menu.add({
+  label: "Movies",
+  value: 1500,
+  children: []
+});
+
+menu.add({
+  label: "Consumer Electronics",
+  value: 1500,
+  children: []
+});
+
+
+menu.add({
+  label: "Real Estate",
+  value: 1500,
+  children: []
+});
+
+
+menu.add({
+  label: "Commercial Banking",
+  value: 1500,
+  children: []
+});
+
+menu.draw();
+</code>
+</pre>
+
+
+<h2>Options</h2>
+
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <col class="one"></col>
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+  </thead>
+
+
+  <tbody>
+    <tr>
+        <td class="number">number</td>
+        <td>main_circle_radius</td>
+        <td>size of main menu circle</td>
+        <td>70</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>child_radius_multiplier</td>
+        <td>size of children relative to their parent</td>
+        <td>0.15</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>hover_scale_multiplier</td>
+        <td>how much bigger items become on mouseover</td>
+        <td>1.2</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>outer_radius_multiplier</td>
+        <td>how far 1st level menu items appear from their parent</td>
+        <td>1.35</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>outer_radius2_multiplier</td>
+        <td>how far 2st level menu items appear from their parent</td>
+        <td>1.5</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>bounce_radius</td>
+        <td>how much menu items "bounce" in animation</td>
+        <td>1.2</td>
+    </tr>
+
+    <tr>
+        <td class="number">number</td>
+        <td>inactive_opacity</td>
+        <td>opacity of inactive (unopened items)</td>
+        <td>0.4</td>
+    </tr>
+
+    <tr>
+        <td class="color">css-color</td>
+        <td>fill_color</td>
+        <td>color of circles</td>
+        <td>#00a6dd</td>
+    </tr>
+  </tbody>
+</table>
+
        </div>
+       <!-- END Path  Charts -->
        
-
-    <hr />
-    <div id="documentation" >
-        <h2>Browser Support</h2>
-        <img src="images/browsers-64.png" />
-
-        <h2>Chart Options</h2>
-        <p class="five">
-        Options can be specified at the chart level or on a line-by-line basis. Chart options are the default for all lines unless otherwise specified. 
-        </p>
-        <div class="row">
-            <div class="eight columns">
-                <h3>Dots</h3>
-                <table>
-                  <col class="three-quarters"></col> 
-                  <col class="one-and-a-quarter"></col> 
-                  <col class="four"></col> 
-                  <col class="one"></col> 
-                  <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Option</th>
-                        <th>Description</th>
-                        <th>Default</th>
-                        <th>Chart/Line</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                        <td class="number">number</td>
-                        <td>dot_size</td>
-                        <td>5</td>
-                        <td>size of dots</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="color">css-color</td>
-                        <td>dot_color</td>
-                        <td>color of dots</td>
-                        <td>"#00aadd"</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="color">css-color</td>
-                        <td>dot_stroke_color</td>
-                        <td>color of dot border</td>
-                        <td>"#fff"</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="number">number</td>
-                        <td>dot_stroke_size</td>
-                        <td>size of dot border</td>
-                        <td>2</td>
-                        <td>both</td>
-                    </tr>
-
-                  </tbody>
-                </table>
-
-                <h3>Lines</h3>
-
-                <table>
-                  <col class="three-quarters"></col> 
-                  <col class="one-and-a-quarter"></col> 
-                  <col class="four"></col> 
-                  <col class="one"></col>
-                  <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Option</th>
-                        <th>Description</th>
-                        <th>Default</th>
-                        <th>Chart/Line</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                        <td class="number">number</td>
-                        <td>line_width</td>
-                        <td>width of line</td>
-                        <td>3</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="color">css-color</td>
-                        <td>line_color</td>
-                        <td>color of line</td>
-                        <td>"#00aadd"</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="number">number</td>
-                        <td>smoothing</td>
-                        <td>0.0 to 1.0,  0 = no smoothing, 1.0= ultra smoothing</td>
-                        <td>0.4</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="boolean">boolean</td>
-                        <td>fill_area</td>
-                        <td>shade the area under a line</td>
-                        <td>true</td>
-                        <td>both</td>
-                    </tr>
-
-                    <tr>
-                        <td class="color">css-color</td>
-                        <td>area_color</td>
-                        <td>color of area under a line</td>
-                        <td>"#00aadd"</td>
-                        <td>both</td>
-                    </tr>
-
-                    <tr>
-                        <td class="number">number</td>
-                        <td>area_opacity</td>
-                        <td>0.0 to 1.0 opacity of shading under a line</td>
-                        <td>0.2</td>
-                        <td>both</td>
-                    </tr>
-
-                  </tbody>
-                </table>
-
-
-                <h3>Bars</h3>
-                 <table>
-                  <col class="three-quarters"></col> 
-                  <col class="one-and-a-quarter"></col> 
-                  <col class="four"></col> 
-                  <col class="one"></col>
-                  <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Option</th>
-                        <th>Description</th>
-                        <th>Default</th>
-                        <th>Chart/Line</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                        <td class="string">string</td>
-                        <td>render</td>
-                        <td>"bar" or "line"</td>
-                        <td>"line"</td>
-                        <td>chart only</td>
-                    </tr>
-                    <tr>
-                        <td class="number">number</td>
-                        <td>bar_width</td>
-                        <td>width of bars (px)</td>
-                        <td>20</td>
-                        <td>both</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-
-
-                <h3>Labels</h3>
-
-                <table>
-                  <col class="three-quarters"></col> 
-                  <col class="one-and-a-quarter"></col> 
-                  <col class="four"></col> 
-                  <col class="one"></col>
-                  <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Option</th>
-                        <th>Description</th>
-                        <th>Default</th>
-                        <th>Chart/Line</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                        <td class="boolean">boolean</td>
-                        <td>show_x_labels</td>
-                        <td>display x axis labels</td>
-                        <td>true</td>
-                        <td>chart only</td>
-                    </tr>
-
-                     <tr>
-                        <td class="boolean">boolean</td>
-                        <td>show_y_labels</td>
-                        <td>show y axis labels</td>
-                        <td>true</td>
-                        <td>chart only</td>
-                    </tr>
-
-                     <tr>
-                        <td class="boolean">boolean</td>
-                        <td>label_max</td>
-                        <td>label max point of line with tooltip</td>
-                        <td>true</td>
-                        <td>both</td>
-                    </tr>
-
-                     <tr>
-                        <td class="boolean">boolean</td>
-                        <td>label_min</td>
-                        <td>label min point of line with tooltip</td>
-                        <td>true</td>
-                        <td>both</td>
-                    </tr>
-
-                    <tr>
-                        <td class="number">number</td>
-                        <td>max_x_labels</td>
-                        <td>max number of x axis labels to show</td>
-                        <td>10</td>
-                        <td>chart only</td>
-                    </tr>
-
-                    <tr>
-                        <td class="number">number</td>
-                        <td>max_y_labels</td>
-                        <td>max number of y axis labels to show</td>
-                        <td>3</td>
-                        <td>chart only</td>
-                    </tr>
-
-                    <tr>
-                        <td class="number">number</td>
-                        <td>x_label_size</td>
-                        <td>size of x labels (pixels)</td>
-                        <td>14</td>
-                        <td>chart only</td>
-                    </tr>
-
-                    <tr>
-                        <td class="number">number</td>
-                        <td>y_label_size</td>
-                        <td>size of y labels (pixels)</td>
-                        <td>14</td>
-                        <td>chart only</td>
-                    </tr>
-
-                    <tr>
-                        <td class="string">string</td>
-                        <td>font_family</td>
-                        <td>which font to use</td>
-                        <td>"Helvetica, Arial, sans-serif"</td>
-                        <td>chart only</td>
-                    </tr>
-
-                    <tr>
-                        <td class="number">number</td>
-                        <td>label_format</td>
-                        <td>format string for date labels</td>
-                        <td>"%m%d"</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-
-                <h3>Chart</h3>
-
-                <table>
-                  <col class="three-quarters"></col> 
-                  <col class="one-and-a-quarter"></col> 
-                  <col class="four"></col> 
-                  <col class="one"></col>
-                  <thead>
-                    <tr>
-                        <th>Type</th>
-                        <th>Option</th>
-                        <th>Description</th>
-                        <th>Default</th>
-                        <th>Chart/Line</th>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    <tr>
-                        <td class="boolean">boolean</td>
-                        <td>show_grid</td>
-                        <td>render a background grid</td>
-                        <td>true</td>
-                        <td>chart only</td>
-                    </tr>
-                  </tbody>
-
-                  <tbody>
-                    <tr>
-                        <td class="number">number</td>
-                        <td>x_padding</td>
-                        <td>how much to pad the x-axis (px)</td>
-                        <td>45</td>
-                        <td>chart only</td>
-                    </tr>
-                  </tbody>
-
-                  <tbody>
-                    <tr>
-                        <td class="boolean">boolean</td>
-                        <td>y_padding</td>
-                        <td>how much to pad the y-axis</td>
-                        <td>40</td>
-                        <td>chart only</td>
-                    </tr>
-                  </tbody>
-                </table>
-            </div>
-        </div>
-            
-        <h3>Label Formatting</h3>
-        </p>
-        <ul>
-          <li>%m - month (1-12)</li>
-          <li>%d - date (1-31)</li>
-          <li>%Y - year (eg. 2011)</li>
-          <li>%H - hours (0-24)</li>
-          <li>%I - hours (1-12)</li>
-          <li>%p - am/pm indicator</li>
-          <li>%M - minutes (0-59)</li>
-        </ul>
-        <p>Example: label_format: "%m/%d/%Y" -> "11/05/2011"</p>
-        
-    </div>
-
-    <div id="examples" style="display: none;">
-
-
-    
-
-  </div>
 
   </div>
     <script type="text/javascript" src="js/highlight.pack.js"></script>

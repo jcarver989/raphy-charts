@@ -8,6 +8,7 @@ function progress_chart() {
     font_color: "#fff",
     fill_color: "#222",
     label_color: "#333",
+    background_color: "#00aadd",
     text_shadow: "rgba(0,0,0,.4)"
   };
 

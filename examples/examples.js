@@ -192,6 +192,45 @@ $(document).ready(function() {
 
 
 
+   var log_scale = new Charts.LineChart('logscale', {
+   show_grid: true,
+   show_y_labels: true,
+   label_max: false,
+   label_min: false,
+   scale: "log",
+   max_y_labels: 5,
+   x_padding: 60 
+ });
+
+
+
+
+  log_scale.add_line({
+    data: [[1, 828906],[2, 566933],[3, 584150],[4, 1072143],[5, 1622455],[6, 2466746],[7, 2427789]],
+    options: {
+      line_color: colors[0],
+      dot_color: colors[0],
+      area_color: "230-#88c9dd-rgba(255,255,255,0)",
+      area_opacity: 0.2,
+      dot_size: 5,
+      line_width: 4 
+    }
+  });
+
+  log_scale.add_line({
+    data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+    options: {
+      line_color: colors[2],
+      dot_color: colors[2],
+      fill_area: false,
+      line_width: 2,
+      dot_size: 3
+    }
+  });
+
+    log_scale.draw()
+
+
    var multi_axis = new Charts.LineChart('multiaxis', {
      show_grid: true,
      show_y_labels: true,
@@ -220,8 +259,8 @@ $(document).ready(function() {
     multi_axis.add_line({
       data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
       options: {
-        line_color: colors[1],
-        dot_color: colors[1],
+        line_color: colors[2],
+        dot_color: colors[2],
         fill_area: false,
         line_width: 2,
         dot_size: 3

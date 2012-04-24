@@ -31,6 +31,16 @@ class Scaler
     term2 = term1 + value * (range_span/domain_span)
     term2
 
+
+class LogScaler
+  constructor: (@base = 10) ->
+    return @scale
+
+  scale: (value) =>
+    log = Math.log
+    log(value) / log(@base)
+
+
 class Scaling 
   @get_ranges_for_points: (points) ->
     xs = []

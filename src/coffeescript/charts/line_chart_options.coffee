@@ -44,6 +44,7 @@ class LineChartOptions
     x_padding: 45
     y_padding: 40
     multi_axis: false
+    scale: "linear" # or "log"
 
     render: "line" # or "bar"
     bar_width: 20

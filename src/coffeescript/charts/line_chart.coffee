@@ -66,7 +66,18 @@ class LineChart extends BaseChart
 
 
   create_scalers: (points) ->
-    [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(points)
+    y = undefined
+    max_x = undefined
+    min_x = undefined
+    max_y = undefined
+    min_y = undefined
+
+    if @options.scale == 'log'
+      log = new LogScaler()
+      log_points = (new Point(p.x, log(p.y)) for p in points)
+      [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(log_points)
+    else
+      [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(points)
     
     x_offset = if @options.multi_axis then @options.x_padding * 2 else @options.x_padding 
     x = new Scaler()
@@ -78,7 +89,12 @@ class LineChart extends BaseChart
     .range([@options.y_padding, @height - @options.y_padding])
 
     # top of chart is 0,0 so need to reflect y axis
-    y = (i) => @height - y_scaler(i)
+    linear = (i) => @height - y_scaler(i)
+
+    if @options.scale == 'log'
+      y = (i) -> linear(log(i))
+    else
+      y = linear
 
     [x, y]
 
@@ -112,7 +128,7 @@ class LineChart extends BaseChart
 
     # round to nearest int
     if max_y > 1
-      step_size  = Math.round(step_size)
+      step_size = Math.round(step_size)
       step_size = 1 if step_size == 0
 
     step_size
@@ -123,14 +139,29 @@ class LineChart extends BaseChart
 
     # draw 1 label if all values are the same
     return @_draw_y_labels([new Point(0, max_y)]) if max_y == min_y
-       
-    y = min_y
-    step_size = @calc_y_label_step_size(min_y, max_y)
+
     labels = []
 
-    while y <= max_y 
-      labels.push new Point(0, y)
-      y += step_size
+    if @options.scale == 'log'
+      log = new LogScaler()
+      start = log(min_y)
+      end   = log(max_y)
+      step_size  = (end - start)/(@options.max_y_labels-1)
+      label = min_y 
+      n = 0
+
+      while label <= max_y && n < @options.max_y_labels
+        label = Math.pow(10, start + step_size * n) 
+        labels.push new Point(0, label)
+        n += 1
+        
+    else
+      y = min_y
+      step_size = @calc_y_label_step_size(min_y, max_y)
+
+      while y <= max_y 
+        labels.push new Point(0, y)
+        y += step_size
 
     labels[labels.length-1].y = Math.round(max_y) if max_y > 1
 

@@ -14,7 +14,7 @@
 
 
 is_element = (o) ->
-  if o.hasOwnProperty("tagName") then true else false
+  if o.tagName != undefined then true else false
 
 class BaseChart
   constructor: (dom_container, options) ->

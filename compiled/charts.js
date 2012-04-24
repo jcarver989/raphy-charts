@@ -41,6 +41,7 @@ LineChartOptions = (function() {
     x_padding: 45,
     y_padding: 40,
     multi_axis: false,
+    scale: "linear",
     render: "line",
     bar_width: 20
   };
@@ -529,7 +530,7 @@ BarChartOptions = (function() {
   return BarChartOptions;
 
 })();
-var Scaler, Scaling,
+var LogScaler, Scaler, Scaling,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 Scaler = (function() {
@@ -560,6 +561,24 @@ Scaler = (function() {
   };
 
   return Scaler;
+
+})();
+
+LogScaler = (function() {
+
+  function LogScaler(base) {
+    this.base = base != null ? base : 10;
+    this.scale = __bind(this.scale, this);
+    return this.scale;
+  }
+
+  LogScaler.prototype.scale = function(value) {
+    var log;
+    log = Math.log;
+    return log(value) / log(this.base);
+  };
+
+  return LogScaler;
 
 })();
 
@@ -985,7 +1004,7 @@ Line = (function() {
 var BaseChart, is_element;
 
 is_element = function(o) {
-  if (o.hasOwnProperty("tagName")) {
+  if (o.tagName !== void 0) {
     return true;
   } else {
     return false;
@@ -1459,15 +1478,41 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.create_scalers = function(points) {
-    var max_x, max_y, min_x, min_y, x, x_offset, y, y_scaler, _ref,
+    var linear, log, log_points, max_x, max_y, min_x, min_y, p, x, x_offset, y, y_scaler, _ref, _ref2,
       _this = this;
-    _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    y = void 0;
+    max_x = void 0;
+    min_x = void 0;
+    max_y = void 0;
+    min_y = void 0;
+    if (this.options.scale === 'log') {
+      log = new LogScaler();
+      log_points = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = points.length; _i < _len; _i++) {
+          p = points[_i];
+          _results.push(new Point(p.x, log(p.y)));
+        }
+        return _results;
+      })();
+      _ref = Scaling.get_ranges_for_points(log_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    } else {
+      _ref2 = Scaling.get_ranges_for_points(points), max_x = _ref2[0], min_x = _ref2[1], max_y = _ref2[2], min_y = _ref2[3];
+    }
     x_offset = this.options.multi_axis ? this.options.x_padding * 2 : this.options.x_padding;
     x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - x_offset]);
     y_scaler = new Scaler().domain([min_y, max_y]).range([this.options.y_padding, this.height - this.options.y_padding]);
-    y = function(i) {
+    linear = function(i) {
       return _this.height - y_scaler(i);
     };
+    if (this.options.scale === 'log') {
+      y = function(i) {
+        return linear(log(i));
+      };
+    } else {
+      y = linear;
+    }
     return [x, y];
   };
 
@@ -1501,16 +1546,30 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_y_labels = function(points, x_offset) {
-    var labels, max_x, max_y, min_x, min_y, step_size, y, _ref;
+    var end, label, labels, log, max_x, max_y, min_x, min_y, n, start, step_size, y, _ref;
     if (x_offset == null) x_offset = 0;
     _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
     if (max_y === min_y) return this._draw_y_labels([new Point(0, max_y)]);
-    y = min_y;
-    step_size = this.calc_y_label_step_size(min_y, max_y);
     labels = [];
-    while (y <= max_y) {
-      labels.push(new Point(0, y));
-      y += step_size;
+    if (this.options.scale === 'log') {
+      log = new LogScaler();
+      start = log(min_y);
+      end = log(max_y);
+      step_size = (end - start) / (this.options.max_y_labels - 1);
+      label = min_y;
+      n = 0;
+      while (label <= max_y && n < this.options.max_y_labels) {
+        label = Math.pow(10, start + step_size * n);
+        labels.push(new Point(0, label));
+        n += 1;
+      }
+    } else {
+      y = min_y;
+      step_size = this.calc_y_label_step_size(min_y, max_y);
+      while (y <= max_y) {
+        labels.push(new Point(0, y));
+        y += step_size;
+      }
     }
     if (max_y > 1) labels[labels.length - 1].y = Math.round(max_y);
     return this._draw_y_labels(labels, x_offset);

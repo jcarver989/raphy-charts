@@ -42,6 +42,7 @@ LineChartOptions = (function() {
     y_padding: 40,
     multi_axis: false,
     scale: "linear",
+    y_axis_scale: [],
     render: "line",
     bar_width: 20
   };
@@ -1478,7 +1479,7 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.create_scalers = function(points) {
-    var linear, log, log_points, max_x, max_y, min_x, min_y, p, x, x_offset, y, y_scaler, _ref, _ref2,
+    var linear, log, log_points, max_x, max_y, min_x, min_y, p, x, x_offset, y, y_scaler, _ref, _ref2, _ref3,
       _this = this;
     y = void 0;
     max_x = void 0;
@@ -1499,6 +1500,9 @@ LineChart = (function(_super) {
       _ref = Scaling.get_ranges_for_points(log_points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
     } else {
       _ref2 = Scaling.get_ranges_for_points(points), max_x = _ref2[0], min_x = _ref2[1], max_y = _ref2[2], min_y = _ref2[3];
+    }
+    if (this.options.y_axis_scale.length === 2) {
+      _ref3 = this.options.y_axis_scale, min_y = _ref3[0], max_y = _ref3[1];
     }
     x_offset = this.options.multi_axis ? this.options.x_padding * 2 : this.options.x_padding;
     x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - x_offset]);
@@ -1546,9 +1550,12 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_y_labels = function(points, x_offset) {
-    var end, label, labels, log, max_x, max_y, min_x, min_y, n, start, step_size, y, _ref;
+    var end, label, labels, log, max_x, max_y, min_x, min_y, n, start, step_size, y, _ref, _ref2;
     if (x_offset == null) x_offset = 0;
     _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
+    if (this.options.y_axis_scale.length === 2) {
+      _ref2 = this.options.y_axis_scale, min_y = _ref2[0], max_y = _ref2[1];
+    }
     if (max_y === min_y) return this._draw_y_labels([new Point(0, max_y)]);
     labels = [];
     if (this.options.scale === 'log') {

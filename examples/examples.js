@@ -162,8 +162,9 @@ $(document).ready(function() {
       y_label_size: 12,
       smoothing: 1,
       max_x_labels: 5,
-      max_y_labels: 10,
-      x_padding: 50
+      max_y_labels: 3,
+      x_padding: 50,
+      y_axis_scale: [0, 10]
     });
 
     var ret = data["result"];
@@ -199,7 +200,7 @@ $(document).ready(function() {
    label_min: false,
    scale: "log",
    max_y_labels: 5,
-   x_padding: 60 
+   x_padding: 60
  });
 
 

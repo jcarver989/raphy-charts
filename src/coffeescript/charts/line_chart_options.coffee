@@ -46,6 +46,8 @@ class LineChartOptions
     multi_axis: false
     scale: "linear" # or "log"
 
+    y_axis_scale: [] # force y_axis scale eg [0, 100]
+
     render: "line" # or "bar"
     bar_width: 20
   }

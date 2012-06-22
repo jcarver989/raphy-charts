@@ -78,6 +78,9 @@ class LineChart extends BaseChart
       [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(log_points)
     else
       [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(points)
+
+    if @options.y_axis_scale.length == 2
+      [min_y, max_y] = @options.y_axis_scale
     
     x_offset = if @options.multi_axis then @options.x_padding * 2 else @options.x_padding 
     x = new Scaler()
@@ -136,6 +139,9 @@ class LineChart extends BaseChart
 
   draw_y_labels: (points, x_offset = 0) ->
     [max_x, min_x, max_y, min_y] = Scaling.get_ranges_for_points(points)
+
+    if @options.y_axis_scale.length == 2
+      [min_y, max_y] = @options.y_axis_scale
 
     # draw 1 label if all values are the same
     return @_draw_y_labels([new Point(0, max_y)]) if max_y == min_y

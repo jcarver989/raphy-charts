@@ -271,6 +271,44 @@ $(document).ready(function() {
     multi_axis.draw()
 
 
+
+   var multi_axis_zeros = new Charts.LineChart('multiaxiszeros', {
+     show_grid: true,
+     show_y_labels: true,
+     label_max: false,
+     label_min: false,
+     multi_axis: true,
+     max_y_labels: 4,
+     x_padding: 45 
+   });
+
+   multi_axis_zeros.add_line({
+      data: [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0]],
+      options: {
+        line_color: colors[0],
+        dot_color: colors[0],
+        area_color: "230-#88c9dd-rgba(255,255,255,0)",
+        area_opacity: 0.2,
+        dot_size: 5,
+        line_width: 4 
+      }
+    });
+
+    multi_axis_zeros.add_line({
+      data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+      options: {
+        line_color: colors[2],
+        dot_color: colors[2],
+        fill_area: false,
+        line_width: 2,
+        dot_size: 3
+      }
+    });
+
+    multi_axis_zeros.draw()
+
+
+
    var bullet = new Charts.BulletChart('bulletchart');
    bullet.add("foo", 50, 30, 100);
    bullet.add("doo", 70, 30, 100);

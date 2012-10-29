@@ -29,7 +29,7 @@ class Scaler
     range_span = @range_max - @range_min
     term1 = (@domain_max * @range_min - @domain_min * @range_max) / domain_span
     term2 = term1 + value * (range_span/domain_span)
-    term2
+    if domain_span == 0 then @range_min else term2
 
 
 class LogScaler

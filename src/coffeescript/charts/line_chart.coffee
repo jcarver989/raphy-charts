@@ -101,6 +101,11 @@ class LineChart extends BaseChart
 
     [x, y]
 
+  create_scalers_for_single_point: () ->
+    y = (i) => 0.5 * (@height - @options.y_padding)
+    x = (i) => 0.5 * (@width - @options.x_padding)
+    [x, y]
+
   _draw_y_labels: (labels, x_offset = 0) ->
     fmt = @options.label_format
     size = @options.y_label_size
@@ -109,7 +114,10 @@ class LineChart extends BaseChart
     padding = size + 5 
     offset = if @options.multi_axis && x_offset > 0 then x_offset else x_offset + padding
 
-    [x, y] = @create_scalers(labels)
+    if labels.length == 1
+      [x,y] = @create_scalers_for_single_point()
+    else
+      [x, y] = @create_scalers(labels)
 
     label_coordinates = []
     for label, i in labels
@@ -144,7 +152,7 @@ class LineChart extends BaseChart
       [min_y, max_y] = @options.y_axis_scale
 
     # draw 1 label if all values are the same
-    return @_draw_y_labels([new Point(0, max_y)]) if max_y == min_y
+    return @_draw_y_labels([new Point(0, max_y)], x_offset) if max_y == min_y
 
     labels = []
 
@@ -254,7 +262,7 @@ class LineChart extends BaseChart
 
     @r.clear()
 
-    [x, y] = @create_scalers(@all_points)
+    [x, y] = if @all_points.length > 1 then @create_scalers(@all_points) else @create_scalers_for_single_point()
 
     for line_indices, i in @line_indices
       [begin, end] = line_indices
@@ -262,7 +270,7 @@ class LineChart extends BaseChart
 
       # scale points on their own axis if multi axis is set 
       if @options.multi_axis
-        [line_x, line_y] = @create_scalers(raw_points)
+        [line_x, line_y] = if @all_points.length > 2 then @create_scalers(raw_points) else @create_scalers_for_single_point()
       else
         line_x = x
         line_y = y

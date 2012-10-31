@@ -1630,8 +1630,20 @@ LineChart = (function(_super) {
     return [x, y];
   };
 
+  LineChart.prototype.create_scalers_for_single_point = function() {
+    var x, y,
+      _this = this;
+    y = function(i) {
+      return 0.5 * (_this.height - _this.options.y_padding);
+    };
+    x = function(i) {
+      return 0.5 * (_this.width - _this.options.x_padding);
+    };
+    return [x, y];
+  };
+
   LineChart.prototype._draw_y_labels = function(labels, x_offset) {
-    var fmt, font_family, i, label, label_coordinates, offset, padding, size, x, y, _i, _len, _ref;
+    var fmt, font_family, i, label, label_coordinates, offset, padding, size, x, y, _i, _len, _ref, _ref1;
     if (x_offset == null) {
       x_offset = 0;
     }
@@ -1640,7 +1652,11 @@ LineChart = (function(_super) {
     font_family = this.options.font_family;
     padding = size + 5;
     offset = this.options.multi_axis && x_offset > 0 ? x_offset : x_offset + padding;
-    _ref = this.create_scalers(labels), x = _ref[0], y = _ref[1];
+    if (labels.length === 1) {
+      _ref = this.create_scalers_for_single_point(), x = _ref[0], y = _ref[1];
+    } else {
+      _ref1 = this.create_scalers(labels), x = _ref1[0], y = _ref1[1];
+    }
     label_coordinates = [];
     for (i = _i = 0, _len = labels.length; _i < _len; i = ++_i) {
       label = labels[i];
@@ -1675,7 +1691,7 @@ LineChart = (function(_super) {
       _ref1 = this.options.y_axis_scale, min_y = _ref1[0], max_y = _ref1[1];
     }
     if (max_y === min_y) {
-      return this._draw_y_labels([new Point(0, max_y)]);
+      return this._draw_y_labels([new Point(0, max_y)], x_offset);
     }
     labels = [];
     if (this.options.scale === 'log') {
@@ -1766,14 +1782,14 @@ LineChart = (function(_super) {
       return;
     }
     this.r.clear();
-    _ref = this.create_scalers(this.all_points), x = _ref[0], y = _ref[1];
+    _ref = this.all_points.length > 1 ? this.create_scalers(this.all_points) : this.create_scalers_for_single_point(), x = _ref[0], y = _ref[1];
     _ref1 = this.line_indices;
     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
       line_indices = _ref1[i];
       begin = line_indices[0], end = line_indices[1];
       raw_points = this.all_points.slice(begin, end + 1 || 9e9);
       if (this.options.multi_axis) {
-        _ref2 = this.create_scalers(raw_points), line_x = _ref2[0], line_y = _ref2[1];
+        _ref2 = this.all_points.length > 2 ? this.create_scalers(raw_points) : this.create_scalers_for_single_point(), line_x = _ref2[0], line_y = _ref2[1];
       } else {
         line_x = x;
         line_y = y;

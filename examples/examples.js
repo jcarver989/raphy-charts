@@ -246,7 +246,7 @@ $(document).ready(function() {
 
 
     multi_axis.add_line({
-      data: [[1, 828906],[2, 566933],[3, 584150],[4, 1072143],[5, 1622455],[6, 2466746],[7, 2427789]],
+      data: [[1, 828906]],
       options: {
         line_color: colors[0],
         dot_color: colors[0],
@@ -258,7 +258,7 @@ $(document).ready(function() {
     });
 
     multi_axis.add_line({
-      data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+      data: [[1, 305]],
       options: {
         line_color: colors[2],
         dot_color: colors[2],

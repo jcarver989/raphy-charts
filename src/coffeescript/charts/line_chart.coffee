@@ -64,7 +64,6 @@ class LineChart extends BaseChart
     for val in y_coordinates
       paths.push @r.path("M #{@options.x_padding}, #{val} L #{width}, #{val} Z")
 
-    stroke(paths, "#ccc", 1).toBack()
 
     # color the axis for easier reading
     if @options.multi_axis == true && @line_options.length == 2
@@ -74,8 +73,12 @@ class LineChart extends BaseChart
         right_side   = @width - @options.x_padding * 2
         right_stroke = @r.path("M #{right_side}, #{@options.y_padding} L #{right_side}, #{height} Z")
 
-        stroke(left_stroke,  @line_options[0].line_color, 2)
-        stroke(right_stroke, @line_options[1].line_color, 2)
+        stroke(left_stroke,  @line_options[0].line_color, 2).toBack()
+        stroke(right_stroke, @line_options[1].line_color, 2).toBack()
+
+
+    # do this last to avoid overwriting the multi axis colors
+    stroke(paths, "#ccc", 1).toBack()
 
   create_scalers: (points) ->
     y = undefined

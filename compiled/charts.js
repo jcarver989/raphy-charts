@@ -1588,15 +1588,15 @@ LineChart = (function(_super) {
       val = y_coordinates[_j];
       paths.push(this.r.path("M " + this.options.x_padding + ", " + val + " L " + width + ", " + val + " Z"));
     }
-    stroke(paths, "#ccc", 1).toBack();
     if (this.options.multi_axis === true && this.line_options.length === 2) {
       left_side = this.options.x_padding;
       left_stroke = this.r.path("M " + left_side + ", " + this.options.y_padding + " L " + left_side + ", " + height + " Z");
       right_side = this.width - this.options.x_padding * 2;
       right_stroke = this.r.path("M " + right_side + ", " + this.options.y_padding + " L " + right_side + ", " + height + " Z");
-      stroke(left_stroke, this.line_options[0].line_color, 2);
-      return stroke(right_stroke, this.line_options[1].line_color, 2);
+      stroke(left_stroke, this.line_options[0].line_color, 2).toBack();
+      stroke(right_stroke, this.line_options[1].line_color, 2).toBack();
     }
+    return stroke(paths, "#ccc", 1).toBack();
   };
 
   LineChart.prototype.create_scalers = function(points) {

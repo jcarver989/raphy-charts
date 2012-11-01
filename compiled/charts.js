@@ -1563,7 +1563,7 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_grid = function(x_coordinates, y_coordinates) {
-    var height, paths, val, width, x_offset, _i, _j, _len, _len1;
+    var height, left_side, left_stroke, paths, right_side, right_stroke, val, width, x_offset, _i, _j, _len, _len1;
     if (x_coordinates == null) {
       x_coordinates = [];
     }
@@ -1582,10 +1582,24 @@ LineChart = (function(_super) {
       val = y_coordinates[_j];
       paths.push(this.r.path("M " + this.options.x_padding + ", " + val + " L " + width + ", " + val + " Z"));
     }
-    return paths.attr({
+    paths.attr({
       stroke: "#ccc",
       "stroke-width": 1
     }).toBack();
+    if (this.options.multi_axis === true && this.line_options.length === 2) {
+      left_side = this.options.x_padding;
+      left_stroke = this.r.path("M " + left_side + ", " + this.options.y_padding + " L " + left_side + ", " + height + " Z");
+      left_stroke.attr({
+        stroke: this.line_options[0].line_color,
+        "stroke-width": 1
+      });
+      right_side = this.width - this.options.x_padding * 2;
+      right_stroke = this.r.path("M " + right_side + ", " + this.options.y_padding + " L " + right_side + ", " + height + " Z");
+      return right_stroke.attr({
+        stroke: this.line_options[1].line_color,
+        "stroke-width": 1
+      });
+    }
   };
 
   LineChart.prototype.create_scalers = function(points) {

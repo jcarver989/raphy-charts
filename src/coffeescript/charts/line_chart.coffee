@@ -64,6 +64,24 @@ class LineChart extends BaseChart
       "stroke-width": 1
     }).toBack()
 
+    # color the axis for easier reading
+    if @options.multi_axis == true && @line_options.length == 2
+        left_side   = @options.x_padding 
+        left_stroke = @r.path("M #{left_side}, #{@options.y_padding} L #{left_side}, #{height} Z")
+
+        left_stroke.attr({
+          stroke: @line_options[0].line_color
+          "stroke-width": 1 
+        })
+
+        right_side   = @width - @options.x_padding * 2
+        right_stroke = @r.path("M #{right_side}, #{@options.y_padding} L #{right_side}, #{height} Z")
+
+        right_stroke.attr({
+          stroke: @line_options[1].line_color
+          "stroke-width": 1 
+        })
+
 
   create_scalers: (points) ->
     y = undefined

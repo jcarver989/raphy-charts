@@ -1563,13 +1563,19 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_grid = function(x_coordinates, y_coordinates) {
-    var height, left_side, left_stroke, paths, right_side, right_stroke, val, width, x_offset, _i, _j, _len, _len1;
+    var height, left_side, left_stroke, paths, right_side, right_stroke, stroke, val, width, x_offset, _i, _j, _len, _len1;
     if (x_coordinates == null) {
       x_coordinates = [];
     }
     if (y_coordinates == null) {
       y_coordinates = [];
     }
+    stroke = function(path, color, width) {
+      return path.attr({
+        stroke: color,
+        "stroke-width": width
+      });
+    };
     x_offset = this.options.multi_axis ? this.options.x_padding * 2 : this.options.x_padding;
     height = this.height - this.options.y_padding;
     width = this.width - x_offset;
@@ -1582,23 +1588,14 @@ LineChart = (function(_super) {
       val = y_coordinates[_j];
       paths.push(this.r.path("M " + this.options.x_padding + ", " + val + " L " + width + ", " + val + " Z"));
     }
-    paths.attr({
-      stroke: "#ccc",
-      "stroke-width": 1
-    }).toBack();
+    stroke(paths, "#ccc", 1).toBack();
     if (this.options.multi_axis === true && this.line_options.length === 2) {
       left_side = this.options.x_padding;
       left_stroke = this.r.path("M " + left_side + ", " + this.options.y_padding + " L " + left_side + ", " + height + " Z");
-      left_stroke.attr({
-        stroke: this.line_options[0].line_color,
-        "stroke-width": 1
-      });
       right_side = this.width - this.options.x_padding * 2;
       right_stroke = this.r.path("M " + right_side + ", " + this.options.y_padding + " L " + right_side + ", " + height + " Z");
-      return right_stroke.attr({
-        stroke: this.line_options[1].line_color,
-        "stroke-width": 1
-      });
+      stroke(left_stroke, this.line_options[0].line_color, 2);
+      return stroke(right_stroke, this.line_options[1].line_color, 2);
     }
   };
 

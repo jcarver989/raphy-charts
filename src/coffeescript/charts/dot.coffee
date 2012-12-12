@@ -44,3 +44,6 @@ class Dot
   attach_handlers: () ->
     @element.mouseover () => @activate()
     @element.mouseout  () => @deactivate()
+
+  hide: () ->
+    @element.hide()

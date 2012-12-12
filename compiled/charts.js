@@ -187,6 +187,10 @@ Dot = (function() {
     });
   };
 
+  Dot.prototype.hide = function() {
+    return this.element.hide();
+  };
+
   return Dot;
 
 })();
@@ -1059,7 +1063,7 @@ Line = (function() {
   };
 
   Line.prototype.draw_dots_and_tooltips = function() {
-    var dots, i, max_point, min_point, point, raw_point, raw_points, scaled_points, tooltips, _i, _len;
+    var dot, dots, i, max_point, min_point, point, raw_point, raw_points, scaled_points, tooltips, _i, _len;
     scaled_points = this.scaled_points;
     raw_points = this.raw_points;
     tooltips = [];
@@ -1069,13 +1073,17 @@ Line = (function() {
     for (i = _i = 0, _len = scaled_points.length; _i < _len; i = ++_i) {
       point = scaled_points[i];
       raw_point = raw_points[i];
-      dots.push(new Dot(this.r, point, this.options));
-      tooltips.push(new Tooltip(this.r, dots[i].element, raw_point.options.tooltip || raw_point.y));
       if (raw_point.y >= raw_points[max_point].y) {
         max_point = i;
       }
       if (raw_point.y < raw_points[min_point].y) {
         min_point = i;
+      }
+      dot = new Dot(this.r, point, this.options);
+      dots.push(dot);
+      tooltips.push(new Tooltip(this.r, dots[i].element, raw_point.options.tooltip || raw_point.y));
+      if (raw_point.options.no_dot === true) {
+        dot.hide();
       }
     }
     if (this.options.label_max) {

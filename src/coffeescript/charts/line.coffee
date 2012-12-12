@@ -66,10 +66,15 @@ class Line
     # draw individual points
     for point, i in scaled_points
       raw_point = raw_points[i] # unscaled
-      dots.push     new Dot(@r, point, @options)
-      tooltips.push new Tooltip(@r, dots[i].element, raw_point.options.tooltip || raw_point.y)
       max_point = i if raw_point.y >= raw_points[max_point].y
       min_point = i if raw_point.y < raw_points[min_point].y
+
+      dot = new Dot(@r, point, @options)
+      dots.push dot
+      tooltips.push new Tooltip(@r, dots[i].element, raw_point.options.tooltip || raw_point.y)
+
+      if raw_point.options.no_dot == true
+        dot.hide()
 
     if @options.label_max
       tooltips[max_point].show()

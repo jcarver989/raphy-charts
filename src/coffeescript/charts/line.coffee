@@ -70,11 +70,16 @@ class Line
       min_point = i if raw_point.y < raw_points[min_point].y
 
       dot = new Dot(@r, point, @options)
+      tooltip = new Tooltip(@r, dot.element, raw_point.options.tooltip || raw_point.y)
       dots.push dot
-      tooltips.push new Tooltip(@r, dots[i].element, raw_point.options.tooltip || raw_point.y)
+      tooltips.push tooltip
 
       if raw_point.options.no_dot == true
         dot.hide()
+
+      if raw_point.options.show_dot == true
+        dot.activate()
+        tooltip.show()
 
     if @options.label_max
       tooltips[max_point].show()

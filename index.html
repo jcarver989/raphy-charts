@@ -367,9 +367,10 @@ multi_axis.draw()
         <td>2</td>
         <td>both</td>
     </tr>
-
   </tbody>
 </table>
+
+
 
 
 <h3>Lines</h3>
@@ -584,6 +585,38 @@ multi_axis.draw()
   <li>%M - minutes (0-59)</li>
 </ul>
 <p>Example: label_format: "%m/%d/%Y" -> "11/05/2011"</p>
+
+
+<h3>Point Options (eg chart.add_line([[1,2, {tooltip: "foo"}]])</h3>
+<table>
+  <col class="three-quarters"></col> 
+  <col class="one-and-a-quarter"></col> 
+  <col class="four"></col> 
+  <thead>
+    <tr>
+        <th>Type</th>
+        <th>Option</th>
+        <th>Description</th>
+        <th>Default</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+        <td class="boolean">boolean</td>
+        <td>no_dot</td>
+        <td>Don't render a dot + tooltip on this point</td>
+        <td>false</td>
+    </tr>
+
+     <tr>
+        <td class="string">string</td>
+        <td>tooltip</td>
+        <td>custom tooltip label on a particular point</td>
+        <td>the point's y value</td>
+    </tr>
+  </tbody>
+</table>
 
 
        </div>

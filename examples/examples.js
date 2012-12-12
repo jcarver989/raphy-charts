@@ -283,7 +283,7 @@ $(document).ready(function() {
    });
 
    multi_axis_zeros.add_line({
-      data: [[1, 0],[2, 0],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0]],
+      data: [[1, 0],[2, 0, {tooltip: "custom tooltip"}],[3, 0],[4, 0],[5, 0],[6, 0],[7, 0]],
       options: {
         line_color: colors[0],
         dot_color: colors[0],

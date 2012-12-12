@@ -14,7 +14,7 @@
 
 
 class Point
-  constructor: (x, @y) ->
+  constructor: (x, @y, @options = {}) ->
     if @is_date(x)
       @x = x.getTime()
       @is_date_type = true 

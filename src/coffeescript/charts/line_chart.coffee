@@ -35,14 +35,20 @@ class LineChart extends BaseChart
     @line_options = []
 
   add_line: (args) ->
-    point_pairs = args.data
-    return if point_pairs.length < 1
+    data = args.data
+    return if data.length < 1
 
-    points = (new Point(pair[0], pair[1]) for pair in point_pairs)
+    points = []
+    for item in data 
+      if item.length == 3 # has options
+        points.push new Point(item[0], item[1], item[2])
+      else
+        points.push new Point(item[0], item[1])
+
     points_count  = @all_points.length
     @line_indices.push [points_count, points_count + points.length-1]
     @all_points.push.apply(@all_points, points)
-    @line_options.push LineChartOptions.merge(@options, args.options )
+    @line_options.push LineChartOptions.merge(@options, args.options)
     return
 
   draw_grid: (x_coordinates = [], y_coordinates = []) ->

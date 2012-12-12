@@ -664,8 +664,9 @@ var Point;
 
 Point = (function() {
 
-  function Point(x, y) {
+  function Point(x, y, options) {
     this.y = y;
+    this.options = options != null ? options : {};
     if (this.is_date(x)) {
       this.x = x.getTime();
       this.is_date_type = true;
@@ -796,14 +797,13 @@ var Tooltip;
 Tooltip = (function() {
 
   function Tooltip(r, target, text, hover_enabled) {
-    var box, box_height, box_midpoint, box_width, height, offset, rounding, size, width, x, y,
+    var box, box_height, box_midpoint, box_width, height, offset, padding, rounding, size, width, x, y,
       _this = this;
     this.r = r;
     if (hover_enabled == null) {
       hover_enabled = true;
     }
     size = 30;
-    width = 50;
     height = 25;
     offset = 10;
     rounding = 5;
@@ -816,6 +816,16 @@ Tooltip = (function() {
     box_width = box.width;
     box_height = box.height;
     box_midpoint = x + box_width / 2;
+    this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
+    this.text.attr({
+      "fill": "#fff",
+      "font-size": 14,
+      "text-anchor": "middle",
+      "opacity": 0,
+      "font-weight": "bold"
+    });
+    padding = 10;
+    width = this.text.getBBox().width + padding * 2;
     this.popup = this.r.set();
     this.popup.push(this.r.rect(box_midpoint - width / 2, y - (height + offset), width, height, rounding));
     this.triangle = this.r.triangle(box_midpoint, y - offset + 4, 4).rotate(180);
@@ -824,16 +834,6 @@ Tooltip = (function() {
       "fill": "rgba(0,0,0,.4)",
       "opacity": 0,
       "stroke": "none"
-    });
-    this.text = this.r.text(box_midpoint, y - (height / 2 + offset), text);
-    this.text.attr({
-      "fill": "#fff",
-      "font-size": 14,
-      "text-anchor": "middle",
-      "width": width,
-      "height": height,
-      "opacity": 0,
-      "font-weight": "bold"
     });
     this.popup.toFront();
     this.text.toFront();
@@ -1059,7 +1059,7 @@ Line = (function() {
   };
 
   Line.prototype.draw_dots_and_tooltips = function() {
-    var dots, i, max_point, min_point, point, raw_points, scaled_points, tooltips, _i, _len;
+    var dots, i, max_point, min_point, point, raw_point, raw_points, scaled_points, tooltips, _i, _len;
     scaled_points = this.scaled_points;
     raw_points = this.raw_points;
     tooltips = [];
@@ -1068,12 +1068,13 @@ Line = (function() {
     min_point = 0;
     for (i = _i = 0, _len = scaled_points.length; _i < _len; i = ++_i) {
       point = scaled_points[i];
+      raw_point = raw_points[i];
       dots.push(new Dot(this.r, point, this.options));
-      tooltips.push(new Tooltip(this.r, dots[i].element, raw_points[i].y));
-      if (raw_points[i].y >= raw_points[max_point].y) {
+      tooltips.push(new Tooltip(this.r, dots[i].element, raw_point.options.tooltip || raw_point.y));
+      if (raw_point.y >= raw_points[max_point].y) {
         max_point = i;
       }
-      if (raw_points[i].y < raw_points[min_point].y) {
+      if (raw_point.y < raw_points[min_point].y) {
         min_point = i;
       }
     }
@@ -1542,20 +1543,20 @@ LineChart = (function(_super) {
   }
 
   LineChart.prototype.add_line = function(args) {
-    var pair, point_pairs, points, points_count;
-    point_pairs = args.data;
-    if (point_pairs.length < 1) {
+    var data, item, points, points_count, _i, _len;
+    data = args.data;
+    if (data.length < 1) {
       return;
     }
-    points = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = point_pairs.length; _i < _len; _i++) {
-        pair = point_pairs[_i];
-        _results.push(new Point(pair[0], pair[1]));
+    points = [];
+    for (_i = 0, _len = data.length; _i < _len; _i++) {
+      item = data[_i];
+      if (item.length === 3) {
+        points.push(new Point(item[0], item[1], item[2]));
+      } else {
+        points.push(new Point(item[0], item[1]));
       }
-      return _results;
-    })();
+    }
     points_count = this.all_points.length;
     this.line_indices.push([points_count, points_count + points.length - 1]);
     this.all_points.push.apply(this.all_points, points);

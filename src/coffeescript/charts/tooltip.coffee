@@ -18,7 +18,6 @@
 class Tooltip
   constructor: (@r, target, text, hover_enabled = true) ->
     size = 30
-    width = 50
     height = 25 
     offset = 10
     rounding = 5
@@ -32,6 +31,18 @@ class Tooltip
     box_width = box.width
     box_height = box.height
     box_midpoint = (x + box_width/2)
+
+    @text = @r.text(box_midpoint, y - (height/2 + offset), text)
+    @text.attr({ 
+      "fill"        : "#fff"
+      "font-size"   : 14 
+      "text-anchor" : "middle" 
+      "opacity": 0
+      "font-weight" : "bold"
+    })
+
+    padding = 10
+    width = @text.getBBox().width + padding * 2
 
     @popup = @r.set()
     
@@ -57,16 +68,7 @@ class Tooltip
       "stroke" : "none"
     })
 
-    @text = @r.text(box_midpoint, y - (height/2 + offset), text)
-    @text.attr({ 
-      "fill"        : "#fff"
-      "font-size"   : 14 
-      "text-anchor" : "middle" 
-      "width"       : width
-      "height"      : height 
-      "opacity": 0
-      "font-weight" : "bold"
-    })
+
 
     @popup.toFront()
     @text.toFront()

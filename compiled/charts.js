@@ -89,6 +89,27 @@ LineChartOptions = (function() {
   return LineChartOptions;
 
 })();
+var Util;
+
+Util = (function() {
+
+  function Util() {}
+
+  Util.clone = function(obj) {
+    var copy, key;
+    if (!((obj != null) && typeof obj === 'object')) {
+      return obj;
+    }
+    copy = new obj.constructor();
+    for (key in obj) {
+      copy[key] = Util.clone(obj[key]);
+    }
+    return copy;
+  };
+
+  return Util;
+
+})();
 var Grid;
 
 Grid = (function() {
@@ -145,7 +166,9 @@ Dot = (function() {
     this.scale_factor = scale_factor != null ? scale_factor : 1.5;
     this.element = this.r.circle(point.x, point.y, this.opts.dot_size);
     this.style_dot();
-    this.attach_handlers();
+    if (this.opts.hover_enabled) {
+      this.attach_handlers();
+    }
   }
 
   Dot.prototype.style_dot = function() {
@@ -1063,7 +1086,7 @@ Line = (function() {
   };
 
   Line.prototype.draw_dots_and_tooltips = function() {
-    var dot, dots, i, max_point, min_point, point, raw_point, raw_points, scaled_points, tooltip, tooltips, _i, _len;
+    var dot, dots, i, max_point, min_point, options, point, raw_point, raw_points, scaled_points, tooltip, tooltips, _i, _len;
     scaled_points = this.scaled_points;
     raw_points = this.raw_points;
     tooltips = [];
@@ -1079,8 +1102,10 @@ Line = (function() {
       if (raw_point.y < raw_points[min_point].y) {
         min_point = i;
       }
-      dot = new Dot(this.r, point, this.options);
-      tooltip = new Tooltip(this.r, dot.element, raw_point.options.tooltip || raw_point.y);
+      options = Util.clone(this.options);
+      options.hover_enabled = !raw_point.options.show_dot;
+      dot = new Dot(this.r, point, options);
+      tooltip = new Tooltip(this.r, dot.element, raw_point.options.tooltip || raw_point.y, options.hover_enabled);
       dots.push(dot);
       tooltips.push(tooltip);
       if (raw_point.options.no_dot === true) {

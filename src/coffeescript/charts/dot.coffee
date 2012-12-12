@@ -17,7 +17,7 @@ class Dot
   constructor: (@r, @point, @opts, @scale_factor = 1.5) ->
     @element = @r.circle(point.x, point.y, @opts.dot_size)
     @style_dot()
-    @attach_handlers()
+    @attach_handlers() if @opts.hover_enabled
 
   style_dot: () ->
     @element.attr({

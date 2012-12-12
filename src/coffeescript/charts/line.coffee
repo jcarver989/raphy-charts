@@ -17,6 +17,7 @@
 # @import tooltip.coffee
 # @import dot.coffee
 # @import bezier.coffee
+# @import util.coffee
 
 class Line
   constructor: (@r, @raw_points, @scaled_points, @height, @width, @options = {}) ->
@@ -69,8 +70,11 @@ class Line
       max_point = i if raw_point.y >= raw_points[max_point].y
       min_point = i if raw_point.y < raw_points[min_point].y
 
-      dot = new Dot(@r, point, @options)
-      tooltip = new Tooltip(@r, dot.element, raw_point.options.tooltip || raw_point.y)
+      options = Util.clone(@options)
+      options.hover_enabled = !raw_point.options.show_dot
+
+      dot = new Dot(@r, point, options)
+      tooltip = new Tooltip(@r, dot.element, raw_point.options.tooltip || raw_point.y, options.hover_enabled)
       dots.push dot
       tooltips.push tooltip
 

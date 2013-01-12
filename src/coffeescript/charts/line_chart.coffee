@@ -141,16 +141,14 @@ class LineChart extends BaseChart
       [x, y] = @create_scalers(labels)
 
     label_coordinates = []
-    for label, i in labels
-      new Label(
-        @r, 
-        offset, 
-        y(label.y), 
-        label.y, 
-        fmt, 
-        size,
-        font_family
-      ).draw()
+    
+    axis = new LabelSet(@r, fmt)
+    .x((i) -> offset)
+    .y((i) -> y(labels[i].y))
+    .size(size)
+
+    for label in labels
+      axis.draw(label.y)
       label_coordinates.push y(label.y)
 
     label_coordinates

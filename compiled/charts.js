@@ -1761,7 +1761,7 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype._draw_y_labels = function(labels, x_offset) {
-    var fmt, font_family, i, label, label_coordinates, offset, padding, size, x, y, _i, _len, _ref, _ref1;
+    var axis, fmt, font_family, label, label_coordinates, offset, padding, size, x, y, _i, _len, _ref, _ref1;
     if (x_offset == null) {
       x_offset = 0;
     }
@@ -1776,9 +1776,14 @@ LineChart = (function(_super) {
       _ref1 = this.create_scalers(labels), x = _ref1[0], y = _ref1[1];
     }
     label_coordinates = [];
-    for (i = _i = 0, _len = labels.length; _i < _len; i = ++_i) {
-      label = labels[i];
-      new Label(this.r, offset, y(label.y), label.y, fmt, size, font_family).draw();
+    axis = new LabelSet(this.r, fmt).x(function(i) {
+      return offset;
+    }).y(function(i) {
+      return y(labels[i].y);
+    }).size(size);
+    for (_i = 0, _len = labels.length; _i < _len; _i++) {
+      label = labels[_i];
+      axis.draw(label.y);
       label_coordinates.push(y(label.y));
     }
     return label_coordinates;

@@ -12,6 +12,27 @@
 # See the License for the specific language governing permissions and 
 # limitations under the License. 
 
+# @import util.coffee
+
+dateint_to_abbreviation = (dateint) ->
+  switch dateint
+    when 1 then "Jan"
+    when 2 then "Feb"
+    when 3 then "Mar"
+    when 4 then "Apr"
+    when 5 then "May"
+    when 6 then "Jun"
+    when 7 then "Jul"
+    when 8 then "Aug"
+    when 9 then "Sep"
+    when 10 then "Oct"
+    when 11 then "Nov"
+    when 12 then "Dec"
+
+format_number_commas = (number, percision = 2) ->
+  rounding = if percision > 0 then Math.pow(10, percision) else 1
+  value    = Math.round(number * rounding) / rounding 
+  Util.commas(value)
 
 format_number =  (number, percision = 2) -> 
   rounding = if percision > 0 then Math.pow(10, percision) else 1
@@ -84,6 +105,7 @@ class Label
   parse_format: (format) ->
     switch format 
       when "%m" then @text.getMonth()+1
+      when "%b" then dateint_to_abbreviation(@text.getMonth()+1)
       when "%d" then @text.getDate()
       when "%Y" then @text.getFullYear()
       when "%H" then @text.getHours()
@@ -97,7 +119,7 @@ class Label
     if @is_date(@text) 
       text = @parse_date(@text)
     else if typeof @text == "number" 
-      text = format_number(@text) 
+      text = format_number_commas(@text) 
     else
       text = @text
 

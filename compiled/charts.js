@@ -107,7 +107,249 @@ Util = (function() {
     return copy;
   };
 
+  Util.comma = function(value) {
+    var formatted, i, j, str;
+    str = value.toString();
+    formatted = "";
+    i = 0;
+    j = str.length - 1;
+    while (j >= 0) {
+      formatted += str.charAt(i);
+      if (j % 3 === 0 && j !== 0) {
+        formatted += ",";
+      }
+      i++;
+      j--;
+    }
+    return formatted;
+  };
+
+  Util.commas = function(value) {
+    var parts;
+    parts = value.toString().split(".");
+    if (parts.length === 1) {
+      return this.comma(parts[0]);
+    } else {
+      return this.comma(parts[0]) + "." + parts[1];
+    }
+  };
+
   return Util;
+
+})();
+var Label, LabelSet, dateint_to_abbreviation, format_number, format_number_commas;
+
+dateint_to_abbreviation = function(dateint) {
+  switch (dateint) {
+    case 1:
+      return "Jan";
+    case 2:
+      return "Feb";
+    case 3:
+      return "Mar";
+    case 4:
+      return "Apr";
+    case 5:
+      return "May";
+    case 6:
+      return "Jun";
+    case 7:
+      return "Jul";
+    case 8:
+      return "Aug";
+    case 9:
+      return "Sep";
+    case 10:
+      return "Oct";
+    case 11:
+      return "Nov";
+    case 12:
+      return "Dec";
+  }
+};
+
+format_number_commas = function(number, percision) {
+  var rounding, value;
+  if (percision == null) {
+    percision = 2;
+  }
+  rounding = percision > 0 ? Math.pow(10, percision) : 1;
+  value = Math.round(number * rounding) / rounding;
+  return Util.commas(value);
+};
+
+format_number = function(number, percision) {
+  var millions, rounding, thousands;
+  if (percision == null) {
+    percision = 2;
+  }
+  rounding = percision > 0 ? Math.pow(10, percision) : 1;
+  if (number > 1000000) {
+    millions = number / 1000000;
+    millions = Math.round(millions * rounding) / rounding;
+    return millions + "m";
+  } else if (number > 1000) {
+    thousands = number / 1000;
+    return Math.round(thousands * rounding) / rounding + "k";
+  } else {
+    return Math.round(number * rounding) / rounding;
+  }
+};
+
+LabelSet = (function() {
+
+  function LabelSet(r, format) {
+    this.r = r;
+    this.format = format != null ? format : "";
+    this.num = 0;
+    this.font_family = "Helvetica, Arial, sans-serif";
+    this.color = "#333";
+  }
+
+  LabelSet.prototype.x = function(x_func) {
+    this.x_func = x_func;
+    return this;
+  };
+
+  LabelSet.prototype.y = function(y_func) {
+    this.y_func = y_func;
+    return this;
+  };
+
+  LabelSet.prototype.size = function(size) {
+    this.size = size;
+    return this;
+  };
+
+  LabelSet.prototype.attr = function(options) {
+    this.options = options;
+    return this;
+  };
+
+  LabelSet.prototype.draw = function(text) {
+    var label;
+    label = new Label(this.r, this.x_func(this.num), this.y_func(this.num), text, this.format, this.size, this.font_family, this.color, this.options);
+    this.num += 1;
+    return label.draw();
+  };
+
+  return LabelSet;
+
+})();
+
+Label = (function() {
+
+  function Label(r, x, y, text, format, size, font_family, color, options) {
+    this.r = r;
+    this.x = x;
+    this.y = y;
+    this.text = text;
+    this.format = format != null ? format : "";
+    this.size = size != null ? size : 14;
+    this.font_family = font_family != null ? font_family : "Helvetica, Arial, sans-serif";
+    this.color = color != null ? color : "#333";
+    this.options = options != null ? options : void 0;
+  }
+
+  Label.prototype.is_date = function(potential_date) {
+    return Object.prototype.toString.call(potential_date) === '[object Date]';
+  };
+
+  Label.prototype.parse_date = function(date) {
+    var formatted, groups, item, _i, _len;
+    groups = this.format.match(/%([a-zA-Z])/g);
+    formatted = this.format;
+    for (_i = 0, _len = groups.length; _i < _len; _i++) {
+      item = groups[_i];
+      formatted = formatted.replace(item, this.parse_format(item));
+    }
+    return formatted;
+  };
+
+  Label.prototype.meridian_indicator = function(date) {
+    var hour;
+    hour = date.getHours();
+    if (hour >= 12) {
+      return "pm";
+    } else {
+      return "am";
+    }
+  };
+
+  Label.prototype.to_12_hour_clock = function(date) {
+    var fmt_hour, hour;
+    hour = date.getHours();
+    fmt_hour = hour % 12;
+    if (fmt_hour === 0) {
+      return 12;
+    } else {
+      return fmt_hour;
+    }
+  };
+
+  Label.prototype.fmt_minutes = function(date) {
+    var minutes;
+    minutes = date.getMinutes();
+    if (minutes < 10) {
+      return "0" + minutes;
+    } else {
+      return minutes;
+    }
+  };
+
+  Label.prototype.parse_format = function(format) {
+    switch (format) {
+      case "%m":
+        return this.text.getMonth() + 1;
+      case "%b":
+        return dateint_to_abbreviation(this.text.getMonth() + 1);
+      case "%d":
+        return this.text.getDate();
+      case "%Y":
+        return this.text.getFullYear();
+      case "%H":
+        return this.text.getHours();
+      case "%M":
+        return this.fmt_minutes(this.text);
+      case "%I":
+        return this.to_12_hour_clock(this.text);
+      case "%p":
+        return this.meridian_indicator(this.text);
+    }
+  };
+
+  Label.prototype.draw = function() {
+    var margin, text, width, x;
+    text = "";
+    if (this.is_date(this.text)) {
+      text = this.parse_date(this.text);
+    } else if (typeof this.text === "number") {
+      text = format_number_commas(this.text);
+    } else {
+      text = this.text;
+    }
+    this.element = this.r.text(this.x, this.y, text);
+    width = this.element.getBBox().width;
+    margin = 5;
+    this.element.attr({
+      "fill": this.color,
+      "font-size": this.size,
+      "font-weight": "normal",
+      "text-anchor": "middle",
+      "font-family": this.font_family
+    });
+    if (this.options != null) {
+      this.element.attr(this.options);
+    } else {
+      x = this.x < width ? (width / 2) + margin : this.x;
+      this.element.attr({
+        "x": x
+      });
+    }
+    return this.element;
+  };
+
+  return Label;
 
 })();
 var Grid;
@@ -279,180 +521,6 @@ BulletChartOptions = (function() {
   }
 
   return BulletChartOptions;
-
-})();
-var Label, LabelSet, format_number;
-
-format_number = function(number, percision) {
-  var millions, rounding, thousands;
-  if (percision == null) {
-    percision = 2;
-  }
-  rounding = percision > 0 ? Math.pow(10, percision) : 1;
-  if (number > 1000000) {
-    millions = number / 1000000;
-    millions = Math.round(millions * rounding) / rounding;
-    return millions + "m";
-  } else if (number > 1000) {
-    thousands = number / 1000;
-    return Math.round(thousands * rounding) / rounding + "k";
-  } else {
-    return Math.round(number * rounding) / rounding;
-  }
-};
-
-LabelSet = (function() {
-
-  function LabelSet(r, format) {
-    this.r = r;
-    this.format = format != null ? format : "";
-    this.num = 0;
-    this.font_family = "Helvetica, Arial, sans-serif";
-    this.color = "#333";
-  }
-
-  LabelSet.prototype.x = function(x_func) {
-    this.x_func = x_func;
-    return this;
-  };
-
-  LabelSet.prototype.y = function(y_func) {
-    this.y_func = y_func;
-    return this;
-  };
-
-  LabelSet.prototype.size = function(size) {
-    this.size = size;
-    return this;
-  };
-
-  LabelSet.prototype.attr = function(options) {
-    this.options = options;
-    return this;
-  };
-
-  LabelSet.prototype.draw = function(text) {
-    var label;
-    label = new Label(this.r, this.x_func(this.num), this.y_func(this.num), text, this.format, this.size, this.font_family, this.color, this.options);
-    this.num += 1;
-    return label.draw();
-  };
-
-  return LabelSet;
-
-})();
-
-Label = (function() {
-
-  function Label(r, x, y, text, format, size, font_family, color, options) {
-    this.r = r;
-    this.x = x;
-    this.y = y;
-    this.text = text;
-    this.format = format != null ? format : "";
-    this.size = size != null ? size : 14;
-    this.font_family = font_family != null ? font_family : "Helvetica, Arial, sans-serif";
-    this.color = color != null ? color : "#333";
-    this.options = options != null ? options : void 0;
-  }
-
-  Label.prototype.is_date = function(potential_date) {
-    return Object.prototype.toString.call(potential_date) === '[object Date]';
-  };
-
-  Label.prototype.parse_date = function(date) {
-    var formatted, groups, item, _i, _len;
-    groups = this.format.match(/%([a-zA-Z])/g);
-    formatted = this.format;
-    for (_i = 0, _len = groups.length; _i < _len; _i++) {
-      item = groups[_i];
-      formatted = formatted.replace(item, this.parse_format(item));
-    }
-    return formatted;
-  };
-
-  Label.prototype.meridian_indicator = function(date) {
-    var hour;
-    hour = date.getHours();
-    if (hour >= 12) {
-      return "pm";
-    } else {
-      return "am";
-    }
-  };
-
-  Label.prototype.to_12_hour_clock = function(date) {
-    var fmt_hour, hour;
-    hour = date.getHours();
-    fmt_hour = hour % 12;
-    if (fmt_hour === 0) {
-      return 12;
-    } else {
-      return fmt_hour;
-    }
-  };
-
-  Label.prototype.fmt_minutes = function(date) {
-    var minutes;
-    minutes = date.getMinutes();
-    if (minutes < 10) {
-      return "0" + minutes;
-    } else {
-      return minutes;
-    }
-  };
-
-  Label.prototype.parse_format = function(format) {
-    switch (format) {
-      case "%m":
-        return this.text.getMonth() + 1;
-      case "%d":
-        return this.text.getDate();
-      case "%Y":
-        return this.text.getFullYear();
-      case "%H":
-        return this.text.getHours();
-      case "%M":
-        return this.fmt_minutes(this.text);
-      case "%I":
-        return this.to_12_hour_clock(this.text);
-      case "%p":
-        return this.meridian_indicator(this.text);
-    }
-  };
-
-  Label.prototype.draw = function() {
-    var margin, text, width, x;
-    text = "";
-    if (this.is_date(this.text)) {
-      text = this.parse_date(this.text);
-    } else if (typeof this.text === "number") {
-      text = format_number(this.text);
-    } else {
-      text = this.text;
-    }
-    this.element = this.r.text(this.x, this.y, text);
-    width = this.element.getBBox().width;
-    margin = 5;
-    this.element.attr({
-      "fill": this.color,
-      "font-size": this.size,
-      "font-weight": "normal",
-      "text-anchor": "middle",
-      "font-family": this.font_family
-    });
-    if (this.options != null) {
-      this.element.attr(this.options);
-    } else {
-      x = this.x < width ? (width / 2) + margin : this.x;
-      this.element.attr({
-        "x": x
-      });
-    }
-    return this.element;
-  };
-
-  return Label;
 
 })();
 var BaseChartOptions;
@@ -835,7 +903,7 @@ Tooltip = (function() {
     offset = 10;
     rounding = 5;
     if (typeof text === "number") {
-      text = Math.round(text * 100) / 100;
+      text = Util.commas(Math.round(text * 100) / 100);
     }
     box = target.getBBox();
     x = box.x;
@@ -1635,7 +1703,7 @@ LineChart = (function(_super) {
       stroke(left_stroke, this.line_options[0].line_color, 2).toBack();
       stroke(right_stroke, this.line_options[1].line_color, 2).toBack();
     }
-    return stroke(paths, "#ccc", 1).toBack();
+    return stroke(paths, "#ddd", 1).toBack();
   };
 
   LineChart.prototype.create_scalers = function(points) {

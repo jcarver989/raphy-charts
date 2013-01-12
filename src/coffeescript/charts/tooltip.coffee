@@ -14,6 +14,7 @@
 
 
 # @import effects.coffee 
+# @import util.coffee
 
 class Tooltip
   constructor: (@r, target, text, hover_enabled = true) ->
@@ -22,7 +23,7 @@ class Tooltip
     offset = 10
     rounding = 5
 
-    text = Math.round(text*100)/100 if typeof text == "number"
+    text = Util.commas(Math.round(text*100)/100) if typeof text == "number"
       
 
     box = target.getBBox()

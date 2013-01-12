@@ -84,7 +84,7 @@ class LineChart extends BaseChart
 
 
     # do this last to avoid overwriting the multi axis colors
-    stroke(paths, "#ccc", 1).toBack()
+    stroke(paths, "#ddd", 1).toBack()
 
   create_scalers: (points) ->
     y = undefined

@@ -75,7 +75,8 @@
     c = new Charts.LineChart('chart1', {
         show_y_labels: true,
         show_grid: true,
-        render: "bar"
+        render: "bar",
+        label_format: "%b %d"
     });
     c.add_line({
       data: create_exponential_points(),

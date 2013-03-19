@@ -37,6 +37,7 @@ LineChartOptions = (function() {
     x_label_size: 14,
     y_label_size: 14,
     label_format: "%m/%d",
+    label_color: "#333",
     show_grid: false,
     x_padding: 45,
     y_padding: 40,
@@ -203,7 +204,6 @@ LabelSet = (function() {
     this.format = format != null ? format : "";
     this.num = 0;
     this.font_family = "Helvetica, Arial, sans-serif";
-    this.color = "#333";
   }
 
   LabelSet.prototype.x = function(x_func) {
@@ -226,8 +226,16 @@ LabelSet = (function() {
     return this;
   };
 
+  LabelSet.prototype.color = function(color) {
+    this.color = color;
+    return this;
+  };
+
   LabelSet.prototype.draw = function(text) {
     var label;
+    if (!this.color) {
+      this.color = "#333";
+    }
     label = new Label(this.r, this.x_func(this.num), this.y_func(this.num), text, this.format, this.size, this.font_family, this.color, this.options);
     this.num += 1;
     return label.draw();
@@ -1761,13 +1769,14 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype._draw_y_labels = function(labels, x_offset) {
-    var axis, fmt, font_family, label, label_coordinates, offset, padding, size, x, y, _i, _len, _ref, _ref1;
+    var axis, color, fmt, font_family, label, label_coordinates, offset, padding, size, x, y, _i, _len, _ref, _ref1;
     if (x_offset == null) {
       x_offset = 0;
     }
     fmt = this.options.label_format;
     size = this.options.y_label_size;
     font_family = this.options.font_family;
+    color = this.options.label_color || '#000';
     padding = size + 5;
     offset = this.options.multi_axis && x_offset > 0 ? x_offset : x_offset + padding;
     if (labels.length === 1) {
@@ -1780,7 +1789,7 @@ LineChart = (function(_super) {
       return offset;
     }).y(function(i) {
       return y(labels[i].y);
-    }).size(size);
+    }).size(size).color(color);
     for (_i = 0, _len = labels.length; _i < _len; _i++) {
       label = labels[_i];
       axis.draw(label.y);
@@ -1844,12 +1853,13 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_x_label = function(raw_point, point) {
-    var fmt, font_family, label, size;
+    var color, fmt, font_family, label, size;
     fmt = this.options.label_format;
     size = this.options.x_label_size;
     font_family = this.options.font_family;
+    color = this.options.label_color || '#333';
     label = raw_point.is_date_type === true ? new Date(raw_point.x) : Math.round(raw_point.x);
-    return new Label(this.r, point.x, this.height - size, label, fmt, size, font_family).draw();
+    return new Label(this.r, point.x, this.height - size, label, fmt, size, font_family, color).draw();
   };
 
   LineChart.prototype.draw_x_labels = function(raw_points, points) {
@@ -1910,7 +1920,7 @@ LineChart = (function(_super) {
     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
       line_indices = _ref1[i];
       begin = line_indices[0], end = line_indices[1];
-      raw_points = this.all_points.slice(begin, end + 1 || 9e9);
+      raw_points = this.all_points.slice(begin, +end + 1 || 9e9);
       if (this.options.multi_axis) {
         _ref2 = this.all_points.length > 2 ? this.create_scalers(raw_points) : this.create_scalers_for_single_point(), line_x = _ref2[0], line_y = _ref2[1];
       } else {

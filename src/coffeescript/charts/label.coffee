@@ -52,14 +52,16 @@ class LabelSet
   constructor: (@r, @format = "") ->
     @num = 0
     @font_family = "Helvetica, Arial, sans-serif"
-    @color = "#333"
 
   x: (@x_func)         -> this
   y: (@y_func)         -> this
   size: (@size)        -> this
   attr: (@options)     -> this
+  color: (@color)      -> this
  
   draw: (text) ->
+    @color = "#333" unless @color
+
     label = new Label(
       @r,
       @x_func(@num),

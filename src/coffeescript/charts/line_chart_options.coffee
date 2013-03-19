@@ -15,29 +15,30 @@
 
 class LineChartOptions
   @DEFAULTS: {
-    dot_size: 5 
+    dot_size: 5
     dot_color: "#00aadd"
     dot_stroke_color: "#fff"
-    dot_stroke_size: 2 
+    dot_stroke_size: 2
 
-    line_width: 3 
+    line_width: 3
     line_color: "#00aadd"
-    smoothing: 0.4 
+    smoothing: 0.4
 
     fill_area: true
     area_color: "#00aadd"
-    area_opacity: 0.2 
+    area_opacity: 0.2
 
     show_x_labels: true
     show_y_labels: true
     label_max : true
     label_min : true
     max_x_labels: 10
-    max_y_labels: 3 
+    max_y_labels: 3
     font_family: "Helvetica, Arial, sans-serif"
     x_label_size: 14
     y_label_size: 14
     label_format: "%m/%d"
+    label_color: "#333"
 
     show_grid: false
 

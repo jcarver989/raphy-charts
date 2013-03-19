@@ -131,6 +131,7 @@ class LineChart extends BaseChart
     fmt = @options.label_format
     size = @options.y_label_size
     font_family = @options.font_family
+    color = @options.label_color || '#333'
 
     padding = size + 5 
     offset = if @options.multi_axis && x_offset > 0 then x_offset else x_offset + padding
@@ -146,6 +147,7 @@ class LineChart extends BaseChart
     .x((i) -> offset)
     .y((i) -> y(labels[i].y))
     .size(size)
+    .color(color)
 
     for label in labels
       axis.draw(label.y)
@@ -204,6 +206,7 @@ class LineChart extends BaseChart
     fmt = @options.label_format
     size = @options.x_label_size
     font_family = @options.font_family
+    color = @options.label_color || '#333'
 
     label = if raw_point.is_date_type == true then new Date(raw_point.x) else Math.round(raw_point.x)
     new Label(
@@ -213,7 +216,8 @@ class LineChart extends BaseChart
       label, 
       fmt,
       size,
-      font_family
+      font_family,
+      color
     ).draw()
 
   draw_x_labels: (raw_points, points) ->

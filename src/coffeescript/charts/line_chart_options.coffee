@@ -15,7 +15,10 @@
 
 class LineChartOptions
   @DEFAULTS: {
-    dot_size: 5 
+    show_line: true
+    show_legend: false
+
+    dot_size: 5
     dot_color: "#00aadd"
     dot_stroke_color: "#fff"
     dot_stroke_size: 2 

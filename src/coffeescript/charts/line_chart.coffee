@@ -33,6 +33,8 @@ class LineChart extends BaseChart
     @all_points   = []
     @line_indices = []
     @line_options = []
+    @lines        = []
+    @legend       = @r.set()
 
   add_line: (args) ->
     data = args.data
@@ -251,23 +253,26 @@ class LineChart extends BaseChart
 
   draw_line: (raw_points, points, options) ->
     if @options.render == "bar"
-      new LineBar(
+      line = new LineBar(
         @r,
         raw_points,
         points,
         @height,
         @width,
         options
-      ).draw()
+      )
     else
-      new Line(
+      line = new Line(
         @r,
         raw_points,
         points,
         @height,
         @width,
         options
-      ).draw()
+      )
+    line.draw()
+    line.hide() unless options['show_line']
+    @lines.push line
 
 
   clear: () ->
@@ -284,6 +289,7 @@ class LineChart extends BaseChart
     [x, y] = if @all_points.length > 1 then @create_scalers(@all_points) else @create_scalers_for_single_point()
 
     for line_indices, i in @line_indices
+
       [begin, end] = line_indices
       raw_points = @all_points[begin..end]
 
@@ -311,7 +317,114 @@ class LineChart extends BaseChart
       else if i == 1 && @options.multi_axis
         @draw_y_labels(raw_points, @width - @options.x_padding) if @options.show_y_labels == true
 
+    # Create the legend for our graph, if we need to
+    @draw_legend() if @options['show_legend']
+
     return
       
+  # Draws a legend in the top right hand corner, giving a name to each line
+  # colour
+  #
+  draw_legend: ->
+    @legend.clear()
+
+    # We need to remember our X position for each line create a legend for
+    # - this allows us to put them next to each other
+    current_x = 0
+
+    # Loop through each line option
+    for line_option, count in @line_options
+      # Create a set to hold the thumbnail and label for a particular line. This
+      # will allow us to add a hover and click state to the thumbnail and the
+      # label at the same time.
+      set = @r.set()
+
+      thumbnail = @r.rect(current_x, 1, 15, 10).attr({
+        fill: line_option['line_color']
+        stroke: line_option['line_color']
+        cursor: 'pointer'
+        'stroke-opacity': 0
+      })
+      # We have to add this to the thumbnail and the label because you can't
+      # bind a scope to the click/mousedown element in raphael, therefore we
+      # can't access the "set" line property when we click one of the two.
+      thumbnail.line  =  @lines[count]
+      if line_option['show_line']
+        thumbnail.full = true
+      else
+        thumbnail.attr({
+          'stroke-opacity': 1
+          'fill-opacity'  : 0
+        })
+        thumbnail.full = false
+      set.push(thumbnail)
+      @legend.push(thumbnail)
+
+      current_x += 23
+
+      line_name = line_option['line_name'] || 'Line ' + count
+      label = @r.text(current_x, 0, line_name)
+      label.attr({
+        fill: '#333',
+        cursor: 'pointer'
+        'font-size' : 10,
+        'font-weight' : 'normal',
+        'text-anchor' : 'start',
+        'font-family' : 'Helvetica',
+      })
+      label.line =  @lines[count]
+      # Save a reference to the thumbnail in our label so we can set the stroke
+      # or fill when we click on the label
+      label.thumbnail = thumbnail
+      # Ensure the label's Y axis is actually 0, because for some reason setting
+      # the to 0 doesn't actually make it 0
+      label.transform("...t0," + (label.getBBox()['y'] * -1))
+      current_x += label.getBBox()['width'] + 25
+      set.push(label)
+      @legend.push(label)
+
+      # Add hover to the line set so the line glows when you're over it
+      set.hover(
+        ->
+          @line.glow()
+        ,
+        ->
+          @line.remove_glow()
+      )
+
+      set.click(->
+        @line.toggle()
+        # We're technically hovering so we should call glow anyway - this wont
+        # work because of the visible check if we've just hidden, and it will
+        # make the experience a little bit better, because the glow won't appear
+        # until the mouse moves otherwise.
+        @line.glow()
+
+        # Switch between a stroke and a fill - this will show us
+        # a visible/hidden state for the line
+        thumbnail = this.thumbnail || this
+        if thumbnail.full
+          thumbnail.attr({
+            'stroke-opacity': 1
+            'fill-opacity'  : 0
+          })
+          thumbnail.full = false
+        else
+          thumbnail.attr({
+            'stroke-opacity': 0
+            'fill-opacity'  : 1
+          })
+          thumbnail.full = true
+      )
+
+
+    # Take the entire legend's width and the padding at the right of the graph
+    # to determine our X transform
+    legend_x = (@width - (@legend.getBBox()['width'] + @options.x_padding))
+
+    legend_y = (@options.y_padding / 2) - (@legend.getBBox()['height'] / 2)
+
+    @legend.transform("...t" + legend_x + "," + legend_y)
+
 
 exports.LineChart = LineChart

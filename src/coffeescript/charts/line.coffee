@@ -21,12 +21,34 @@
 
 class Line
   constructor: (@r, @raw_points, @scaled_points, @height, @width, @options = {}) ->
+    # Contains an array of glow elements when a user is hovering over the line
+    @glow_elements = []
+    @line_set = @r.set()
+
+    @visible = if options['show_line'] == true then true else false
 
   draw: ->
     path = Bezier.create_path(@scaled_points, @options.smoothing)
     @draw_area(path) if @options.fill_area
     @draw_curve(path)
     @draw_dots_and_tooltips(@scaled_points, @raw_points) if @options.dot_size > 0
+
+    # Add this stuff to our set for future manipulation. This contains
+    # everything in this line but the area - because
+    @line_set.push path
+
+    # Add an event listener to watch for hovers over 
+    @line_set.hover(
+      ->
+        @glow()
+      ,
+      ->
+        @remove_glow()
+      ,
+      @,
+      @
+    )
+
     return
 
   draw_curve: (path) ->
@@ -35,6 +57,10 @@ class Line
       "stroke"       : @options.line_color
       "stroke-width" : @options.line_width
     }).toFront()
+
+    # Add the curve to our set
+    @line_set.push curve
+    curve
 
   draw_area: (path) ->
     points = @scaled_points
@@ -47,14 +73,13 @@ class Line
     path += "L #{first_point.x}, #{padded_height} "
     path += "Z"
 
-    area = @r.path(path)
-    area.attr({
+    @area = @r.path(path)
+    @area.attr({
       "fill" : @options.area_color 
       "fill-opacity" : @options.area_opacity 
       "stroke" : "none"
     })
-    area.toBack()
-
+    @area.toBack()
 
   draw_dots_and_tooltips: () ->
     scaled_points = @scaled_points
@@ -75,8 +100,13 @@ class Line
 
       dot = new Dot(@r, point, options)
       tooltip = new Tooltip(@r, dot.element, raw_point.options.tooltip || raw_point.y, options.hover_enabled)
+      tooltip.hide()
       dots.push dot
       tooltips.push tooltip
+
+      # Push the dot to our set - we don't need the tooltip because we shouldn't
+      # be able to hover over a dot to show it.
+      @line_set.push dot.element
 
       if raw_point.options.no_dot == true
         dot.hide()
@@ -92,4 +122,31 @@ class Line
     if @options.label_min
       tooltips[min_point].show()
       dots[min_point].activate()
+
+  hide: ->
+    @area.hide()
+    @line_set.hide()
+    @remove_glow()
+    @visible = false
+
+  show: ->
+    @area.show()
+    @line_set.show()
+    @visible = true
+
+  toggle: ->
+    if @visible
+      @hide()
+    else
+      @show()
+
+  glow: ->
+    return unless @visible
+    @line_set.forEach( (item) ->
+      @glow_elements.push(item.glow({ opacity: 0.1 }))
+    , @)
+
+  remove_glow: ->
+    for i in @glow_elements
+      i.remove()
 

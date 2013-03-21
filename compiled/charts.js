@@ -17,6 +17,8 @@ if (global.module == undefined) {
 LineChartOptions = (function() {
 
   LineChartOptions.DEFAULTS = {
+    show_line: true,
+    show_legend: false,
     dot_size: 5,
     dot_color: "#00aadd",
     dot_stroke_color: "#fff",
@@ -1112,6 +1114,9 @@ Line = (function() {
     this.height = height;
     this.width = width;
     this.options = options != null ? options : {};
+    this.glow_elements = [];
+    this.line_set = this.r.set();
+    this.visible = options['show_line'] === true ? true : false;
   }
 
   Line.prototype.draw = function() {
@@ -1124,19 +1129,27 @@ Line = (function() {
     if (this.options.dot_size > 0) {
       this.draw_dots_and_tooltips(this.scaled_points, this.raw_points);
     }
+    this.line_set.push(path);
+    this.line_set.hover(function() {
+      return this.glow();
+    }, function() {
+      return this.remove_glow();
+    }, this, this);
   };
 
   Line.prototype.draw_curve = function(path) {
     var curve;
     curve = this.r.path(path);
-    return curve.attr({
+    curve.attr({
       "stroke": this.options.line_color,
       "stroke-width": this.options.line_width
     }).toFront();
+    this.line_set.push(curve);
+    return curve;
   };
 
   Line.prototype.draw_area = function(path) {
-    var area, final_point, first_point, padded_height, points;
+    var final_point, first_point, padded_height, points;
     points = this.scaled_points;
     padded_height = this.height - this.options.y_padding;
     final_point = points[points.length - 1];
@@ -1144,13 +1157,13 @@ Line = (function() {
     path += "L " + final_point.x + ", " + padded_height + " ";
     path += "L " + first_point.x + ", " + padded_height + " ";
     path += "Z";
-    area = this.r.path(path);
-    area.attr({
+    this.area = this.r.path(path);
+    this.area.attr({
       "fill": this.options.area_color,
       "fill-opacity": this.options.area_opacity,
       "stroke": "none"
     });
-    return area.toBack();
+    return this.area.toBack();
   };
 
   Line.prototype.draw_dots_and_tooltips = function() {
@@ -1174,8 +1187,10 @@ Line = (function() {
       options.hover_enabled = !raw_point.options.show_dot;
       dot = new Dot(this.r, point, options);
       tooltip = new Tooltip(this.r, dot.element, raw_point.options.tooltip || raw_point.y, options.hover_enabled);
+      tooltip.hide();
       dots.push(dot);
       tooltips.push(tooltip);
+      this.line_set.push(dot.element);
       if (raw_point.options.no_dot === true) {
         dot.hide();
       }
@@ -1192,6 +1207,49 @@ Line = (function() {
       tooltips[min_point].show();
       return dots[min_point].activate();
     }
+  };
+
+  Line.prototype.hide = function() {
+    this.area.hide();
+    this.line_set.hide();
+    this.remove_glow();
+    return this.visible = false;
+  };
+
+  Line.prototype.show = function() {
+    this.area.show();
+    this.line_set.show();
+    return this.visible = true;
+  };
+
+  Line.prototype.toggle = function() {
+    if (this.visible) {
+      return this.hide();
+    } else {
+      return this.show();
+    }
+  };
+
+  Line.prototype.glow = function() {
+    if (!this.visible) {
+      return;
+    }
+    return this.line_set.forEach(function(item) {
+      return this.glow_elements.push(item.glow({
+        opacity: 0.1
+      }));
+    }, this);
+  };
+
+  Line.prototype.remove_glow = function() {
+    var i, _i, _len, _ref, _results;
+    _ref = this.glow_elements;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      i = _ref[_i];
+      _results.push(i.remove());
+    }
+    return _results;
   };
 
   return Line;
@@ -1646,6 +1704,8 @@ LineChart = (function(_super) {
     this.all_points = [];
     this.line_indices = [];
     this.line_options = [];
+    this.lines = [];
+    this.legend = this.r.set();
   }
 
   LineChart.prototype.add_line = function(args) {
@@ -1885,11 +1945,17 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.draw_line = function(raw_points, points, options) {
+    var line;
     if (this.options.render === "bar") {
-      return new LineBar(this.r, raw_points, points, this.height, this.width, options).draw();
+      line = new LineBar(this.r, raw_points, points, this.height, this.width, options);
     } else {
-      return new Line(this.r, raw_points, points, this.height, this.width, options).draw();
+      line = new Line(this.r, raw_points, points, this.height, this.width, options);
     }
+    line.draw();
+    if (!options['show_line']) {
+      line.hide();
+    }
+    return this.lines.push(line);
   };
 
   LineChart.prototype.clear = function() {
@@ -1910,7 +1976,7 @@ LineChart = (function(_super) {
     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
       line_indices = _ref1[i];
       begin = line_indices[0], end = line_indices[1];
-      raw_points = this.all_points.slice(begin, end + 1 || 9e9);
+      raw_points = this.all_points.slice(begin, +end + 1 || 9e9);
       if (this.options.multi_axis) {
         _ref2 = this.all_points.length > 2 ? this.create_scalers(raw_points) : this.create_scalers_for_single_point(), line_x = _ref2[0], line_y = _ref2[1];
       } else {
@@ -1946,6 +2012,81 @@ LineChart = (function(_super) {
         }
       }
     }
+    if (this.options['show_legend']) {
+      this.draw_legend();
+    }
+  };
+
+  LineChart.prototype.draw_legend = function() {
+    var count, current_x, label, legend_x, legend_y, line_name, line_option, set, thumbnail, _i, _len, _ref;
+    this.legend.clear();
+    current_x = 0;
+    _ref = this.line_options;
+    for (count = _i = 0, _len = _ref.length; _i < _len; count = ++_i) {
+      line_option = _ref[count];
+      set = this.r.set();
+      thumbnail = this.r.rect(current_x, 1, 15, 10).attr({
+        fill: line_option['line_color'],
+        stroke: line_option['line_color'],
+        cursor: 'pointer',
+        'stroke-opacity': 0
+      });
+      thumbnail.line = this.lines[count];
+      if (line_option['show_line']) {
+        thumbnail.full = true;
+      } else {
+        thumbnail.attr({
+          'stroke-opacity': 1,
+          'fill-opacity': 0
+        });
+        thumbnail.full = false;
+      }
+      set.push(thumbnail);
+      this.legend.push(thumbnail);
+      current_x += 23;
+      line_name = line_option['line_name'] || 'Line ' + count;
+      label = this.r.text(current_x, 0, line_name);
+      label.attr({
+        fill: '#333',
+        cursor: 'pointer',
+        'font-size': 10,
+        'font-weight': 'normal',
+        'text-anchor': 'start',
+        'font-family': 'Helvetica'
+      });
+      label.line = this.lines[count];
+      label.thumbnail = thumbnail;
+      label.transform("...t0," + (label.getBBox()['y'] * -1));
+      current_x += label.getBBox()['width'] + 25;
+      set.push(label);
+      this.legend.push(label);
+      set.hover(function() {
+        return this.line.glow();
+      }, function() {
+        return this.line.remove_glow();
+      });
+      set.click(function() {
+        this.line.toggle();
+        this.line.glow();
+        thumbnail = this.thumbnail || this;
+        if (thumbnail.full) {
+          thumbnail.attr({
+            'stroke-opacity': 1,
+            'fill-opacity': 0
+          });
+          return thumbnail.full = false;
+        } else {
+          thumbnail.attr({
+            'stroke-opacity': 0,
+            'fill-opacity': 1
+          });
+          return thumbnail.full = true;
+        }
+      });
+    }
+    legend_x = this.width - (this.legend.getBBox()['width'] + this.options.x_padding);
+    legend_y = (this.options.y_padding / 2) - (this.legend.getBBox()['height'] / 2);
+    return this.legend.transform("...t" + legend_x + "," + legend_y);
   };
 
   return LineChart;

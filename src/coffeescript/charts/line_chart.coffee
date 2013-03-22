@@ -131,9 +131,40 @@ class LineChart extends BaseChart
     fmt = @options.label_format
     size = @options.y_label_size
     font_family = @options.font_family
+    color = @options.label_color || '#333'
 
-    padding = size + 5 
+    padding = size + 5
+
+    # How far from the left are the labels going to be?
     offset = if @options.multi_axis && x_offset > 0 then x_offset else x_offset + padding
+
+    # If there's a label for this axis then they need to be a little more to the
+    # right to make space for the label.
+    if @options.y_axis_name
+      offset += (size * 1.75)
+      # Create the label
+      label_color = @options.axis_name_color || '#333'
+      label_size  = @options.axis_name_size || size
+
+      label = new Label(
+        @r,
+        5,
+        @height / 2,
+        @options.y_axis_name,
+        fmt,
+        label_size,
+        font_family,
+        label_color
+      ).draw()
+
+      # Rotate the label so you read it upwards - this will knock out the
+      # X position
+      label.transform("T0,0R270S1")
+
+      # Fix the X position by taking the bounding box's X position and
+      # translating to 0
+      label.transform("...t0," + (label.getBBox()['x'] * -1))
+
 
     if labels.length == 1
       [x,y] = @create_scalers_for_single_point()
@@ -146,6 +177,7 @@ class LineChart extends BaseChart
     .x((i) -> offset)
     .y((i) -> y(labels[i].y))
     .size(size)
+    .color(color)
 
     for label in labels
       axis.draw(label.y)
@@ -204,21 +236,45 @@ class LineChart extends BaseChart
     fmt = @options.label_format
     size = @options.x_label_size
     font_family = @options.font_family
+    color = @options.label_color || '#333'
+
+    # If the x label is named make room for it by nudging the labels a little
+    # higher towards the graph
+    if @options.x_axis_name
+      y = @height - (size * 2)
+    else
+      y = @height - size
 
     label = if raw_point.is_date_type == true then new Date(raw_point.x) else Math.round(raw_point.x)
     new Label(
-      @r, 
-      point.x, 
-      @height - size, 
-      label, 
+      @r,
+      point.x,
+      y,
+      label,
       fmt,
       size,
-      font_family
+      font_family,
+      color
     ).draw()
 
   draw_x_labels: (raw_points, points) ->
     label_coordinates = []
     max_labels = @options.max_x_labels
+
+    # Is this axis named? If so, add the label name to the axis
+    if @options.x_axis_name
+      color = @options.axis_name_color || '#333'
+      label_size = @options.axis_name_size || @options.x_label_size
+      label = new Label(
+        @r,
+        (@width / 2),
+        @height - (@options.x_label_size / 2),
+        @options.x_axis_name,
+        @options.label_format,
+        label_size,
+        @options.font_family,
+        color
+      ).draw()
 
     # draw first
     @draw_x_label(raw_points[0], points[0])

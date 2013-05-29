@@ -205,7 +205,16 @@ $(document).ready(function() {
  });
 
 
-
+  log_scale.add_line({
+    data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
+    options: {
+      line_color: colors[2],
+      dot_color: colors[2],
+      fill_area: false,
+      line_width: 2,
+      dot_size: 3
+    }
+  });
 
   log_scale.add_line({
     data: [[1, 828906],[2, 566933],[3, 584150],[4, 1072143],[5, 1622455],[6, 2466746],[7, 2427789]],
@@ -216,17 +225,6 @@ $(document).ready(function() {
       area_opacity: 0.2,
       dot_size: 5,
       line_width: 4 
-    }
-  });
-
-  log_scale.add_line({
-    data: [[1, 305],[2, 336],[3, 378],[4, 449],[5, 635],[6, 935],[7, 782]],
-    options: {
-      line_color: colors[2],
-      dot_color: colors[2],
-      fill_area: false,
-      line_width: 2,
-      dot_size: 3
     }
   });
 

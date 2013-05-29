@@ -1140,7 +1140,7 @@ Line = (function() {
     return curve.attr({
       "stroke": this.options.line_color,
       "stroke-width": this.options.line_width
-    }).toFront();
+    });
   };
 
   Line.prototype.draw_area = function(path) {
@@ -1158,7 +1158,7 @@ Line = (function() {
       "fill-opacity": this.options.area_opacity,
       "stroke": "none"
     });
-    return area.toBack();
+    return area;
   };
 
   Line.prototype.draw_dots_and_tooltips = function() {
@@ -1938,7 +1938,7 @@ LineChart = (function(_super) {
     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
       line_indices = _ref1[i];
       begin = line_indices[0], end = line_indices[1];
-      raw_points = this.all_points.slice(begin, +end + 1 || 9e9);
+      raw_points = this.all_points.slice(begin, end + 1 || 9e9);
       if (this.options.multi_axis) {
         _ref2 = this.all_points.length > 2 ? this.create_scalers(raw_points) : this.create_scalers_for_single_point(), line_x = _ref2[0], line_y = _ref2[1];
       } else {

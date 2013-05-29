@@ -34,7 +34,7 @@ class Line
     curve.attr({
       "stroke"       : @options.line_color
       "stroke-width" : @options.line_width
-    }).toFront()
+    })
 
   draw_area: (path) ->
     points = @scaled_points
@@ -53,7 +53,7 @@ class Line
       "fill-opacity" : @options.area_opacity 
       "stroke" : "none"
     })
-    area.toBack()
+    area
 
 
   draw_dots_and_tooltips: () ->

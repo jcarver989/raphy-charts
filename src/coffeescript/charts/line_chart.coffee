@@ -287,7 +287,7 @@ class LineChart extends BaseChart
     label_coordinates.push points[last].x
     return if max_labels < 3
 
-    len = points.length-2
+    len = points.length-1
     step_size  = len / (max_labels-1)
 
     # when irrational

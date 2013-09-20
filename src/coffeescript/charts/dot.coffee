@@ -29,7 +29,7 @@ class Dot
     @element.toFront()
 
   activate: () ->
-    @element.attr({ "fill" : "#333"})
+    @element.attr({ "fill" : @opts.dot_active_color or "#333"})
     @element.animate({ 
       "r" : @opts.dot_size * @scale_factor
     }, 200)

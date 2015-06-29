@@ -15,7 +15,6 @@ if (global.module == undefined) {
       var LineChartOptions;
 
 LineChartOptions = (function() {
-
   LineChartOptions.DEFAULTS = {
     dot_size: 5,
     dot_color: "#00aadd",
@@ -93,7 +92,6 @@ LineChartOptions = (function() {
 var Util;
 
 Util = (function() {
-
   function Util() {}
 
   Util.clone = function(obj) {
@@ -198,7 +196,6 @@ format_number = function(number, percision) {
 };
 
 LabelSet = (function() {
-
   function LabelSet(r, format) {
     this.r = r;
     this.format = format != null ? format : "";
@@ -246,7 +243,6 @@ LabelSet = (function() {
 })();
 
 Label = (function() {
-
   function Label(r, x, y, text, format, size, font_family, color, options) {
     this.r = r;
     this.x = x;
@@ -363,7 +359,6 @@ Label = (function() {
 var Grid;
 
 Grid = (function() {
-
   function Grid(r, width, height, points, options) {
     this.r = r;
     this.width = width;
@@ -408,7 +403,6 @@ Grid = (function() {
 var Dot;
 
 Dot = (function() {
-
   function Dot(r, point, opts, scale_factor) {
     this.r = r;
     this.point = point;
@@ -451,13 +445,16 @@ Dot = (function() {
   };
 
   Dot.prototype.attach_handlers = function() {
-    var _this = this;
-    this.element.mouseover(function() {
-      return _this.activate();
-    });
-    return this.element.mouseout(function() {
-      return _this.deactivate();
-    });
+    this.element.mouseover((function(_this) {
+      return function() {
+        return _this.activate();
+      };
+    })(this));
+    return this.element.mouseout((function(_this) {
+      return function() {
+        return _this.deactivate();
+      };
+    })(this));
   };
 
   Dot.prototype.hide = function() {
@@ -470,7 +467,6 @@ Dot = (function() {
 var BulletChartOptions;
 
 BulletChartOptions = (function() {
-
   BulletChartOptions.DEFAULTS = {
     line_width: 4,
     line_color: "#000",
@@ -534,7 +530,6 @@ BulletChartOptions = (function() {
 var BaseChartOptions;
 
 BaseChartOptions = (function() {
-
   BaseChartOptions.merge = function(from, to) {
     var option, opts, value;
     if (from == null) {
@@ -581,7 +576,6 @@ var IndexChartOptions,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 IndexChartOptions = (function(_super) {
-
   __extends(IndexChartOptions, _super);
 
   IndexChartOptions.DEFAULTS = {
@@ -610,7 +604,6 @@ IndexChartOptions = (function(_super) {
 var BarChartOptions;
 
 BarChartOptions = (function() {
-
   BarChartOptions.DEFAULTS = {
     bar_width: 20,
     bar_spacing: 20,
@@ -674,10 +667,8 @@ var LogScaler, Scaler, Scaling,
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
 Scaler = (function() {
-
   function Scaler() {
     this.scale = __bind(this.scale, this);
-
   }
 
   Scaler.prototype.domain = function(points) {
@@ -710,11 +701,9 @@ Scaler = (function() {
 })();
 
 LogScaler = (function() {
-
   function LogScaler(base) {
     this.base = base != null ? base : 10;
     this.scale = __bind(this.scale, this);
-
     return this.scale;
   }
 
@@ -729,7 +718,6 @@ LogScaler = (function() {
 })();
 
 Scaling = (function() {
-
   function Scaling() {}
 
   Scaling.get_ranges_for_points = function(points) {
@@ -766,7 +754,6 @@ exports.Scaler = Scaler;
 var Point;
 
 Point = (function() {
-
   function Point(x, y, options) {
     this.y = y;
     this.options = options != null ? options : {};
@@ -796,7 +783,6 @@ Raphael.fn.triangle = function(cx, cy, r) {
 };
 
 Effects = (function() {
-
   function Effects(r) {
     this.r = r;
   }
@@ -898,10 +884,8 @@ exports.Effects = Effects;
 var Tooltip;
 
 Tooltip = (function() {
-
   function Tooltip(r, target, text, hover_enabled) {
-    var box, box_height, box_midpoint, box_width, height, offset, padding, rounding, size, width, x, y,
-      _this = this;
+    var box, box_height, box_midpoint, box_width, height, offset, padding, rounding, size, width, x, y;
     this.r = r;
     if (hover_enabled == null) {
       hover_enabled = true;
@@ -941,29 +925,34 @@ Tooltip = (function() {
     this.popup.toFront();
     this.text.toFront();
     if (hover_enabled === true) {
-      target.mouseover(function() {
-        return _this.show();
-      });
-      target.mouseout(function() {
-        return _this.hide();
-      });
+      target.mouseover((function(_this) {
+        return function() {
+          return _this.show();
+        };
+      })(this));
+      target.mouseout((function(_this) {
+        return function() {
+          return _this.hide();
+        };
+      })(this));
     }
   }
 
   Tooltip.prototype.animate_opacity = function(element, value, time) {
-    var _this = this;
     if (time == null) {
       time = 200;
     }
     return element.animate({
       "opacity": value,
       "fill-opacity": value
-    }, time, function() {
-      if (value === 0) {
-        _this.text.toBack();
-        return _this.popup.toBack();
-      }
-    });
+    }, time, (function(_this) {
+      return function() {
+        if (value === 0) {
+          _this.text.toBack();
+          return _this.popup.toBack();
+        }
+      };
+    })(this));
   };
 
   Tooltip.prototype.hide = function() {
@@ -992,7 +981,6 @@ exports.Tooltip = Tooltip;
 var LineBar;
 
 LineBar = (function() {
-
   function LineBar(r, raw_points, scaled_points, height, width, options) {
     this.r = r;
     this.raw_points = raw_points;
@@ -1046,7 +1034,6 @@ LineBar = (function() {
 var Bezier;
 
 Bezier = (function() {
-
   function Bezier() {}
 
   Bezier.create_path = function(points, smoothing) {
@@ -1112,7 +1099,6 @@ exports.Bezier = Bezier;
 var Line;
 
 Line = (function() {
-
   function Line(r, raw_points, scaled_points, height, width, options) {
     this.r = r;
     this.raw_points = raw_points;
@@ -1216,7 +1202,6 @@ is_element = function(o) {
 };
 
 BaseChart = (function() {
-
   function BaseChart(dom_container, options) {
     var container, _ref;
     container = is_element(dom_container) ? dom_container : document.getElementById(dom_container);
@@ -1244,7 +1229,6 @@ var PathMenu, PathMenuOptions, bounce_to_and_back, draw_circle, point_on_circle,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 PathMenuOptions = (function(_super) {
-
   __extends(PathMenuOptions, _super);
 
   PathMenuOptions.DEFAULTS = {
@@ -1309,7 +1293,6 @@ draw_circle = function(x, y, r, text_size) {
 };
 
 PathMenu = (function(_super) {
-
   __extends(PathMenu, _super);
 
   function PathMenu(dom_id, options) {
@@ -1327,38 +1310,41 @@ PathMenu = (function(_super) {
   }
 
   PathMenu.prototype.add_hover = function(circle) {
-    var hover_in, hover_out,
-      _this = this;
-    hover_in = function(e) {
-      circle[0].animate({
-        "r": _this.options.hover_scale_multiplier * _this.child_radius,
-        "opacity": 1,
-        "stroke-width": 2,
-        "stroke": "rgba(0,0,0,.4)"
-      }, 200);
-      circle[1].animate({
-        "font-size": 22,
-        "opacity": 1,
-        "fill": "#fff"
-      }, 200);
-      return circle._label.animate({
-        "opacity": 1
-      }, 200);
-    };
-    hover_out = function(e) {
-      circle[0].animate({
-        r: _this.child_radius,
-        opacity: _this.options.inactive_opacity,
-        stroke: "none",
-        "stroke-width": 0
-      }, 200);
-      circle[1].animate({
-        opacity: 0
-      }, 200);
-      return circle._label.animate({
-        "opacity": 0
-      }, 200);
-    };
+    var hover_in, hover_out;
+    hover_in = (function(_this) {
+      return function(e) {
+        circle[0].animate({
+          "r": _this.options.hover_scale_multiplier * _this.child_radius,
+          "opacity": 1,
+          "stroke-width": 2,
+          "stroke": "rgba(0,0,0,.4)"
+        }, 200);
+        circle[1].animate({
+          "font-size": 22,
+          "opacity": 1,
+          "fill": "#fff"
+        }, 200);
+        return circle._label.animate({
+          "opacity": 1
+        }, 200);
+      };
+    })(this);
+    hover_out = (function(_this) {
+      return function(e) {
+        circle[0].animate({
+          r: _this.child_radius,
+          opacity: _this.options.inactive_opacity,
+          stroke: "none",
+          "stroke-width": 0
+        }, 200);
+        circle[1].animate({
+          opacity: 0
+        }, 200);
+        return circle._label.animate({
+          "opacity": 0
+        }, 200);
+      };
+    })(this);
     circle._activate = hover_in;
     circle._deactivate = hover_out;
     return circle.hover(hover_in, hover_out);
@@ -1425,37 +1411,38 @@ PathMenu = (function(_super) {
   };
 
   PathMenu.prototype.add_click_to_circle = function(circle, is_root) {
-    var handler,
-      _this = this;
+    var handler;
     if (is_root == null) {
       is_root = false;
     }
-    handler = function(e) {
-      var child, degrees, _i, _len, _ref;
-      if (circle._active) {
-        circle.hover(circle._activate, circle._deactivate);
-        degrees = 0;
-        if (circle._children) {
-          _ref = circle._children;
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            child = _ref[_i];
-            if (!child._active) {
-              continue;
+    handler = (function(_this) {
+      return function(e) {
+        var child, degrees, _i, _len, _ref;
+        if (circle._active) {
+          circle.hover(circle._activate, circle._deactivate);
+          degrees = 0;
+          if (circle._children) {
+            _ref = circle._children;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              child = _ref[_i];
+              if (!child._active) {
+                continue;
+              }
+              child._deactivate();
+              child._click_handler();
             }
-            child._deactivate();
-            child._click_handler();
           }
+        } else {
+          circle.unhover(circle._activate, circle._deactivate);
+          degrees = 45;
         }
-      } else {
-        circle.unhover(circle._activate, circle._deactivate);
-        degrees = 45;
-      }
-      _this.bounce_circles(circle, circle._children);
-      circle.animate({
-        transform: "r" + degrees
-      }, 200);
-      return circle._active = !circle._active;
-    };
+        _this.bounce_circles(circle, circle._children);
+        circle.animate({
+          transform: "r" + degrees
+        }, 200);
+        return circle._active = !circle._active;
+      };
+    })(this);
     circle._click_handler = handler;
     return circle.click(handler);
   };
@@ -1488,15 +1475,16 @@ PathMenu = (function(_super) {
   };
 
   PathMenu.prototype.add_grandchildren = function(data, circle) {
-    var _this = this;
     if (!data.children) {
       return;
     }
     circle._children = [];
-    return this.create_circles_along_radius(data.children, this.child_radius, this.outer_radius2, function(grandchild, grandchild_circle) {
-      circle._active = false;
-      return circle._children.push(grandchild_circle);
-    });
+    return this.create_circles_along_radius(data.children, this.child_radius, this.outer_radius2, (function(_this) {
+      return function(grandchild, grandchild_circle) {
+        circle._active = false;
+        return circle._children.push(grandchild_circle);
+      };
+    })(this));
   };
 
   PathMenu.prototype.draw_circle = function(x, y, r, text_size) {
@@ -1517,19 +1505,20 @@ PathMenu = (function(_super) {
   };
 
   PathMenu.prototype.draw = function() {
-    var children, main_circle, step_size,
-      _this = this;
+    var children, main_circle, step_size;
     main_circle = this.draw_circle(this.center_point.x, this.center_point.y, this.main_radius, 100);
     main_circle._active = false;
     main_circle._children = [];
     this.add_click_to_circle(main_circle, true);
     children = this.children.length;
     step_size = (2 * Math.PI) / children;
-    this.create_circles_along_radius(this.children, this.child_radius, this.outer_radius, function(child, circle) {
-      _this.add_grandchildren(child, circle);
-      _this.add_click_to_circle(circle);
-      return main_circle._children.push(circle);
-    });
+    this.create_circles_along_radius(this.children, this.child_radius, this.outer_radius, (function(_this) {
+      return function(child, circle) {
+        _this.add_grandchildren(child, circle);
+        _this.add_click_to_circle(circle);
+        return main_circle._children.push(circle);
+      };
+    })(this));
     return main_circle.toFront();
   };
 
@@ -1560,7 +1549,6 @@ arc = function(xloc, yloc, value, total, R) {
 };
 
 CircleProgressOptions = (function(_super) {
-
   __extends(CircleProgressOptions, _super);
 
   CircleProgressOptions.DEFAULTS = {
@@ -1583,7 +1571,6 @@ CircleProgressOptions = (function(_super) {
 })(BaseChartOptions);
 
 CircleProgress = (function(_super) {
-
   __extends(CircleProgress, _super);
 
   function CircleProgress(dom_id, label, value, options) {
@@ -1642,7 +1629,6 @@ var LineChart,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 LineChart = (function(_super) {
-
   __extends(LineChart, _super);
 
   function LineChart(dom_id, options) {
@@ -1715,8 +1701,7 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.create_scalers = function(points) {
-    var linear, log, log_points, max_x, max_y, min_x, min_y, p, x, x_offset, y, y_scaler, _ref, _ref1, _ref2,
-      _this = this;
+    var linear, log, log_points, max_x, max_y, min_x, min_y, p, x, x_offset, y, y_scaler, _ref, _ref1, _ref2;
     y = void 0;
     max_x = void 0;
     min_x = void 0;
@@ -1743,9 +1728,11 @@ LineChart = (function(_super) {
     x_offset = this.options.multi_axis ? this.options.x_padding * 2 : this.options.x_padding;
     x = new Scaler().domain([min_x, max_x]).range([this.options.x_padding, this.width - x_offset]);
     y_scaler = new Scaler().domain([min_y, max_y]).range([this.options.y_padding, this.height - this.options.y_padding]);
-    linear = function(i) {
-      return _this.height - y_scaler(i);
-    };
+    linear = (function(_this) {
+      return function(i) {
+        return _this.height - y_scaler(i);
+      };
+    })(this);
     if (this.options.scale === 'log') {
       y = function(i) {
         return linear(log(i));
@@ -1757,19 +1744,22 @@ LineChart = (function(_super) {
   };
 
   LineChart.prototype.create_scalers_for_single_point = function() {
-    var x, y,
-      _this = this;
-    y = function(i) {
-      return 0.5 * (_this.height - _this.options.y_padding);
-    };
-    x = function(i) {
-      return 0.5 * (_this.width - _this.options.x_padding);
-    };
+    var x, y;
+    y = (function(_this) {
+      return function(i) {
+        return 0.5 * (_this.height - _this.options.y_padding);
+      };
+    })(this);
+    x = (function(_this) {
+      return function(i) {
+        return 0.5 * (_this.width - _this.options.x_padding);
+      };
+    })(this);
     return [x, y];
   };
 
   LineChart.prototype._draw_y_labels = function(labels, x_offset) {
-    var axis, color, fmt, font_family, label, label_color, label_coordinates, label_size, offset, padding, size, x, y, _i, _len, _ref, _ref1;
+    var axis, color, fmt, font_family, label, label_color, label_coordinates, label_size, offset, padding, size, x, y, _i, _len, _ref;
     if (x_offset == null) {
       x_offset = 0;
     }
@@ -1787,11 +1777,7 @@ LineChart = (function(_super) {
       label.transform("T0,0R270S1");
       label.transform("...t0," + (label.getBBox()['x'] * -1));
     }
-    if (labels.length === 1) {
-      _ref = this.create_scalers_for_single_point(), x = _ref[0], y = _ref[1];
-    } else {
-      _ref1 = this.create_scalers(labels), x = _ref1[0], y = _ref1[1];
-    }
+    _ref = this.create_scalers(labels), x = _ref[0], y = _ref[1];
     label_coordinates = [];
     axis = new LabelSet(this.r, fmt).x(function(i) {
       return offset;
@@ -1895,7 +1881,7 @@ LineChart = (function(_super) {
     if (max_labels < 3) {
       return;
     }
-    len = points.length - 2;
+    len = points.length - 1;
     step_size = len / (max_labels - 1);
     rounded_step_size = Math.round(step_size);
     if (step_size !== rounded_step_size) {
@@ -1938,7 +1924,7 @@ LineChart = (function(_super) {
     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {
       line_indices = _ref1[i];
       begin = line_indices[0], end = line_indices[1];
-      raw_points = this.all_points.slice(begin, end + 1 || 9e9);
+      raw_points = this.all_points.slice(begin, +end + 1 || 9e9);
       if (this.options.multi_axis) {
         _ref2 = this.all_points.length > 2 ? this.create_scalers(raw_points) : this.create_scalers_for_single_point(), line_x = _ref2[0], line_y = _ref2[1];
       } else {
@@ -2002,7 +1988,6 @@ guide_struct = function(label, index_value, opacity) {
 };
 
 IndexChart = (function(_super) {
-
   __extends(IndexChart, _super);
 
   function IndexChart(dom_id, options) {
@@ -2028,11 +2013,12 @@ IndexChart = (function(_super) {
   };
 
   IndexChart.prototype.add_raw_label = function(label) {
-    var labels,
-      _this = this;
-    labels = new LabelSet(this.r).x(function(num) {
-      return _this.width - 10;
-    }).y(function(i) {
+    var labels;
+    labels = new LabelSet(this.r).x((function(_this) {
+      return function(num) {
+        return _this.width - 10;
+      };
+    })(this)).y(function(i) {
       return i * 15 + 15;
     }).size(this.options.label_size).attr({
       "fill": "#333",
@@ -2197,8 +2183,7 @@ IndexChart = (function(_super) {
   };
 
   IndexChart.prototype.draw = function() {
-    var bar, guide, half_bar_height, i, label, labels, raw_label, raw_value_labels, spacing_factor, x, x_padding, y, y_padding, _i, _j, _len, _len1, _ref, _ref1, _results,
-      _this = this;
+    var bar, guide, half_bar_height, i, label, labels, raw_label, raw_value_labels, spacing_factor, x, x_padding, y, y_padding, _i, _j, _len, _len1, _ref, _ref1, _results;
     this.set_bar_height();
     this.set_threshold();
     spacing_factor = this.bar_height + this.options.bar_margin;
@@ -2215,16 +2200,20 @@ IndexChart = (function(_super) {
     });
     raw_value_labels = new LabelSet(this.r).y(function(num) {
       return (num * spacing_factor) + y_padding + half_bar_height;
-    }).x(function(num) {
-      return _this.width - 10;
-    }).size(this.options.label_size).attr({
+    }).x((function(_this) {
+      return function(num) {
+        return _this.width - 10;
+      };
+    })(this)).size(this.options.label_size).attr({
       "fill": "#333",
       "text-anchor": "end"
     });
     x = new Scaler().domain([0, this.threshold]).range([this.options.x_padding, this.width - this.options.x_padding_right]);
-    y = function(i) {
-      return i * (_this.bar_height + _this.options.bar_margin) + _this.options.y_padding;
-    };
+    y = (function(_this) {
+      return function(i) {
+        return i * (_this.bar_height + _this.options.bar_margin) + _this.options.y_padding;
+      };
+    })(this);
     _ref = this.sort_bars_by_index();
     for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
       bar = _ref[i];
@@ -2265,7 +2254,6 @@ bar = function(label, value, average, comparison) {
 };
 
 BulletChart = (function(_super) {
-
   __extends(BulletChart, _super);
 
   function BulletChart(dom_id, options) {
@@ -2353,7 +2341,6 @@ var BarChart,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 BarChart = (function(_super) {
-
   __extends(BarChart, _super);
 
   function BarChart(dom_id, options) {
@@ -2396,8 +2383,7 @@ BarChart = (function(_super) {
   };
 
   BarChart.prototype.draw = function() {
-    var bar, i, max_x, max_y, min_x, min_y, points, scaled_x, scaled_y, tl_bar_corner, value, y, y_scaler, _i, _len, _ref, _ref1, _results,
-      _this = this;
+    var bar, i, max_x, max_y, min_x, min_y, points, scaled_x, scaled_y, tl_bar_corner, value, y, y_scaler, _i, _len, _ref, _ref1, _results;
     points = (function() {
       var _i, _len, _ref, _results;
       _ref = this.values;
@@ -2411,9 +2397,11 @@ BarChart = (function(_super) {
     points.push(new Point(0, 0));
     _ref = Scaling.get_ranges_for_points(points), max_x = _ref[0], min_x = _ref[1], max_y = _ref[2], min_y = _ref[3];
     y_scaler = new Scaler().domain([min_y, max_y]).range([this.options.y_padding, this.height - this.options.y_padding]);
-    y = function(i) {
-      return _this.height - y_scaler(i);
-    };
+    y = (function(_this) {
+      return function(i) {
+        return _this.height - y_scaler(i);
+      };
+    })(this);
     _ref1 = this.bars;
     _results = [];
     for (i = _i = 0, _len = _ref1.length; _i < _len; i = ++_i) {

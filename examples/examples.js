@@ -164,8 +164,7 @@ $(document).ready(function() {
       smoothing: 1,
       max_x_labels: 5,
       max_y_labels: 3,
-      x_padding: 50,
-      y_axis_scale: [0, 10]
+      x_padding: 50
     });
 
     var ret = data["result"];
@@ -176,7 +175,7 @@ $(document).ready(function() {
         }
 
         c.add_line({
-          data: yvals,
+          data: [[1,9], [2,9], [3,9], [4,9]],
           options: {
             line_color: colors[ i % colors.length],
             dot_color:  colors[ i % colors.length],

@@ -165,11 +165,7 @@ class LineChart extends BaseChart
       # translating to 0
       label.transform("...t0," + (label.getBBox()['x'] * -1))
 
-
-    if labels.length == 1
-      [x,y] = @create_scalers_for_single_point()
-    else
-      [x, y] = @create_scalers(labels)
+    [x, y] = @create_scalers(labels)
 
     label_coordinates = []
     
